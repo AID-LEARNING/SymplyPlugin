@@ -1,0 +1,8 @@
+name: SymplyPlugin
+api: 5.0.0
+version: 0.0.1
+main: SenseiTarzan\SymplyPlugin\Main
+description: System de pour simplifier la vie lait frais
+load: STARTUP
+loadbefore:
+  - "WaterLogging"

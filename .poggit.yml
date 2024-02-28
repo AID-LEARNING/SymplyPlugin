@@ -1,0 +1,19 @@
+---
+branches:
+  - stable
+projects:
+  SymplyPlugin:
+    path: ""
+    icon: "icon.png"
+    lint:
+      phpstan: false
+    libs:
+      - src: SOF3/await-generator/await-generator
+        version: ^3.6.1
+      - src: AID-LEARNING/ExtraEvent/libEventAttribute
+        version: ^1.0.2
+        branch: pm5
+      - src: AID-LEARNING/libExtraPath/libExtraPathConfig
+        version: ^1.0.1
+        branch: pm5
+...
