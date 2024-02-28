@@ -1,6 +1,6 @@
 ---
 branches:
-  - stable
+  - master
 projects:
   SymplyPlugin:
     path: ""
