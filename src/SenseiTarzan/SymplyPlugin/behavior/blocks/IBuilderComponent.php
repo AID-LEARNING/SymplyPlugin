@@ -14,6 +14,9 @@ use SenseiTarzan\SymplyPlugin\behavior\blocks\component\sub\MaterialSubComponent
 use SenseiTarzan\SymplyPlugin\behavior\blocks\component\TransformationComponent;
 use SenseiTarzan\SymplyPlugin\behavior\blocks\component\UnitCubeComponent;
 
+/**
+ * @internal
+ */
 interface IBuilderComponent
 {
 

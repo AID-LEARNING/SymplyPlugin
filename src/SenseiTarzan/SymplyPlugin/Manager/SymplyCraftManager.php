@@ -25,17 +25,6 @@ use Symfony\Component\Filesystem\Path;
 class SymplyCraftManager
 {
 
-	/**
-	 * @var SymplyShapedRecipe[][]
-	 * @phpstan-var array<string, list<SymplyShapedRecipe>>
-	 */
-	protected array $shapedRecipes = [];
-	/**
-	 * @var SymplyShapelessRecipe[][]
-	 * @phpstan-var array<string, list<SymplyShapelessRecipe>>
-	 */
-	protected array $shapelessRecipes = [];
-
 	private readonly string $pathCraft;
 	private readonly Config $config;
 
@@ -46,7 +35,7 @@ class SymplyCraftManager
 	{
 		$this->pathCraft = Path::join($this->plugin->getDataFolder(), "craft", "data");
 		@mkdir($this->pathCraft, recursive: true);
-		$this->config = new Config(Path::join($this->plugin->getDataFolder(), "config.yml"));
+		$this->config = new Config(Path::join($this->plugin->getDataFolder(), "craft", "config.yml"));
 	}
 
 	public function onLoad(): void

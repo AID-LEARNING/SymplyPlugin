@@ -40,8 +40,6 @@ use SenseiTarzan\SymplyPlugin\behavior\blocks\component\GeometryComponent;
 use SenseiTarzan\SymplyPlugin\behavior\blocks\component\MaterialInstancesComponent;
 use SenseiTarzan\SymplyPlugin\behavior\blocks\component\SelectionBoxComponent;
 use SenseiTarzan\SymplyPlugin\behavior\blocks\component\sub\HitBoxSubComponent;
-use SenseiTarzan\SymplyPlugin\behavior\blocks\component\sub\MaterialMappingSubComponent;
-use SenseiTarzan\SymplyPlugin\behavior\blocks\component\sub\MaterialSubComponent;
 use SenseiTarzan\SymplyPlugin\behavior\blocks\component\UnitCubeComponent;
 use SenseiTarzan\SymplyPlugin\behavior\blocks\IBlockCustom;
 use SenseiTarzan\SymplyPlugin\behavior\blocks\IBuilderComponent;
