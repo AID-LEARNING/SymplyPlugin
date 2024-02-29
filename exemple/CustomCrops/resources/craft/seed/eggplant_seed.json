@@ -1,0 +1,18 @@
+{
+  "format_version": "1.12",
+  "minecraft:recipe_shapeless": {
+    "tags": [
+      "crafting_table"
+    ],
+    "ingredients": [
+      {
+        "item": "symply:eggplant"
+      }
+    ],
+    "result": [
+      {
+        "item": "symply:eggplant_seed"
+      }
+    ]
+  }
+}

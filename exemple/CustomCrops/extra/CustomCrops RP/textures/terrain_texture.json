@@ -1,0 +1,38 @@
+{
+	"resource_pack_name": "bridgeRP",
+	"texture_name": "atlas.terrain",
+	"padding": 8,
+	"num_mip_levels": 4,
+	"texture_data": {
+		"eggplant_crops_0": {
+			"textures": "textures/blocks/eggplant_crops_0"
+		},
+		"eggplant_crops_1": {
+			"textures": "textures/blocks/eggplant_crops_1"
+		},
+		"eggplant_crops_2": {
+			"textures": "textures/blocks/eggplant_crops_2"
+		},
+		"eggplant_crops_3": {
+			"textures": "textures/blocks/eggplant_crops_3"
+		},
+		"eggplant_crops_4": {
+			"textures": "textures/blocks/eggplant_crops_4"
+		},
+		"cotton_crops_0": {
+			"textures": "textures/blocks/cotton_crops_0"
+		},
+		"cotton_crops_1": {
+			"textures": "textures/blocks/cotton_crops_1"
+		},
+		"cotton_crops_2": {
+			"textures": "textures/blocks/cotton_crops_2"
+		},
+		"cotton_crops_3": {
+			"textures": "textures/blocks/cotton_crops_3"
+		},
+		"cotton_crops_4": {
+			"textures": "textures/blocks/cotton_crops_4"
+		}
+	}
+}

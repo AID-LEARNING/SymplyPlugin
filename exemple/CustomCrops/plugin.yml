@@ -1,0 +1,8 @@
+name: CustomCrops
+api: 5.0.0
+version: 0.0.1
+main: SenseiTarzan\CustomCrops\Main
+description: "Custom Crops Exemple"
+load: STARTUP
+depend:
+  - "SymplyPlugin"

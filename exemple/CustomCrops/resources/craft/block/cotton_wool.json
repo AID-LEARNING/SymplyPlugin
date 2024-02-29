@@ -1,0 +1,22 @@
+{
+  "format_version": "1.12",
+  "minecraft:recipe_shaped": {
+    "tags": [
+      "crafting_table"
+    ],
+    "key": {
+      "A": {
+        "item": "symply:cotton"
+      }
+    },
+    "pattern": [
+      "AA",
+      "AA"
+    ],
+    "result": [
+      {
+        "item": "minecraft:white_wool"
+      }
+    ]
+  }
+}

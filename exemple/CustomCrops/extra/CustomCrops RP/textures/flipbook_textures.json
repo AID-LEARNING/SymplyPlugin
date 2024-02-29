@@ -1,0 +1,8 @@
+
+[
+	{
+    "flipbook_texture": "textures/blocks/rice_farmland",
+    "atlas_tile": "uf_rice_farmland",
+    "ticks_per_frame": 3
+  }
+]

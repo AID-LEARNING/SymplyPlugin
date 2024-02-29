@@ -1,0 +1,22 @@
+{
+	"resource_pack_name": "bridgeRP",
+	"texture_name": "atlas.items",
+	"texture_data": {
+		"eggplant_seeds": {
+			"textures": "textures/items/eggplant_seeds"
+		},
+		"eggplant": {
+			"textures": [
+				"textures/items/eggplant"
+			]
+		},
+		"cotton_seeds": {
+			"textures": "textures/items/cotton_seeds"
+		},
+		"cotton": {
+			"textures": [
+				"textures/items/cotton"
+			]
+		}
+	}
+}

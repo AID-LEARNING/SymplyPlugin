@@ -1,0 +1,29 @@
+{
+	"format_version": 2,
+	"header": {
+		"name": "CustomCrops SymplyPlugin",
+		"description": "Exemple for create custom crops",
+		"min_engine_version": [
+			1,
+			20,
+			0
+		],
+		"uuid": "d5783311-70ea-4479-87a8-d50be2a4e805",
+		"version": [
+			0,
+			0,
+			1
+		]
+	},
+	"modules": [
+		{
+			"type": "resources",
+			"uuid": "fe61f68d-9add-4eae-9916-4a5816e97f06",
+			"version": [
+				2,
+				2,
+				0
+			]
+		}
+	]
+}
