@@ -90,6 +90,7 @@ class SymplyDataCraftingDataCache
 					$nullUUID,
 					$recipe->getType(),
 					50,
+					true,
 					$index
 				);
 			}if($recipe instanceof ShapelessRecipe){
@@ -125,6 +126,7 @@ class SymplyDataCraftingDataCache
 					$nullUUID,
 					CraftingRecipeBlockName::CRAFTING_TABLE,
 					50,
+					true,
 					$index
 				);
 			}else{
