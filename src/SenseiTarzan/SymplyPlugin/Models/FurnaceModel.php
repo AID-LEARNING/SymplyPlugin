@@ -31,13 +31,9 @@ class FurnaceModel
 	 * @var string[]
 	 */
 	public array $tags;
-	/**
-	 * @required
-	 */
+	/** @required */
 	public ItemModel $input;
 
-	/**
-	 * @required
-	 */
+	/** @required */
 	public ItemModel $output;
 }
