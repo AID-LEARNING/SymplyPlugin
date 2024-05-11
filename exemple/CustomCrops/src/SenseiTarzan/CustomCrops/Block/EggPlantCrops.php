@@ -7,17 +7,17 @@ use pocketmine\block\Wheat;
 use pocketmine\item\Item;
 use pocketmine\math\Vector3;
 use SenseiTarzan\CustomCrops\Enum\ExtraItem;
-use SenseiTarzan\SymplyPlugin\behavior\blocks\builder\BlockPermutationBuilder;
-use SenseiTarzan\SymplyPlugin\behavior\blocks\component\OnInteractComponent;
-use SenseiTarzan\SymplyPlugin\behavior\blocks\component\sub\MaterialSubComponent;
-use SenseiTarzan\SymplyPlugin\behavior\blocks\Crops;
-use SenseiTarzan\SymplyPlugin\behavior\blocks\enum\RenderMethodEnum;
-use SenseiTarzan\SymplyPlugin\behavior\blocks\enum\TargetMaterialEnum;
-use SenseiTarzan\SymplyPlugin\behavior\blocks\info\BlockCreativeInfo;
-use SenseiTarzan\SymplyPlugin\behavior\blocks\permutation\Permutations;
-use SenseiTarzan\SymplyPlugin\behavior\blocks\property\CropsProperty;
-use SenseiTarzan\SymplyPlugin\behavior\common\enum\CategoryCreativeEnum;
-use SenseiTarzan\SymplyPlugin\behavior\common\enum\GroupCreativeEnum;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BlockPermutationBuilder;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\OnInteractComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub\MaterialSubComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Crops;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\RenderMethodEnum;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\TargetMaterialEnum;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Info\BlockCreativeInfo;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Permutation\Permutations;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property\CropsProperty;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\CategoryCreativeEnum;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\GroupCreativeEnum;
 
 class EggPlantCrops extends Crops
 {

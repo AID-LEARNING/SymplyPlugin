@@ -9,7 +9,7 @@ use pocketmine\block\BlockTypeInfo;
 use pocketmine\utils\CloningRegistryTrait;
 use SenseiTarzan\CustomCrops\Block\CottonCrops;
 use SenseiTarzan\CustomCrops\Block\EggPlantCrops;
-use SenseiTarzan\SymplyPlugin\behavior\blocks\BlockIdentifier;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\BlockIdentifier;
 
 /**
  * This doc-block is generated automatically, do not modify it manually.

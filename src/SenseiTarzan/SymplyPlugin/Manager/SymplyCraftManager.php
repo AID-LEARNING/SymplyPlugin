@@ -1,18 +1,33 @@
 <?php
 
+/*
+ *
+ *            _____ _____         _      ______          _____  _   _ _____ _   _  _____
+ *      /\   |_   _|  __ \       | |    |  ____|   /\   |  __ \| \ | |_   _| \ | |/ ____|
+ *     /  \    | | | |  | |______| |    | |__     /  \  | |__) |  \| | | | |  \| | |  __
+ *    / /\ \   | | | |  | |______| |    |  __|   / /\ \ |  _  /| . ` | | | | . ` | | |_ |
+ *   / ____ \ _| |_| |__| |      | |____| |____ / ____ \| | \ \| |\  |_| |_| |\  | |__| |
+ *  /_/    \_\_____|_____/       |______|______/_/    \_\_|  \_\_| \_|_____|_| \_|\_____|
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * @author AID-LEARNING
+ * @link https://github.com/AID-LEARNING
+ *
+ */
+
+declare(strict_types=1);
+
 namespace SenseiTarzan\SymplyPlugin\Manager;
 
 use pocketmine\crafting\CraftingManager;
 use pocketmine\crafting\FurnaceRecipe;
 use pocketmine\crafting\FurnaceType;
 use pocketmine\data\SavedDataLoadingException;
-use pocketmine\item\Item;
-use pocketmine\nbt\LittleEndianNbtSerializer;
-use pocketmine\nbt\TreeRoot;
-use pocketmine\network\mcpe\protocol\types\recipe\ShapelessRecipe;
-use pocketmine\utils\BinaryStream;
 use pocketmine\utils\Config;
-use ReflectionProperty;
 use SenseiTarzan\SymplyPlugin\Main;
 use SenseiTarzan\SymplyPlugin\Manager\Component\SymplyShapedRecipe;
 use SenseiTarzan\SymplyPlugin\Manager\Component\SymplyShapelessRecipe;
@@ -21,6 +36,11 @@ use SenseiTarzan\SymplyPlugin\Models\ItemModel;
 use SenseiTarzan\SymplyPlugin\Models\ShapedModel;
 use SenseiTarzan\SymplyPlugin\Models\ShapelessModel;
 use Symfony\Component\Filesystem\Path;
+use function array_walk;
+use function is_array;
+use function is_string;
+use function mb_strtoupper;
+use function mkdir;
 
 class SymplyCraftManager
 {
@@ -35,10 +55,10 @@ class SymplyCraftManager
 	{
 		$this->pathCraft = Path::join($this->plugin->getDataFolder(), "craft", "data");
 		@mkdir($this->pathCraft, recursive: true);
-		$this->config = new Config(Path::join($this->plugin->getDataFolder(), "craft", "config.yml"));
+		$this->config = new Config(Path::join($this->plugin->getDataFolder(), "craft", "config.yml")); //TODO
 	}
 
-	public function onLoad(): void
+	public function onLoad() : void
 	{
 		if ($this->craftManager === null){
 			$this->craftManager = $this->plugin->getServer()->getCraftingManager();
@@ -119,15 +139,12 @@ class SymplyCraftManager
 		}
 	}
 
-	public function getCraftingManager(): CraftingManager
+	public function getCraftingManager() : CraftingManager
 	{
 		return ($this->craftManager ?? $this->plugin->getServer()->getCraftingManager());
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getPathCraft(): string
+	public function getPathCraft() : string
 	{
 		return $this->pathCraft;
 	}

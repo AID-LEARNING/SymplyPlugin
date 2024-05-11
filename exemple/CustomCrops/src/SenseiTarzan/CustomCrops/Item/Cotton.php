@@ -3,11 +3,11 @@
 namespace SenseiTarzan\CustomCrops\Item;
 
 
-use SenseiTarzan\SymplyPlugin\behavior\common\enum\CategoryCreativeEnum;
-use SenseiTarzan\SymplyPlugin\behavior\common\enum\GroupCreativeEnum;
-use SenseiTarzan\SymplyPlugin\behavior\items\builder\ItemBuilder;
-use SenseiTarzan\SymplyPlugin\behavior\items\info\ItemCreativeInfo;
-use SenseiTarzan\SymplyPlugin\behavior\items\Item;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\CategoryCreativeEnum;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\GroupCreativeEnum;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Builder\ItemBuilder;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Info\ItemCreativeInfo;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Item;
 
 class Cotton extends Item
 {

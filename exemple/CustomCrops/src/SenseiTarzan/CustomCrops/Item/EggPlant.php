@@ -3,8 +3,8 @@
 namespace SenseiTarzan\CustomCrops\Item;
 
 
-use SenseiTarzan\SymplyPlugin\behavior\items\builder\ItemBuilder;
-use SenseiTarzan\SymplyPlugin\behavior\items\Food;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Builder\ItemBuilder;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Food;
 
 class EggPlant extends Food
 {

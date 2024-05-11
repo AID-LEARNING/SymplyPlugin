@@ -10,7 +10,7 @@ use SenseiTarzan\CustomCrops\Item\CottonSeed;
 use SenseiTarzan\CustomCrops\Item\EggPlant;
 use SenseiTarzan\CustomCrops\Item\EggPlantSeed;
 use SenseiTarzan\CustomCrops\Item\SeedCustom;
-use SenseiTarzan\SymplyPlugin\behavior\items\ItemIdentifier;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\ItemIdentifier;
 
 /**
  * This doc-block is generated automatically, do not modify it manually.
