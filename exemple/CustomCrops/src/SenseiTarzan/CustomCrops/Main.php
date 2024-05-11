@@ -11,9 +11,9 @@ use SenseiTarzan\CustomCrops\Enum\ExtraBlock;
 use SenseiTarzan\CustomCrops\Enum\ExtraItem;
 use SenseiTarzan\CustomTableCrafting\Block\CustomTableCraftingBlock;
 use SenseiTarzan\Path\PathScanner;
-use SenseiTarzan\SymplyPlugin\behavior\blocks\BlockIdentifier;
-use SenseiTarzan\SymplyPlugin\behavior\SymplyBlockFactory;
-use SenseiTarzan\SymplyPlugin\behavior\SymplyItemFactory;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\BlockIdentifier;
+use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockFactory;
+use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
 use SenseiTarzan\SymplyPlugin\Main as SymplyMain;
 use Symfony\Component\Filesystem\Path;
 

@@ -1,13 +1,32 @@
 <?php
 
+/*
+ *
+ *            _____ _____         _      ______          _____  _   _ _____ _   _  _____
+ *      /\   |_   _|  __ \       | |    |  ____|   /\   |  __ \| \ | |_   _| \ | |/ ____|
+ *     /  \    | | | |  | |______| |    | |__     /  \  | |__) |  \| | | | |  \| | |  __
+ *    / /\ \   | | | |  | |______| |    |  __|   / /\ \ |  _  /| . ` | | | | . ` | | |_ |
+ *   / ____ \ _| |_| |__| |      | |____| |____ / ____ \| | \ \| |\  |_| |_| |\  | |__| |
+ *  /_/    \_\_____|_____/       |______|______/_/    \_\_|  \_\_| \_|_____|_| \_|\_____|
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * @author AID-LEARNING
+ * @link https://github.com/AID-LEARNING
+ *
+ */
+
+declare(strict_types=1);
+
 namespace SenseiTarzan\SymplyPlugin\Manager;
 
-use pocketmine\crafting\CraftingManager;
 use pocketmine\crafting\FurnaceType;
 use pocketmine\crafting\ShapedRecipe;
 use pocketmine\crafting\ShapelessRecipe;
 use pocketmine\crafting\ShapelessRecipeType;
-use pocketmine\network\mcpe\cache\CraftingDataCache;
 use pocketmine\network\mcpe\convert\TypeConverter;
 use pocketmine\network\mcpe\protocol\CraftingDataPacket;
 use pocketmine\network\mcpe\protocol\types\recipe\CraftingRecipeBlockName;
@@ -75,7 +94,7 @@ class SymplyDataCraftingDataCache
 					50,
 					$index
 				);
-			}else if($recipe instanceof SymplyShapedRecipe){
+			}elseif($recipe instanceof SymplyShapedRecipe){
 				$inputs = [];
 				for($row = 0, $height = $recipe->getHeight(); $row < $height; ++$row){
 					for($column = 0, $width = $recipe->getWidth(); $column < $width; ++$column){

@@ -1,5 +1,26 @@
 <?php
 
+/*
+ *
+ *            _____ _____         _      ______          _____  _   _ _____ _   _  _____
+ *      /\   |_   _|  __ \       | |    |  ____|   /\   |  __ \| \ | |_   _| \ | |/ ____|
+ *     /  \    | | | |  | |______| |    | |__     /  \  | |__) |  \| | | | |  \| | |  __
+ *    / /\ \   | | | |  | |______| |    |  __|   / /\ \ |  _  /| . ` | | | | . ` | | |_ |
+ *   / ____ \ _| |_| |__| |      | |____| |____ / ____ \| | \ \| |\  |_| |_| |\  | |__| |
+ *  /_/    \_\_____|_____/       |______|______/_/    \_\_|  \_\_| \_|_____|_| \_|\_____|
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * @author AID-LEARNING
+ * @link https://github.com/AID-LEARNING
+ *
+ */
+
+declare(strict_types=1);
+
 namespace SenseiTarzan\SymplyPlugin\Manager;
 
 use pocketmine\crafting\ExactRecipeIngredient;
@@ -20,10 +41,14 @@ use pocketmine\utils\Filesystem;
 use pocketmine\world\format\io\GlobalItemDataHandlers;
 use SenseiTarzan\Path\PathScanner;
 use SenseiTarzan\SymplyPlugin\Models\ItemModel;
+use function base64_decode;
+use function is_string;
+use function json_decode;
+use function str_replace;
+use function str_starts_with;
 
 class SymplyCraftingManagerFromDataHelper
 {
-
 
 	private static function loadJsonOfObjectFile(\JsonMapper $mapper, string $modelClass, object $data)
 	{
@@ -35,12 +60,9 @@ class SymplyCraftingManagerFromDataHelper
 	}
 
 	/**
-	 * @param string $path
-	 * @param array $filterExtension
 	 * @param class-string $modelClass
-	 * @return \Generator
 	 */
-	public static function scanDirectoryToObjectFile(string $path, array $filterExtension, string $modelClass): \Generator
+	public static function scanDirectoryToObjectFile(string $path, array $filterExtension, string $modelClass) : \Generator
 	{
 
 		$mapper = new \JsonMapper();
@@ -55,7 +77,6 @@ class SymplyCraftingManagerFromDataHelper
 			yield $file => self::loadJsonOfObjectFile($mapper, $modelClass, $data->{$modelClass::NAME});
 		}
 	}
-
 
 	public static function deserializeItemStack(ItemModel|string $data) : ?Item{
 		if (is_string($data)){
@@ -131,12 +152,7 @@ class SymplyCraftingManagerFromDataHelper
 		}
 	}
 
-
-	/**
-	 * @param ItemModel|string $info
-	 * @return RecipeIngredient|null
-	 */
-	public static function deserializeIngredient(ItemModel|string $info): ?RecipeIngredient
+	public static function deserializeIngredient(ItemModel|string $info) : ?RecipeIngredient
 	{
 		$result = null;
 		if (is_string($info) && !str_starts_with("tag:", $info)){

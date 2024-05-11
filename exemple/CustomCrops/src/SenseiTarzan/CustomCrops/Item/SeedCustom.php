@@ -4,12 +4,12 @@ namespace SenseiTarzan\CustomCrops\Item;
 
 use pocketmine\block\Block;
 use pocketmine\block\Crops;
-use SenseiTarzan\SymplyPlugin\behavior\common\enum\CategoryCreativeEnum;
-use SenseiTarzan\SymplyPlugin\behavior\common\enum\GroupCreativeEnum;
-use SenseiTarzan\SymplyPlugin\behavior\items\builder\ItemBuilder;
-use SenseiTarzan\SymplyPlugin\behavior\items\info\ItemCreativeInfo;
-use SenseiTarzan\SymplyPlugin\behavior\items\Item;
-use SenseiTarzan\SymplyPlugin\behavior\items\ItemIdentifier;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\CategoryCreativeEnum;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\GroupCreativeEnum;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Builder\ItemBuilder;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Info\ItemCreativeInfo;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Item;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\ItemIdentifier;
 
 class SeedCustom extends Item
 {
