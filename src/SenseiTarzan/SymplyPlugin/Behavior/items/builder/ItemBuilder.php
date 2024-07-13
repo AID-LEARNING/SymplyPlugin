@@ -38,7 +38,9 @@ use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\DisplayNameComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\FoodComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\ProjectileComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\RenderOffsetsComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\RepairableComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\sub\RenderOffsetSubComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\sub\RepairableSubComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\ThrowableComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\WearableComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\AnimationEnum;
@@ -483,6 +485,15 @@ final class ItemBuilder
 			$onUseRange,
 			$usingConvertsTo
 		));
+	}
+
+	/**
+	 * @param RepairableSubComponent[] $repair_items
+	 * @return static
+	 */
+	public function setRepairable(array $repair_items = []): static
+	{
+		return $this->addComponent(new RepairableComponent($repair_items));
 	}
 
 	public function toPacket(int $vanillaIdItem) : CompoundTag
