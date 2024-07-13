@@ -29,6 +29,6 @@ readonly class RepairableComponent implements IComponent
 		foreach ($this->repair_items as $repair_item) {
 			$repair_items->push($repair_item->toNbt());
 		}
-		return CompoundTag::create()->setTag("repair_items", $repair_items);
+		return CompoundTag::create()->setTag($this->getName(), CompoundTag::create()->setTag("repair_items", $repair_items));
 	}
 }
