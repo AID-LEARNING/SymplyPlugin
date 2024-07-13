@@ -35,6 +35,7 @@ use pocketmine\network\mcpe\protocol\types\recipe\FurnaceRecipeBlockName;
 use pocketmine\network\mcpe\protocol\types\recipe\IntIdMetaItemDescriptor;
 use pocketmine\network\mcpe\protocol\types\recipe\PotionContainerChangeRecipe as ProtocolPotionContainerChangeRecipe;
 use pocketmine\network\mcpe\protocol\types\recipe\PotionTypeRecipe as ProtocolPotionTypeRecipe;
+use pocketmine\network\mcpe\protocol\types\recipe\RecipeUnlockingRequirement;
 use pocketmine\network\mcpe\protocol\types\recipe\ShapedRecipe as ProtocolShapedRecipe;
 use pocketmine\network\mcpe\protocol\types\recipe\ShapelessRecipe as ProtocolShapelessRecipe;
 use pocketmine\timings\Timings;
@@ -92,6 +93,7 @@ class SymplyDataCraftingDataCache
 					$nullUUID,
 					$recipe->getTypeFake(),
 					50,
+					new RecipeUnlockingRequirement(null),
 					$index
 				);
 			}elseif($recipe instanceof SymplyShapedRecipe){
@@ -110,6 +112,7 @@ class SymplyDataCraftingDataCache
 					$recipe->getType(),
 					50,
 					true,
+					new RecipeUnlockingRequirement(null),
 					$index
 				);
 			}if($recipe instanceof ShapelessRecipe){
@@ -127,6 +130,7 @@ class SymplyDataCraftingDataCache
 					$nullUUID,
 					$typeTag,
 					50,
+					new RecipeUnlockingRequirement(null),
 					$index
 				);
 			}elseif($recipe instanceof ShapedRecipe){
@@ -146,6 +150,7 @@ class SymplyDataCraftingDataCache
 					CraftingRecipeBlockName::CRAFTING_TABLE,
 					50,
 					true,
+					new RecipeUnlockingRequirement(null),
 					$index
 				);
 			}else{
