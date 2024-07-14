@@ -43,7 +43,7 @@ class BehaviorListener
 	{
 	}
 
-	#[EventAttribute(EventPriority::LOWEST)]
+	#[EventAttribute(EventPriority::MONITOR)]
 	public function onSend(DataPacketSendEvent $event) : void
 	{
 		$packets = $event->getPackets();
@@ -55,7 +55,7 @@ class BehaviorListener
 					"data_driven_items" => true
 				], true);
 				$packet->itemTable = SymplyCache::getInstance()->sortItemTypeEntries($packet->itemTable);
-				$packet->blockPalette = SymplyCache::getInstance()->getBlockPaletteEntries();
+				$packet->blockPalette = array_merge($packet->blockPalette, SymplyCache::getInstance()->getBlockPaletteEntries());
 			} elseif ($packet instanceof ResourcePackStackPacket) {
 				$packet->experiments = new Experiments([
 					"data_driven_items" => true
