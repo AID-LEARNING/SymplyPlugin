@@ -1,6 +1,6 @@
 name: SymplyPlugin
 api: 5.0.0
-version: 0.0.1
+version: 0.0.2
 main: SenseiTarzan\SymplyPlugin\Main
 description: "System of custom Block et Item best that Customies and support recipes json"
 load: STARTUP
