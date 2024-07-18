@@ -1,20 +1,21 @@
 {
-    "name": "gcaptari/symply-plugin",
-    "autoload": {
-        "psr-4": {
-            "SenseiTarzan\\SymplyPlugin\\": "src/SenseiTarzan/SymplyPlugin"
-        }
-    },
-    "authors": [
-        {
-            "name": "Sensei Tarzan",
-            "email": "gabrielcaptari0@gmail.com"
-        }
-    ],
-    "require": {
-      "ext-pmmpthread": "*"
-    },
-    "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.56"
+  "name": "gcaptari/symply-plugin",
+  "autoload": {
+    "psr-4": {
+      "SenseiTarzan\\SymplyPlugin\\": "src/SenseiTarzan/SymplyPlugin"
     }
+  },
+  "authors": [
+    {
+      "name": "Sensei Tarzan",
+      "email": "gabrielcaptari0@gmail.com"
+    }
+  ],
+  "require": {
+    "ext-pmmpthread": "*"
+  },
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "^3.56",
+    "pocketmine/pocketmine-mp": "5.17.0"
+  }
 }
