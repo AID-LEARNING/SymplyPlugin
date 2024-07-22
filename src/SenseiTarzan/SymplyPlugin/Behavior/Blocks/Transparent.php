@@ -33,6 +33,7 @@ use function assert;
 
 class Transparent extends PMTransparent implements IBlockCustom
 {
+    private BlockBuilder $blockBuilder;
 
 	public function __construct(
 		BlockIdentifier $idInfo,
@@ -52,9 +53,7 @@ class Transparent extends PMTransparent implements IBlockCustom
 
 	public function getBlockBuilder() : BlockBuilder
 	{
-		return BlockBuilder::create()
-			->setBlock($this)
-			->setGeometry("minecraft:geometry.full_block")
-			->setCreativeInfo(new BlockCreativeInfo(CategoryCreativeEnum::CONSTRUCTION, GroupCreativeEnum::NONE));
+		return isset($this->blockBuilder) ? $this->blockBuilder : $this->blockBuilder = BlockBuilder::create()
+			->setBlock($this);
 	}
 }

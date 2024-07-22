@@ -34,6 +34,8 @@ use function assert;
 abstract class OpaquePermutation extends PMOpaque implements IPermutationBlock
 {
 
+    private BlockPermutationBuilder $blockBuilder;
+
 	public function __construct(
 		BlockIdentifier $idInfo,
 		string          $name,
@@ -52,9 +54,7 @@ abstract class OpaquePermutation extends PMOpaque implements IPermutationBlock
 
 	public function getBlockBuilder() : BlockPermutationBuilder
 	{
-		return BlockPermutationBuilder::create()
-			->setBlock($this)
-			->setGeometry("minecraft:geometry.full_block")
-			->setCreativeInfo(new BlockCreativeInfo(CategoryCreativeEnum::CONSTRUCTION, GroupCreativeEnum::NONE));
+		return isset($this->blockBuilder) ? $this->blockBuilder : $this->blockBuilder = BlockPermutationBuilder::create()
+			->setBlock($this);
 	}
 }

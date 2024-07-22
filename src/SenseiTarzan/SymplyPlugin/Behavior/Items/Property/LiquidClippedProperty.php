@@ -24,11 +24,12 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Property;
 
 use pocketmine\nbt\tag\ByteTag;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\PropertyName;
 
 class LiquidClippedProperty extends ItemProperty
 {
 	public function __construct(bool $value = false)
 	{
-		parent::__construct("liquid_clipped", new ByteTag($value ? 1 : 0));
+		parent::__construct(PropertyName::LIQUID_CLIPPED, new ByteTag($value ? 1 : 0));
 	}
 }

@@ -28,6 +28,7 @@ use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\world\format\io\GlobalBlockStateHandlers;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 use function array_map;
 use function implode;
 use function is_string;
@@ -98,6 +99,6 @@ class DiggerComponent implements IComponent
 
 	public function getName() : string
 	{
-		return "minecraft:digger";
+		return ComponentName::DIGGER;
 	}
 }

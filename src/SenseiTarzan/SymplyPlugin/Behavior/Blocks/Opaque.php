@@ -26,12 +26,11 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks;
 use pocketmine\block\BlockTypeInfo;
 use pocketmine\block\Opaque as PMOpaque;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BlockBuilder;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Info\BlockCreativeInfo;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\CategoryCreativeEnum;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\GroupCreativeEnum;
 
 class Opaque extends PMOpaque implements IBlockCustom
 {
+
+    private BlockBuilder $blockBuilder;
 
 	public function __construct(
 		BlockIdentifier $idInfo,
@@ -49,9 +48,7 @@ class Opaque extends PMOpaque implements IBlockCustom
 
 	public function getBlockBuilder() : BlockBuilder
 	{
-		return BlockBuilder::create()
-			->setBlock($this)
-			->setGeometry("minecraft:geometry.full_block")
-			->setCreativeInfo(new BlockCreativeInfo(CategoryCreativeEnum::CONSTRUCTION, GroupCreativeEnum::NONE));
+		return isset($this->blockBuilder) ? $this->blockBuilder : $this->blockBuilder = BlockBuilder::create()
+			->setBlock($this);
 	}
 }

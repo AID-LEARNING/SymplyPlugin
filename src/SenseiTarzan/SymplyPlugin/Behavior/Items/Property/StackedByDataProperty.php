@@ -24,11 +24,12 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Property;
 
 use pocketmine\nbt\tag\ByteTag;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\PropertyName;
 
 class StackedByDataProperty extends ItemProperty
 {
 	public function __construct(bool $value = false)
 	{
-		parent::__construct("stacked_by_data", new ByteTag($value ? 1 : 0));
+		parent::__construct(PropertyName::STACKED_BY_DATA, new ByteTag($value ? 1 : 0));
 	}
 }

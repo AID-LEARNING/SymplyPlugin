@@ -40,6 +40,7 @@ use pocketmine\player\Player;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BlockPermutationBuilder;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\OnInteractComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub\MaterialSubComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\PropertyName;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\RenderMethodEnum;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\TargetMaterialEnum;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Info\BlockCreativeInfo;
@@ -56,6 +57,7 @@ class Crops extends PMCrops implements IPermutationBlock
 {
 	use AgeableTrait;
 	use StaticSupportTrait;
+    private BlockPermutationBuilder $blockBuilder;
 
 	public const MAX_AGE = 7;
 
@@ -102,34 +104,36 @@ class Crops extends PMCrops implements IPermutationBlock
 
 	public function serializeState(BlockStateWriter $writer) : void
 	{
-		$writer->writeInt("symply:crops", $this->getAge());
+		$writer->writeInt(PropertyName::CROPS, $this->getAge());
 	}
 
 	public function deserializeState(BlockStateReader $reader) : void
 	{
-		$this->age = $reader->readBoundedInt("symply:crops", 0, static::MAX_AGE);
+		$this->age = $reader->readBoundedInt(PropertyName::CROPS, 0, static::MAX_AGE);
 	}
 
 	public function getBlockBuilder() : BlockPermutationBuilder
 	{
-		$ages = range(0, static::MAX_AGE);
-		$identifier = explode(":", $this->getIdInfo()->getNamespaceId())[1];
-		$builder = BlockPermutationBuilder::create()
-			->setBlock($this)
-			->setMaterialInstance(materials: [
-				new MaterialSubComponent(TargetMaterialEnum::ALL, $identifier . "_0", RenderMethodEnum::ALPHA_TEST)
-			])
-			->setCreativeInfo(new BlockCreativeInfo(CategoryCreativeEnum::NATURE, GroupCreativeEnum::SEED))
-			->addProperty(new CropsProperty($ages))
-			->addComponent(new OnInteractComponent())
-		->setCollisionBox(new Vector3(-8, 0, -8), new Vector3(16,16,16), false);
-		foreach ($ages as $age){
-			$builder->addPermutation(Permutations::create()
-				->setCondition("query.block_property('symply:crops') == $age")
-				->setMaterialInstance(materials: [
-					new MaterialSubComponent(TargetMaterialEnum::ALL, $identifier . "_$age", RenderMethodEnum::ALPHA_TEST)
-				]));
-		}
-		return $builder;
+        if (!isset($this->blockBuilder)) {
+            $ages = range(0, static::MAX_AGE);
+            $identifier = explode(":", $this->getIdInfo()->getNamespaceId())[1];
+            $this->blockBuilder = BlockPermutationBuilder::create()
+                ->setBlock($this)
+                ->setMaterialInstance(materials: [
+                    new MaterialSubComponent(TargetMaterialEnum::ALL, $identifier . "_0", RenderMethodEnum::ALPHA_TEST)
+                ])
+                ->setCreativeInfo(new BlockCreativeInfo(CategoryCreativeEnum::NATURE, GroupCreativeEnum::SEED))
+                ->addProperty(new CropsProperty($ages))
+                ->addComponent(new OnInteractComponent())
+                ->setCollisionBox(new Vector3(-8, 0, -8), new Vector3(16, 16, 16), false);
+            foreach ($ages as $age) {
+                $this->blockBuilder->addPermutation(Permutations::create()
+                    ->setCondition("query.block_property('" . PropertyName::CROPS . "') == $age")
+                    ->setMaterialInstance(materials: [
+                        new MaterialSubComponent(TargetMaterialEnum::ALL, $identifier . "_$age", RenderMethodEnum::ALPHA_TEST)
+                    ]));
+            }
+        }
+		return $this->blockBuilder;
 	}
 }

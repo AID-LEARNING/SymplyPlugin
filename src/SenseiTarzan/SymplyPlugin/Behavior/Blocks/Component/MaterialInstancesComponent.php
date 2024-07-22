@@ -26,6 +26,7 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component;
 use pocketmine\nbt\tag\CompoundTag;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub\MaterialMappingSubComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub\MaterialSubComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\TargetMaterialEnum;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
 use function is_string;
@@ -46,7 +47,7 @@ class MaterialInstancesComponent implements IComponent
 
 	public function getName() : string
 	{
-		return "minecraft:material_instances";
+		return ComponentName::MATERIAL_INSTANCES;
 	}
 
 	public function toNbt() : CompoundTag

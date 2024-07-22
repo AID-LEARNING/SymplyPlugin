@@ -24,11 +24,12 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Property;
 
 use pocketmine\nbt\tag\IntTag;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\PropertyName;
 
 class DamageProperty extends ItemProperty
 {
 	public function __construct(int $damage)
 	{
-		parent::__construct("damage", new IntTag($damage));
+		parent::__construct(PropertyName::DAMAGE, new IntTag($damage));
 	}
 }

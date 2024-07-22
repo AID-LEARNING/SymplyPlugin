@@ -26,7 +26,6 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BlockBuilder;
 
 interface IBlockCustom {
-
 	public function getIdInfo() : BlockIdentifier;
 	public function getBlockBuilder() : BlockBuilder;
 }

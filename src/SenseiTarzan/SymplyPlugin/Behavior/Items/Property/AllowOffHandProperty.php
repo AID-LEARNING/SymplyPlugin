@@ -24,11 +24,12 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Property;
 
 use pocketmine\nbt\tag\ByteTag;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\PropertyName;
 
 class AllowOffHandProperty extends ItemProperty
 {
 	public function __construct(bool $value = true)
 	{
-		parent::__construct("allow_off_hand", new ByteTag($value ? 1 : 0));
+		parent::__construct(PropertyName::ALLOW_OFF_HAND, new ByteTag($value ? 1 : 0));
 	}
 }

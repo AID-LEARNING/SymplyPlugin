@@ -25,6 +25,7 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Component;
 
 use pocketmine\nbt\tag\CompoundTag;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 
 class BlockPlacerComponent implements IComponent
 {
@@ -45,13 +46,13 @@ class BlockPlacerComponent implements IComponent
 
 	public function toNbt() : CompoundTag
 	{
-	   return CompoundTag::create()->setTag("minecraft:block_placer", CompoundTag::create()
+	   return CompoundTag::create()->setTag($this->getName(), CompoundTag::create()
 	   ->setString("block", $this->getBlockIdentifier())
 	   ->setByte("use_block_description", $this->isUseBlockDescription() ? 1 : 0));
 	}
 
 	public function getName() : string
 	{
-		return "minecraft:block_placer";
+		return ComponentName::BLOCK_PLACER;
 	}
 }

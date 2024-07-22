@@ -44,7 +44,9 @@ use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\sub\RepairableSubComponen
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\ThrowableComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\WearableComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\AnimationEnum;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\EnchantSlotEnum;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\PropertyName;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\RenderSubOffsetsTypeEnum;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\SlotEnum;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\TextureTypeEnum;
@@ -159,6 +161,10 @@ final class ItemBuilder
 	{
 		return $this->components;
 	}
+    public function getComponent(string $name) : ?IComponent
+    {
+        return $this->components[$name] ?? null;
+    }
 
 	/**
 	 * @param ItemProperty[] $properties
@@ -186,6 +192,11 @@ final class ItemBuilder
 		return $this->properties;
 	}
 
+    public function getProperty(string $name) : ?ItemProperty
+    {
+        return $this->properties[$name] ?? null;
+    }
+
 	/**
 	 * Donne le noms par defaut pour mettre dans language de minecraft
 	 * @return $this
@@ -194,7 +205,7 @@ final class ItemBuilder
 		return $this->addComponent(new DisplayNameComponent("item.{$this->item->getIdentifier()->getNamespaceId()}.name"));
 	}
 
-	/**
+	/**R
 	 * Permet d'active la deuxieme mains pour l'item
 	 * @return $this
 	 */
@@ -257,12 +268,21 @@ final class ItemBuilder
 
 	/**
 	 * Permet de set un cooldown a l'item mais il ya un packet a utiliser
+     * @param string $category nom du cooldown
+     * @param float $duration la duree est en seconde et non pas des tick !!Attention!!
 	 * @return $this
 	 */
 	public function setCooldownComponent(string $category, float $duration) : static
 	{
 		return $this->addComponent(new CooldownComponent($category, $duration));
 	}
+
+    public function getCooldownComponent(): ?CooldownComponent
+    {
+        $component = $this->getComponent(ComponentName::COOLDOWN);
+        assert($component instanceof CooldownComponent);
+        return $component;
+    }
 
 	/**
 	 * Permet de mettre faire l'action d'un arc
@@ -411,7 +431,7 @@ final class ItemBuilder
 	 */
 	private function issHandEquipped() : mixed
 	{
-		return isset($this->properties[HandEquippedProperty::NAME]) ? $this->properties[HandEquippedProperty::NAME]->getValues()->getValue()  : false;
+		return ($this->getProperty(PropertyName::HAND_EQUIPPED)?->getValues()->getValue()) ?? false;
 	}
 
 	/**

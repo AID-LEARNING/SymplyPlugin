@@ -27,6 +27,7 @@ use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\sub\AmmunitionSubComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 
 class ShooterComponent implements IComponent
 {
@@ -44,7 +45,7 @@ class ShooterComponent implements IComponent
 
 	public function getName() : string
 	{
-		return "minecraft:shooter";
+		return ComponentName::SHOOTER;
 	}
 
 	public function toNbt() : CompoundTag
@@ -55,10 +56,10 @@ class ShooterComponent implements IComponent
 			$ammunitionListTag->push($ammunition->toNbt());
 		}
 
-		return CompoundTag::create()
-			->setTag("ammunition", $ammunitionListTag)
-			->setByte("charge_on_draw", $this->chargeOnDraw ? 1 : 0)
-			->setFloat("max_draw_duration", $this->maxDrawDuration)
-			->setByte("scale_power_by_draw_duration", $this->scalePowerByDrawDuration ? 1 : 0);
+		return CompoundTag::create()->setTag($this->getName(), CompoundTag::create()
+            ->setTag("ammunition", $ammunitionListTag)
+            ->setByte("charge_on_draw", $this->chargeOnDraw ? 1 : 0)
+            ->setFloat("max_draw_duration", $this->maxDrawDuration)
+            ->setByte("scale_power_by_draw_duration", $this->scalePowerByDrawDuration ? 1 : 0));
 	}
 }

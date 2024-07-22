@@ -26,6 +26,7 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Component;
 use pocketmine\nbt\tag\CompoundTag;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\sub\RenderOffsetSubComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\RenderOffsetTypeEnum;
 
 class RenderOffsetsComponent implements IComponent
@@ -45,7 +46,7 @@ class RenderOffsetsComponent implements IComponent
 
 	public function getName() : string
 	{
-		return "minecraft:render_offsets";
+		return ComponentName::PROJECTILE;
 	}
 
 	public function toNbt() : CompoundTag

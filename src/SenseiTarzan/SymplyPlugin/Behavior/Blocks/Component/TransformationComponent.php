@@ -25,6 +25,7 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component;
 
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
 use function intdiv;
 
@@ -40,7 +41,7 @@ final class TransformationComponent implements IComponent
 
 	public function getName() : string
 	{
-		return "minecraft:transformation";
+		return ComponentName::TRANSFORMATION;
 	}
 
 	public function getRotation() : Vector3

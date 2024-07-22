@@ -25,6 +25,7 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Component;
 
 use pocketmine\nbt\tag\CompoundTag;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 
 class ChargeableComponent implements IComponent
 {
@@ -35,7 +36,7 @@ class ChargeableComponent implements IComponent
 
 	public function getName() : string
 	{
-		return "minecraft:chargeable";
+		return ComponentName::CHARGEABLE;
 	}
 
 	public function getMovementModifier() : float
@@ -45,7 +46,7 @@ class ChargeableComponent implements IComponent
 
 	public function toNbt() : CompoundTag
 	{
-		return CompoundTag::create()->setTag("minecraft:chargeable", CompoundTag::create()
+		return CompoundTag::create()->setTag($this->getName(), CompoundTag::create()
 			->setFloat("movement_modifier", $this->getMovementModifier()));
 	}
 }

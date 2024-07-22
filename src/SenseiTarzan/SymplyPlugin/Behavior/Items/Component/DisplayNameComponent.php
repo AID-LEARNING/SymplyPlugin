@@ -25,6 +25,7 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Component;
 
 use pocketmine\nbt\tag\CompoundTag;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 
 class DisplayNameComponent implements IComponent
 {
@@ -35,7 +36,7 @@ class DisplayNameComponent implements IComponent
 
 	public function getName() : string
 	{
-		return "minecraft:display_name";
+		return ComponentName::DISPLAY_NAME;
 	}
 
 	public function getValue() : string

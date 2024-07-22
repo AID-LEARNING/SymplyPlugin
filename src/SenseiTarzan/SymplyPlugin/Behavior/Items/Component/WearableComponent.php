@@ -25,6 +25,7 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Component;
 
 use pocketmine\nbt\tag\CompoundTag;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\SlotEnum;
 
 class WearableComponent implements IComponent
@@ -34,7 +35,7 @@ class WearableComponent implements IComponent
 
 	public function getName() : string
 	{
-		return "minecraft:wearable";
+		return ComponentName::WEARABLE;
 	}
 
 	public function toNbt() : CompoundTag

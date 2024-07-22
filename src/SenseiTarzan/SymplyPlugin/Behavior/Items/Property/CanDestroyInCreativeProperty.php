@@ -24,11 +24,12 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Property;
 
 use pocketmine\nbt\tag\ByteTag;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\PropertyName;
 
 class CanDestroyInCreativeProperty extends ItemProperty
 {
 	public function __construct(bool $value = true)
 	{
-		parent::__construct("can_destroy_in_creative", new ByteTag($value ? 1 : 0));
+		parent::__construct(PropertyName::CAN_DESTROY_IN_CREATIVE, new ByteTag($value ? 1 : 0));
 	}
 }

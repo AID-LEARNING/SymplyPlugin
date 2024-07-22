@@ -24,11 +24,12 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Property;
 
 use pocketmine\nbt\tag\IntTag;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\PropertyName;
 
 class MaxStackSizeProperty extends ItemProperty
 {
 	public function __construct(int $max)
 	{
-		parent::__construct("max_stack_size", new IntTag($max));
+		parent::__construct(PropertyName::MAX_STACK_SIZE, new IntTag($max));
 	}
 }
