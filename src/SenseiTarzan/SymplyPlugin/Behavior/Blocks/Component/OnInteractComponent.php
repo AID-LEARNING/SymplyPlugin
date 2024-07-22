@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component;
 
 use pocketmine\nbt\tag\CompoundTag;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
 
 class OnInteractComponent implements IComponent
@@ -38,7 +39,7 @@ class OnInteractComponent implements IComponent
 
 	public function getName() : string
 	{
-		return "minecraft:on_interact";
+		return ComponentName::ON_INTERACT;
 	}
 
 	public function toNbt() : CompoundTag

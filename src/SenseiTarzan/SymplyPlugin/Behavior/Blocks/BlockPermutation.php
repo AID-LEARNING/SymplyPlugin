@@ -30,10 +30,9 @@ use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\GroupCreativeEnum;
 
 abstract class BlockPermutation extends Block implements IPermutationBlock
 {
+    private BlockPermutationBuilder $blockBuilder;
 	public function getBlockBuilder() : BlockPermutationBuilder{
-		return BlockPermutationBuilder::create()
-			->setBlock($this)
-			->setGeometry("minecraft:geometry.full_block")
-			->setCreativeInfo(new BlockCreativeInfo(CategoryCreativeEnum::CONSTRUCTION, GroupCreativeEnum::NONE));
+		return  isset($this->blockBuilder) ? $this->blockBuilder : $this->blockBuilder = BlockPermutationBuilder::create()
+			->setBlock($this);
 	}
 }

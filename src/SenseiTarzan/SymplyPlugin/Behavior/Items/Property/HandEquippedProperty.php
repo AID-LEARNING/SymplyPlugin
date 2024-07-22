@@ -24,13 +24,12 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Property;
 
 use pocketmine\nbt\tag\ByteTag;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\PropertyName;
 
 class HandEquippedProperty extends ItemProperty
 {
-
-	public const NAME = "hand_equipped";
 	public function __construct(bool $value = false)
 	{
-		parent::__construct(self::NAME, new ByteTag($value ? 1 : 0));
+		parent::__construct(PropertyName::HAND_EQUIPPED, new ByteTag($value ? 1 : 0));
 	}
 }

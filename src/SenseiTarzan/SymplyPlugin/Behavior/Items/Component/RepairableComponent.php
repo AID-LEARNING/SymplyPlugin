@@ -7,6 +7,7 @@ use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\sub\RepairableSubComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 
 readonly class RepairableComponent implements IComponent
 {
@@ -20,7 +21,7 @@ readonly class RepairableComponent implements IComponent
 
 	public function getName(): string
 	{
-		return "minecraft:repairable";
+		return ComponentName::REPAIRABLE;
 	}
 
 	public function toNbt(): CompoundTag

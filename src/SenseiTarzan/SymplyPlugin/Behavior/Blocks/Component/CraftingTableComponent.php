@@ -26,6 +26,7 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\StringTag;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
 use function array_map;
 use function array_merge;
@@ -58,7 +59,7 @@ class CraftingTableComponent implements IComponent
 
 	public function getName() : string
 	{
-		return "minecraft:crafting_table";
+		return ComponentName::CRAFTING_TABLE;
 	}
 
 	public function toNbt() : CompoundTag

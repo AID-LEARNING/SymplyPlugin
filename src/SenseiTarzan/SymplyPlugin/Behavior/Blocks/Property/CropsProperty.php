@@ -25,6 +25,7 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property;
 
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\ListTag;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\PropertyName;
 use function array_map;
 use function sort;
 use const SORT_NUMERIC;
@@ -37,6 +38,6 @@ final class CropsProperty extends BlockProperty
 	public function __construct(array $crops = [])
 	{
 		sort($crops, SORT_NUMERIC);
-		parent::__construct("symply:crops", new ListTag(array_map(fn(int $number) => new IntTag($number), $crops)));
+		parent::__construct(PropertyName::CROPS, new ListTag(array_map(fn(int $number) => new IntTag($number), $crops)));
 	}
 }

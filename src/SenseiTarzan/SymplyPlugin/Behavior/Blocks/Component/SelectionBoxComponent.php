@@ -25,6 +25,7 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component;
 
 use pocketmine\nbt\tag\CompoundTag;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub\HitBoxSubComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
 
 class SelectionBoxComponent implements IComponent
@@ -39,7 +40,7 @@ class SelectionBoxComponent implements IComponent
 
 	public function getName() : string
 	{
-		return "minecraft:selection_box";
+		return ComponentName::SELECTION_BOX;
 	}
 
 	public function toNbt() : CompoundTag

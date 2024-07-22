@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component;
 
 use pocketmine\nbt\tag\CompoundTag;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
 use function is_bool;
 
@@ -44,7 +45,7 @@ class GeometryComponent implements IComponent
 
 	public function getName() : string
 	{
-		return "minecraft:geometry";
+		return ComponentName::GEOMETRY;
 	}
 
 	public function setCulling(?string $culling) : self

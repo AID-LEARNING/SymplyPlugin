@@ -24,11 +24,12 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Property;
 
 use pocketmine\nbt\tag\IntTag;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\PropertyName;
 
 class FrameCountProperty extends ItemProperty
 {
 	public function __construct(int $frame)
 	{
-		parent::__construct("frame_count", new IntTag($frame));
+		parent::__construct(PropertyName::FRAME_COUNT, new IntTag($frame));
 	}
 }

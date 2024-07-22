@@ -25,11 +25,12 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Property;
 
 use pocketmine\nbt\tag\IntTag;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\AnimationEnum;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\PropertyName;
 
 class UseAnimationProperty extends ItemProperty
 {
 	public function __construct(AnimationEnum $animation)
 	{
-		parent::__construct("use_animation", new IntTag($animation->value));
+		parent::__construct(PropertyName::USE_ANIMATION, new IntTag($animation->value));
 	}
 }

@@ -25,6 +25,7 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Component;
 
 use pocketmine\nbt\tag\CompoundTag;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\TextureTypeEnum;
 
 class ArmorComponent implements IComponent
@@ -41,12 +42,12 @@ class ArmorComponent implements IComponent
 
 	public function toNbt() : CompoundTag
 	{
-		return CompoundTag::create()->setTag("minecraft:armor", CompoundTag::create()
+		return CompoundTag::create()->setTag($this->getName(), CompoundTag::create()
 			->setString("texture_type", $this->getTextureType()->value));
 	}
 
 	public function getName() : string
 	{
-		return "minecraft:armor";
+		return ComponentName::ARMOR;
 	}
 }

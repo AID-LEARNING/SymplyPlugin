@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component;
 
 use pocketmine\nbt\tag\CompoundTag;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
 
 class DestructibleByMiningComponent implements IComponent
@@ -37,7 +38,7 @@ class DestructibleByMiningComponent implements IComponent
 
 	public function getName() : string
 	{
-		return "minecraft:destructible_by_mining";
+		return ComponentName::DESTRUCTIBLE_BY_MINING;
 	}
 
 	public function toNbt() : CompoundTag

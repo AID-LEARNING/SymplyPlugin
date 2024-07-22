@@ -25,6 +25,7 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component;
 
 use pocketmine\nbt\tag\CompoundTag;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub\HitBoxSubComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
 
 class CollisionBoxComponent implements IComponent
@@ -38,7 +39,7 @@ class CollisionBoxComponent implements IComponent
 
 	public function getName() : string
 	{
-		return "minecraft:collision_box";
+		return ComponentName::COLLISION_BOX;
 	}
 
 	public function toNbt() : CompoundTag

@@ -28,6 +28,7 @@ use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\ListTag;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 use function array_map;
 
 class FoodComponent implements IComponent
@@ -54,7 +55,7 @@ class FoodComponent implements IComponent
 
 	public function getName() : string
 	{
-		return "minecraft:food";
+		return ComponentName::FOOD;
 	}
 
 	public function toNbt() : CompoundTag

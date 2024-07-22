@@ -25,6 +25,7 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Component;
 
 use pocketmine\nbt\tag\CompoundTag;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 
 class CooldownComponent implements IComponent
 {
@@ -33,7 +34,7 @@ class CooldownComponent implements IComponent
 
 	public function getName() : string
 	{
-		return "minecraft:cooldown";
+		return ComponentName::COOLDOWN;
 	}
 
 	public function getCategory() : string
@@ -48,7 +49,7 @@ class CooldownComponent implements IComponent
 
 	public function toNbt() : CompoundTag
 	{
-		return CompoundTag::create()->setTag("minecraft:cooldown", CompoundTag::create()
+		return CompoundTag::create()->setTag($this->getName(), CompoundTag::create()
 			->setString("category", $this->getCategory())
 			->setFloat("duration", $this->getDuration()));
 	}

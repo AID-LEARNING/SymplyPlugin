@@ -25,12 +25,13 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property;
 
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\ListTag;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\PropertyName;
 use function array_map;
 
 final class SlabProperty extends BlockProperty
 {
 	public function __construct()
 	{
-		parent::__construct("symply:slab_state", new ListTag(array_map(fn(int $number) => new IntTag($number), [0, 1, 2])));
+		parent::__construct(PropertyName::SLAB_STATE, new ListTag(array_map(fn(int $number) => new IntTag($number), [0, 1, 2])));
 	}
 }

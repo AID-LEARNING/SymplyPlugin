@@ -25,6 +25,7 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Component;
 
 use pocketmine\nbt\tag\CompoundTag;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 
 class ThrowableComponent implements IComponent
 {
@@ -41,7 +42,7 @@ class ThrowableComponent implements IComponent
 
 	public function getName() : string
 	{
-		return "minecraft:throwable";
+		return ComponentName::THROWABLE;
 	}
 
 	public function toNbt() : CompoundTag

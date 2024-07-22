@@ -25,6 +25,7 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Component;
 
 use pocketmine\nbt\tag\CompoundTag;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 
 class UseModifiersComponent implements IComponent
 {
@@ -38,7 +39,7 @@ class UseModifiersComponent implements IComponent
 
 	public function getName() : string
 	{
-		return "minecraft:use_modifiers";
+		return ComponentName::USE_MODIFIERS;
 	}
 
 	public function toNbt() : CompoundTag

@@ -24,13 +24,14 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Property;
 
 use pocketmine\nbt\tag\FloatTag;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\PropertyName;
 
 class MiningSpeed extends ItemProperty
 {
 
 	public function __construct(float $mining_speed)
 	{
-		parent::__construct("mining_speed", new FloatTag($mining_speed));
+		parent::__construct(PropertyName::MINING_SPEED, new FloatTag($mining_speed));
 	}
 
 }

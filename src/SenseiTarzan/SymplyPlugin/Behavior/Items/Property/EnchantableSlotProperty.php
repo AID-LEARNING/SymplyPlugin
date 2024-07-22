@@ -25,12 +25,13 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Property;
 
 use pocketmine\nbt\tag\StringTag;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\EnchantSlotEnum;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\PropertyName;
 
 class EnchantableSlotProperty extends ItemProperty
 {
 
 	public function __construct(EnchantSlotEnum $slot)
 	{
-		parent::__construct("enchantable_slot", new StringTag($slot->value));
+		parent::__construct(PropertyName::ENCHANTABLE_SLOT, new StringTag($slot->value));
 	}
 }

@@ -42,6 +42,8 @@ use SenseiTarzan\SymplyPlugin\Behavior\Blocks\IBlockCustom;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\IBuilderComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Info\BlockCreativeInfo;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\CategoryCreativeEnum;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\GroupCreativeEnum;
 use function array_map;
 
 class BlockBuilder implements IBuilderComponent
@@ -58,7 +60,10 @@ class BlockBuilder implements IBuilderComponent
 	}
 
 	public static function create() : static{
-		return (new static())->setUnitCube();
+		return (new static())
+            ->setUnitCube()
+            ->setGeometry("minecraft:geometry.full_block")
+            ->setCreativeInfo(new BlockCreativeInfo(CategoryCreativeEnum::CONSTRUCTION, GroupCreativeEnum::NONE));
 	}
 
 	public function setBlock(Block&IBlockCustom $blockCustom) : static{

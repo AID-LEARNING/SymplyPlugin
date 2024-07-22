@@ -24,12 +24,13 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Property;
 
 use pocketmine\nbt\tag\IntTag;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\PropertyName;
 
 class EnchantableValueProperty extends ItemProperty
 {
 
 	public function __construct(int $value)
 	{
-		parent::__construct("enchantable_value", new IntTag($value));
+		parent::__construct(PropertyName::ENCHANTABLE_VALUE, new IntTag($value));
 	}
 }

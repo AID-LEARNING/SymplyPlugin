@@ -33,6 +33,7 @@ use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockFactory;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
 use SenseiTarzan\SymplyPlugin\Listener\BehaviorListener;
 use SenseiTarzan\SymplyPlugin\Listener\ClientBreakListener;
+use SenseiTarzan\SymplyPlugin\Listener\ItemListener;
 use SenseiTarzan\SymplyPlugin\Manager\SymplyCraftManager;
 use SenseiTarzan\SymplyPlugin\Task\AsyncOverwriteTask;
 use SenseiTarzan\SymplyPlugin\Task\AsyncRegisterBehaviorsTask;
@@ -80,7 +81,8 @@ class Main extends PluginBase
 			Main::getInstance()->getSymplyCraftManager()->onLoad();
 		}),0);
 		EventLoader::loadEventWithClass($this, new BehaviorListener(false));
-		EventLoader::loadEventWithClass($this, new ClientBreakListener());
+        EventLoader::loadEventWithClass($this, new ClientBreakListener());
+        EventLoader::loadEventWithClass($this, ItemListener::class);
 	}
 
 	public static function getInstance() : Main

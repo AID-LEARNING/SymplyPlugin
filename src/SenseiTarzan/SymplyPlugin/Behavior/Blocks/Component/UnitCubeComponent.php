@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component;
 
 use pocketmine\nbt\tag\CompoundTag;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
 
 class UnitCubeComponent implements IComponent
@@ -31,7 +32,7 @@ class UnitCubeComponent implements IComponent
 
 	public function getName() : string
 	{
-		return "minecraft:unit_cube";
+		return ComponentName::UNIT_CUBE;
 	}
 
 	public function toNbt() : CompoundTag

@@ -27,6 +27,7 @@ use pocketmine\block\Block;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\world\format\io\GlobalBlockStateHandlers;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
 use function is_array;
 use function is_string;
@@ -76,7 +77,7 @@ class PlacementFilterComponent implements IComponent
 
 	public function getName() : string
 	{
-		return "minecraft:placement_filter";
+		return ComponentName::PLACEMENT_FILTER;
 	}
 
 	public function toNbt() : CompoundTag

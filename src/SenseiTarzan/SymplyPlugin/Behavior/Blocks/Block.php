@@ -26,14 +26,11 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks;
 use pocketmine\block\Block as PMBlock;
 use pocketmine\block\BlockTypeInfo;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BlockBuilder;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Info\BlockCreativeInfo;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\CategoryCreativeEnum;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\GroupCreativeEnum;
 use function assert;
 
 abstract class Block extends PMBlock implements IBlockCustom
 {
-
+    private BlockBuilder $blockBuilder;
 	public function __construct(
 		BlockIdentifier $idInfo,
 		string          $name,
@@ -50,9 +47,7 @@ abstract class Block extends PMBlock implements IBlockCustom
 		return $idInfo;
 	}
 	public function getBlockBuilder() : BlockBuilder{
-		return BlockBuilder::create()
-			->setBlock($this)
-			->setGeometry("minecraft:geometry.full_block")
-			->setCreativeInfo(new BlockCreativeInfo(CategoryCreativeEnum::CONSTRUCTION, GroupCreativeEnum::NONE));
+		return isset($this->blockBuilder) ? $this->blockBuilder : $this->blockBuilder = BlockBuilder::create()
+			->setBlock($this);
 	}
 }

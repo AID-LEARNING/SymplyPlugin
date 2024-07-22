@@ -24,11 +24,12 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Property;
 
 use pocketmine\nbt\tag\IntTag;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\PropertyName;
 
 class UseDurationProperty extends ItemProperty
 {
 	public function __construct(int $values)
 	{
-		parent::__construct("use_duration", new IntTag($values));
+		parent::__construct(PropertyName::USE_DURATION, new IntTag($values));
 	}
 }

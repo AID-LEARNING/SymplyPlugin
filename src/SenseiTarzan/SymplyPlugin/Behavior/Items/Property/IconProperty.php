@@ -24,11 +24,12 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Property;
 
 use pocketmine\nbt\tag\CompoundTag;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\PropertyName;
 
 class IconProperty extends ItemProperty
 {
 	public function __construct(string $texture)
 	{
-		parent::__construct("minecraft:icon", CompoundTag::create()->setTag("textures", CompoundTag::create()->setString("default", $texture)));
+		parent::__construct(PropertyName::ICON, CompoundTag::create()->setTag("textures", CompoundTag::create()->setString("default", $texture)));
 	}
 }
