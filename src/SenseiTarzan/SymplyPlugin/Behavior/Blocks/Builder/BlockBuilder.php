@@ -61,9 +61,9 @@ class BlockBuilder implements IBuilderComponent
 
 	public static function create() : static{
 		return (new static())
-            ->setUnitCube()
-            ->setGeometry("minecraft:geometry.full_block")
-            ->setCreativeInfo(new BlockCreativeInfo(CategoryCreativeEnum::CONSTRUCTION, GroupCreativeEnum::NONE));
+			->setUnitCube()
+			->setGeometry("minecraft:geometry.full_block")
+			->setCreativeInfo(new BlockCreativeInfo(CategoryCreativeEnum::CONSTRUCTION, GroupCreativeEnum::NONE));
 	}
 
 	public function setBlock(Block&IBlockCustom $blockCustom) : static{

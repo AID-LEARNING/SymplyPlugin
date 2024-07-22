@@ -32,7 +32,7 @@ use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\DurabilityComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Info\ItemCreativeInfo;
 use function assert;
 
-abstract class  Durable extends PMDurable implements ICustomItem
+abstract class Durable extends PMDurable implements ICustomItem
 {
 	public function __construct(ItemIdentifier $identifier, string $name = "Unknown", array $enchantmentTags = [])
 	{

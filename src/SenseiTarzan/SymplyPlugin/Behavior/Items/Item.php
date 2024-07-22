@@ -32,7 +32,7 @@ use function assert;
 
 class Item extends PMItem implements ICustomItem
 {
-    private ItemBuilder $itemBuilder;
+	private ItemBuilder $itemBuilder;
 	public function __construct(ItemIdentifier $identifier, string $name = "Unknown", array $enchantmentTags = [])
 	{
 		parent::__construct($identifier, $name, $enchantmentTags);

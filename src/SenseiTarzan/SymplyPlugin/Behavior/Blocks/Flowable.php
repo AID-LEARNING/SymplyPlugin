@@ -26,14 +26,11 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks;
 use pocketmine\block\BlockTypeInfo;
 use pocketmine\block\Flowable as PMFlowable;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BlockBuilder;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Info\BlockCreativeInfo;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\CategoryCreativeEnum;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\GroupCreativeEnum;
 use function assert;
 
 class Flowable extends PMFlowable implements IBlockCustom
 {
-    private BlockBuilder $blockBuilder;
+	private BlockBuilder $blockBuilder;
 	public function __construct(
 		BlockIdentifier $idInfo,
 		string          $name,

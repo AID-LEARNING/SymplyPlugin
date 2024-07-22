@@ -68,6 +68,7 @@ use SenseiTarzan\SymplyPlugin\Behavior\Items\Property\StackedByDataProperty;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Property\UseAnimationProperty;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Property\UseDurationProperty;
 use function array_map;
+use function assert;
 use function round;
 
 final class ItemBuilder
@@ -161,10 +162,10 @@ final class ItemBuilder
 	{
 		return $this->components;
 	}
-    public function getComponent(string $name) : ?IComponent
-    {
-        return $this->components[$name] ?? null;
-    }
+	public function getComponent(string $name) : ?IComponent
+	{
+		return $this->components[$name] ?? null;
+	}
 
 	/**
 	 * @param ItemProperty[] $properties
@@ -192,10 +193,10 @@ final class ItemBuilder
 		return $this->properties;
 	}
 
-    public function getProperty(string $name) : ?ItemProperty
-    {
-        return $this->properties[$name] ?? null;
-    }
+	public function getProperty(string $name) : ?ItemProperty
+	{
+		return $this->properties[$name] ?? null;
+	}
 
 	/**
 	 * Donne le noms par defaut pour mettre dans language de minecraft
@@ -268,8 +269,8 @@ final class ItemBuilder
 
 	/**
 	 * Permet de set un cooldown a l'item mais il ya un packet a utiliser
-     * @param string $category nom du cooldown
-     * @param float $duration la duree est en seconde et non pas des tick !!Attention!!
+	 * @param string $category nom du cooldown
+	 * @param float  $duration la duree est en seconde et non pas des tick !!Attention!!
 	 * @return $this
 	 */
 	public function setCooldownComponent(string $category, float $duration) : static
@@ -277,12 +278,12 @@ final class ItemBuilder
 		return $this->addComponent(new CooldownComponent($category, $duration));
 	}
 
-    public function getCooldownComponent(): ?CooldownComponent
-    {
-        $component = $this->getComponent(ComponentName::COOLDOWN);
-        assert($component instanceof CooldownComponent);
-        return $component;
-    }
+	public function getCooldownComponent() : ?CooldownComponent
+	{
+		$component = $this->getComponent(ComponentName::COOLDOWN);
+		assert($component instanceof CooldownComponent);
+		return $component;
+	}
 
 	/**
 	 * Permet de mettre faire l'action d'un arc
@@ -509,9 +510,8 @@ final class ItemBuilder
 
 	/**
 	 * @param RepairableSubComponent[] $repair_items
-	 * @return static
 	 */
-	public function setRepairable(array $repair_items = []): static
+	public function setRepairable(array $repair_items = []) : static
 	{
 		return $this->addComponent(new RepairableComponent($repair_items));
 	}

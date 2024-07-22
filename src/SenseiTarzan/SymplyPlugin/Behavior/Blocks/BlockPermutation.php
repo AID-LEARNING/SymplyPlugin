@@ -24,13 +24,10 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks;
 
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BlockPermutationBuilder;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Info\BlockCreativeInfo;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\CategoryCreativeEnum;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\GroupCreativeEnum;
 
 abstract class BlockPermutation extends Block implements IPermutationBlock
 {
-    private BlockPermutationBuilder $blockBuilder;
+	private BlockPermutationBuilder $blockBuilder;
 	public function getBlockBuilder() : BlockPermutationBuilder{
 		return  isset($this->blockBuilder) ? $this->blockBuilder : $this->blockBuilder = BlockPermutationBuilder::create()
 			->setBlock($this);

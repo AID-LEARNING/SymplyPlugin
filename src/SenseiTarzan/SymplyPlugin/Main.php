@@ -81,8 +81,8 @@ class Main extends PluginBase
 			Main::getInstance()->getSymplyCraftManager()->onLoad();
 		}),0);
 		EventLoader::loadEventWithClass($this, new BehaviorListener(false));
-        EventLoader::loadEventWithClass($this, new ClientBreakListener());
-        EventLoader::loadEventWithClass($this, ItemListener::class);
+		EventLoader::loadEventWithClass($this, new ClientBreakListener());
+		EventLoader::loadEventWithClass($this, ItemListener::class);
 	}
 
 	public static function getInstance() : Main
