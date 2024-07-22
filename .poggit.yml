@@ -1,6 +1,7 @@
 ---
 branches:
   - master
+  - experimental
 projects:
   SymplyPlugin:
     path: ""
