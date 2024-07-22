@@ -268,6 +268,8 @@ final class ItemBuilder
 
 	/**
 	 * Permet de set un cooldown a l'item mais il ya un packet a utiliser
+     * @param string $category nom du cooldown
+     * @param float $duration la duree est en seconde et non pas des tick !!Attention!!
 	 * @return $this
 	 */
 	public function setCooldownComponent(string $category, float $duration) : static
