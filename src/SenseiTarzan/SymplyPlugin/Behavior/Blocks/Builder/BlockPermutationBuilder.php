@@ -36,7 +36,8 @@ use function array_map;
 use function array_reverse;
 use function array_values;
 
-final class BlockPermutationBuilder extends BlockBuilder{
+final class BlockPermutationBuilder extends BlockBuilder
+{
 
 	/** @var BlockProperty[] */
 	private array $properties = [];

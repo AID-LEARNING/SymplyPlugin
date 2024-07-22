@@ -35,11 +35,12 @@ use SenseiTarzan\ExtraEvent\Class\EventAttribute;
 use SenseiTarzan\SymplyPlugin\Main;
 use SenseiTarzan\SymplyPlugin\Manager\SymplyDataCraftingDataCache;
 use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
+use function array_merge;
 
 readonly class BehaviorListener
 {
 
-	public function __construct(private bool $serverBreakSide)
+	public function __construct(private readonly bool $serverBreakSide)
 	{
 	}
 

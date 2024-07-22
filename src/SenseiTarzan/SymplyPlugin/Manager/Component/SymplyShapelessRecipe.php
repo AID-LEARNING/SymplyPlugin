@@ -28,7 +28,8 @@ use pocketmine\crafting\ShapelessRecipe;
 use pocketmine\crafting\ShapelessRecipeType;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Item;
 
-class SymplyShapelessRecipe extends ShapelessRecipe {
+class SymplyShapelessRecipe extends ShapelessRecipe
+{
 	private string $typeFake;
 
 	/**

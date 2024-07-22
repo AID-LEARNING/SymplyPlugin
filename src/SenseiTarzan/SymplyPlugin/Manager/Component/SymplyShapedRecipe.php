@@ -27,7 +27,8 @@ use pocketmine\crafting\RecipeIngredient;
 use pocketmine\crafting\ShapedRecipe;
 use pocketmine\item\Item;
 
-class SymplyShapedRecipe extends ShapedRecipe {
+class SymplyShapedRecipe extends ShapedRecipe
+{
 
 	private string $type;
 
