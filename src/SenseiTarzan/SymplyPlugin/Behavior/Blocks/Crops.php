@@ -57,7 +57,7 @@ class Crops extends PMCrops implements IPermutationBlock
 {
 	use AgeableTrait;
 	use StaticSupportTrait;
-    private BlockPermutationBuilder $blockBuilder;
+	private BlockPermutationBuilder $blockBuilder;
 
 	public const MAX_AGE = 7;
 
@@ -114,26 +114,26 @@ class Crops extends PMCrops implements IPermutationBlock
 
 	public function getBlockBuilder() : BlockPermutationBuilder
 	{
-        if (!isset($this->blockBuilder)) {
-            $ages = range(0, static::MAX_AGE);
-            $identifier = explode(":", $this->getIdInfo()->getNamespaceId())[1];
-            $this->blockBuilder = BlockPermutationBuilder::create()
-                ->setBlock($this)
-                ->setMaterialInstance(materials: [
-                    new MaterialSubComponent(TargetMaterialEnum::ALL, $identifier . "_0", RenderMethodEnum::ALPHA_TEST)
-                ])
-                ->setCreativeInfo(new BlockCreativeInfo(CategoryCreativeEnum::NATURE, GroupCreativeEnum::SEED))
-                ->addProperty(new CropsProperty($ages))
-                ->addComponent(new OnInteractComponent())
-                ->setCollisionBox(new Vector3(-8, 0, -8), new Vector3(16, 16, 16), false);
-            foreach ($ages as $age) {
-                $this->blockBuilder->addPermutation(Permutations::create()
-                    ->setCondition("query.block_property('" . PropertyName::CROPS . "') == $age")
-                    ->setMaterialInstance(materials: [
-                        new MaterialSubComponent(TargetMaterialEnum::ALL, $identifier . "_$age", RenderMethodEnum::ALPHA_TEST)
-                    ]));
-            }
-        }
+		if (!isset($this->blockBuilder)) {
+			$ages = range(0, static::MAX_AGE);
+			$identifier = explode(":", $this->getIdInfo()->getNamespaceId())[1];
+			$this->blockBuilder = BlockPermutationBuilder::create()
+				->setBlock($this)
+				->setMaterialInstance(materials: [
+					new MaterialSubComponent(TargetMaterialEnum::ALL, $identifier . "_0", RenderMethodEnum::ALPHA_TEST)
+				])
+				->setCreativeInfo(new BlockCreativeInfo(CategoryCreativeEnum::NATURE, GroupCreativeEnum::SEED))
+				->addProperty(new CropsProperty($ages))
+				->addComponent(new OnInteractComponent())
+				->setCollisionBox(new Vector3(-8, 0, -8), new Vector3(16, 16, 16), false);
+			foreach ($ages as $age) {
+				$this->blockBuilder->addPermutation(Permutations::create()
+					->setCondition("query.block_property('" . PropertyName::CROPS . "') == $age")
+					->setMaterialInstance(materials: [
+						new MaterialSubComponent(TargetMaterialEnum::ALL, $identifier . "_$age", RenderMethodEnum::ALPHA_TEST)
+					]));
+			}
+		}
 		return $this->blockBuilder;
 	}
 }

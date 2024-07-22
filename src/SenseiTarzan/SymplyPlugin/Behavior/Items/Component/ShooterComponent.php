@@ -57,9 +57,9 @@ class ShooterComponent implements IComponent
 		}
 
 		return CompoundTag::create()->setTag($this->getName(), CompoundTag::create()
-            ->setTag("ammunition", $ammunitionListTag)
-            ->setByte("charge_on_draw", $this->chargeOnDraw ? 1 : 0)
-            ->setFloat("max_draw_duration", $this->maxDrawDuration)
-            ->setByte("scale_power_by_draw_duration", $this->scalePowerByDrawDuration ? 1 : 0));
+			->setTag("ammunition", $ammunitionListTag)
+			->setByte("charge_on_draw", $this->chargeOnDraw ? 1 : 0)
+			->setFloat("max_draw_duration", $this->maxDrawDuration)
+			->setByte("scale_power_by_draw_duration", $this->scalePowerByDrawDuration ? 1 : 0));
 	}
 }

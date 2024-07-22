@@ -36,10 +36,10 @@ use SenseiTarzan\SymplyPlugin\Main;
 use SenseiTarzan\SymplyPlugin\Manager\SymplyDataCraftingDataCache;
 use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
 
-class BehaviorListener
+readonly class BehaviorListener
 {
 
-	public function __construct(private readonly bool $serverBreakSide)
+	public function __construct(private bool $serverBreakSide)
 	{
 	}
 

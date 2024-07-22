@@ -26,15 +26,12 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks;
 use pocketmine\block\BlockTypeInfo;
 use pocketmine\block\Flowable as PMFlowable;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BlockPermutationBuilder;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Info\BlockCreativeInfo;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\CategoryCreativeEnum;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\GroupCreativeEnum;
 use function assert;
 
 abstract class FlowablePermutation extends PMFlowable implements IPermutationBlock
 {
 
-    private BlockPermutationBuilder $blockBuilder;
+	private BlockPermutationBuilder $blockBuilder;
 
 	public function __construct(
 		BlockIdentifier $idInfo,

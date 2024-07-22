@@ -26,15 +26,12 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks;
 use pocketmine\block\BlockTypeInfo;
 use pocketmine\block\Transparent as PMTransparent;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BlockPermutationBuilder;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Info\BlockCreativeInfo;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\CategoryCreativeEnum;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\GroupCreativeEnum;
 use function assert;
 
 abstract class TransparentPermutation extends PMTransparent implements IPermutationBlock
 {
 
-    private BlockPermutationBuilder $blockBuilder;
+	private BlockPermutationBuilder $blockBuilder;
 
 	public function __construct(
 		BlockIdentifier $idInfo,
