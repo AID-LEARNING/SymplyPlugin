@@ -46,7 +46,7 @@ class RenderOffsetsComponent implements IComponent
 
 	public function getName() : string
 	{
-		return ComponentName::PROJECTILE;
+		return ComponentName::RENDER_OFFSETS;
 	}
 
 	public function toNbt() : CompoundTag
