@@ -30,6 +30,7 @@ use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\mcpe\convert\BlockStateDictionaryEntry;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\BreathabilityComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\CollisionBoxComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\GeometryComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\MaterialInstancesComponent;
@@ -68,7 +69,7 @@ class BlockBuilder implements IBuilderComponent
 
 	public function setBlock(Block&IBlockCustom $blockCustom) : static{
 		$this->blockCustom = $blockCustom;
-		return $this;
+		return $this->addComponent(new BreathabilityComponent($blockCustom->isSolid()));
 	}
 
 	public function getNamespaceId() : string
@@ -160,7 +161,7 @@ class BlockBuilder implements IBuilderComponent
 			->setTag("minecraft:light_dampening", CompoundTag::create()
 				->setByte("lightLevel", $this->blockCustom->getLightFilter()))
 			->setTag("minecraft:destructible_by_mining", CompoundTag::create()
-				->setFloat("value", $this->blockCustom->getBreakInfo()->getHardness()))
+				->setFloat("value", $this->blockCustom->getBreakInfo()->getHardness() * 3.33334))
 			->setTag("minecraft:friction", CompoundTag::create()
 				->setFloat("value", 1 - $this->blockCustom->getFrictionFactor()));
 		foreach ($this->components as $component) {
