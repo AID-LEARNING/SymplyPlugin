@@ -28,6 +28,7 @@ use pocketmine\inventory\CreativeInventory;
 use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\ClosureTask;
 use pocketmine\Server;
+use pocketmine\world\World;
 use SenseiTarzan\ExtraEvent\Component\EventLoader;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockFactory;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
@@ -54,12 +55,6 @@ class Main extends PluginBase
 
 	protected function onEnable() : void
 	{
-		$server = Server::getInstance();
-		$server->getAsyncPool()->addWorkerStartHook(static function(int $worker) use($server) : void{
-			$server->getAsyncPool()->submitTaskToWorker(new AsyncRegisterVanillaTask(), $worker);
-			$server->getAsyncPool()->submitTaskToWorker(new AsyncRegisterBehaviorsTask(), $worker);
-			$server->getAsyncPool()->submitTaskToWorker(new AsyncOverwriteTask(), $worker);
-		});
 		$this->getScheduler()->scheduleDelayedTask(new ClosureTask(static function () {
 			SymplyCache::getInstance()->initBlockBuilders();
 			foreach (SymplyBlockFactory::getInstance()->getCustomAll() as $block){
@@ -78,6 +73,22 @@ class Main extends PluginBase
 				if(!CreativeInventory::getInstance()->contains($item))
 					CreativeInventory::getInstance()->add($item);
 			}
+			$server = Server::getInstance();
+			$worldManager = $server->getWorldManager();
+			$defaultWorld = $worldManager->getDefaultWorld();
+			foreach ($worldManager->getWorlds() as $world){
+				$worldManager->unloadWorld($world, true);
+
+				$worldManager->loadWorld($world->getFolderName());
+			}
+			$worldManager->setDefaultWorld($worldManager->getWorldByName($defaultWorld->getFolderName()));
+			$asyncPool = $server->getAsyncPool();
+			$asyncPool->addWorkerStartHook(static function(int $worker) use($asyncPool) : void{
+				$asyncPool->submitTaskToWorker(new AsyncRegisterVanillaTask(), $worker);
+				$asyncPool->submitTaskToWorker(new AsyncRegisterBehaviorsTask(), $worker);
+				$asyncPool->submitTaskToWorker(new AsyncOverwriteTask(), $worker);
+			});
+			$asyncPool->shutdown();
 			Main::getInstance()->getSymplyCraftManager()->onLoad();
 		}),0);
 		EventLoader::loadEventWithClass($this, new BehaviorListener(false));

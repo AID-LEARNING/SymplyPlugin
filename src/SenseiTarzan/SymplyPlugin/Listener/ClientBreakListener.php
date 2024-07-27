@@ -65,7 +65,8 @@ class ClientBreakListener
 	public function onDataReceive(DataPacketReceiveEvent $event) : void
 	{
 		$player = ($session = $event->getOrigin())->getPlayer();
-		if ($player === null) return;
+		if ($player === null || $player->isCreative())
+			return;
 		$packet = $event->getPacket();
 		if($packet instanceof PlayerAuthInputPacket) {
 			$cancel = false;
