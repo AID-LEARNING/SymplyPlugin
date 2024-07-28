@@ -31,7 +31,10 @@ use pocketmine\Server;
 use pocketmine\world\World;
 use SenseiTarzan\ExtraEvent\Component\EventLoader;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockFactory;
+use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockPalette;
+use SenseiTarzan\SymplyPlugin\Behavior\SymplyEntityFactory;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
+use SenseiTarzan\SymplyPlugin\Class\FixBlockPalette;
 use SenseiTarzan\SymplyPlugin\Listener\BehaviorListener;
 use SenseiTarzan\SymplyPlugin\Listener\ClientBreakListener;
 use SenseiTarzan\SymplyPlugin\Listener\ItemListener;
@@ -75,20 +78,18 @@ class Main extends PluginBase
 			}
 			$server = Server::getInstance();
 			$worldManager = $server->getWorldManager();
-			$defaultWorld = $worldManager->getDefaultWorld();
+			$defaultWorld = $worldManager->getDefaultWorld()->getFolderName();
 			foreach ($worldManager->getWorlds() as $world){
 				$worldManager->unloadWorld($world, true);
-
 				$worldManager->loadWorld($world->getFolderName());
 			}
-			$worldManager->setDefaultWorld($worldManager->getWorldByName($defaultWorld->getFolderName()));
+			$worldManager->setDefaultWorld($worldManager->getWorldByName($defaultWorld));
 			$asyncPool = $server->getAsyncPool();
 			$asyncPool->addWorkerStartHook(static function(int $worker) use($asyncPool) : void{
 				$asyncPool->submitTaskToWorker(new AsyncRegisterVanillaTask(), $worker);
 				$asyncPool->submitTaskToWorker(new AsyncRegisterBehaviorsTask(), $worker);
 				$asyncPool->submitTaskToWorker(new AsyncOverwriteTask(), $worker);
 			});
-			$asyncPool->shutdown();
 			Main::getInstance()->getSymplyCraftManager()->onLoad();
 		}),0);
 		EventLoader::loadEventWithClass($this, new BehaviorListener(false));

@@ -26,6 +26,7 @@ namespace SenseiTarzan\SymplyPlugin\Task;
 use pmmp\thread\ThreadSafeArray;
 use pocketmine\scheduler\AsyncTask;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockFactory;
+use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
 use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
 
 class AsyncRegisterVanillaTask extends AsyncTask
@@ -48,9 +49,8 @@ class AsyncRegisterVanillaTask extends AsyncTask
 		foreach ($this->blockFuncs as [$blockClosure, $identifier,  $serialize, $deserialize]) {
 			SymplyBlockFactory::getInstance(true)->registerVanilla($blockClosure, $identifier,  $serialize, $deserialize);
 		}
-
 		foreach ($this->itemFuncs as [$itemClosure, $identifier, $serialize, $deserialize]){
-			SymplyBlockFactory::getInstance(true)->registerVanilla($itemClosure, $identifier, $serialize, $deserialize);
+			SymplyItemFactory::getInstance(true)->registerVanilla($itemClosure, $identifier, $serialize, $deserialize);
 		}
 	}
 }
