@@ -49,6 +49,6 @@ class Flowable extends PMFlowable implements IBlockCustom
 
 	public function getBlockBuilder() : BlockBuilder
 	{
-		return isset($this->blockBuilder) ? $this->blockBuilder : $this->blockBuilder = BlockBuilder::create()->setBlock($this);
+		return BlockBuilder::create()->setBlock($this);
 	}
 }

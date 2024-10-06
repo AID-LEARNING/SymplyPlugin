@@ -30,7 +30,6 @@ use function assert;
 
 abstract class Block extends PMBlock implements IBlockCustom
 {
-	private BlockBuilder $blockBuilder;
 	public function __construct(
 		BlockIdentifier $idInfo,
 		string          $name,
@@ -47,7 +46,6 @@ abstract class Block extends PMBlock implements IBlockCustom
 		return $idInfo;
 	}
 	public function getBlockBuilder() : BlockBuilder{
-		return isset($this->blockBuilder) ? $this->blockBuilder : $this->blockBuilder = BlockBuilder::create()
-			->setBlock($this);
+		return BlockBuilder::create()->setBlock($this);
 	}
 }

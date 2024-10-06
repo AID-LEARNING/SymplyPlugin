@@ -62,7 +62,6 @@ class BlockBuilder implements IBuilderComponent
 
 	public static function create() : static{
 		return (new static())
-			->setUnitCube()
 			->setGeometry("minecraft:geometry.full_block")
 			->setCreativeInfo(new BlockCreativeInfo(CategoryCreativeEnum::CONSTRUCTION, GroupCreativeEnum::NONE));
 	}
@@ -70,6 +69,14 @@ class BlockBuilder implements IBuilderComponent
 	public function setBlock(Block&IBlockCustom $blockCustom) : static{
 		$this->blockCustom = $blockCustom;
 		return $this->addComponent(new BreathabilityComponent($blockCustom->isSolid()));
+	}
+
+	/**
+	 * @return Block&IBlockCustom
+	 */
+	public function getBlockCustom(): Block&IBlockCustom
+	{
+		return $this->blockCustom;
 	}
 
 	public function getNamespaceId() : string

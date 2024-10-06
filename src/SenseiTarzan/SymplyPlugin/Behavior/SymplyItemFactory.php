@@ -42,6 +42,7 @@ use pocketmine\utils\SingletonTrait;
 use pocketmine\world\format\io\GlobalItemDataHandlers;
 use ReflectionClass;
 use ReflectionProperty;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Builder\ItemBuilder;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\ICustomItem;
 use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
 use function mb_strtoupper;
@@ -58,6 +59,11 @@ final class SymplyItemFactory
 
 	/** @var array<string, Item> */
 	private array $overwrite = [];
+
+	/**
+	 * @var array<string, ItemBuilder>
+	 */
+	private array $itemToItemBuilder = [];
 
 	public function __construct(private readonly bool $asyncMode = false)
 	{
@@ -85,6 +91,8 @@ final class SymplyItemFactory
 		StringToItemParser::getInstance()->register($identifier, static fn() => clone $itemCustom);
 		LegacyItemIdToStringIdMap::getInstance()->add($identifier, $itemId);
 		CreativeInventory::getInstance()->add($itemCustom);
+		$itemBuilder = $itemCustom->getItemBuilder();
+		$this->addItemBuilder($itemCustom, $itemBuilder);
 		if (!$this->asyncMode) {
 			SymplyCache::getInstance()->addItemsComponentPacketEntry(new ItemComponentPacketEntry($identifier, new CacheableNbt($itemCustom->getItemBuilder()->toPacket($itemId))));
 			SymplyCache::getInstance()->addTransmitterItemCustom(ThreadSafeArray::fromArray([$itemClosure, $serializer, $deserializer]));
@@ -126,7 +134,7 @@ final class SymplyItemFactory
 		}
 		$this->vanilla[$identifier] = $itemVanilla;
 		if (!$this->asyncMode)
-			NGSimplyCache::getInstance()->addTransmitterItemVanilla(ThreadSafeArray::fromArray([$itemClosure, $identifier, $serializer, $deserializer]));
+			SymplyCache::getInstance()->addTransmitterItemVanilla(ThreadSafeArray::fromArray([$itemClosure, $identifier, $serializer, $deserializer]));
 		GlobalItemDataHandlers::getDeserializer()->map($identifier, $deserializer ?? static fn() => clone $itemVanilla);
 		GlobalItemDataHandlers::getSerializer()->map($itemVanilla, $serializer ?? static fn() => new SavedItemData($identifier));
 		StringToItemParser::getInstance()->register($identifier, static fn() => clone $itemVanilla);
@@ -234,6 +242,16 @@ final class SymplyItemFactory
 
 	public function getVanilla(string $id) : ?Item{
 		return $this->getOverwrite($id) ?? null;
+	}
+
+	private function addItemBuilder((Item&ICustomItem)|string $item, ItemBuilder $itemBuilder) : void
+	{
+		$this->itemToItemBuilder[is_string($item) ? $item : $item->getIdentifier()->getNamespaceId()] = $itemBuilder;
+	}
+
+	public function getItemBuilder((Item&ICustomItem)|string $item): ItemBuilder
+	{
+		return $this->itemToItemBuilder[is_string($item) ? $item : $item->getIdentifier()->getNamespaceId()];
 	}
 
 	public static function getInstance(bool $asyncMode = false) : self

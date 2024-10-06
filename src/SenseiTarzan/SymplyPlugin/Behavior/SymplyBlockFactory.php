@@ -31,14 +31,19 @@ use pocketmine\block\RuntimeBlockStateRegistry;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\data\bedrock\block\convert\BlockStateReader;
 use pocketmine\data\bedrock\block\convert\BlockStateWriter;
+use pocketmine\data\bedrock\block\upgrade\LegacyBlockIdToStringIdMap;
 use pocketmine\data\bedrock\item\BlockItemIdMap;
+use pocketmine\data\bedrock\item\upgrade\LegacyItemIdToStringIdMap;
 use pocketmine\inventory\CreativeInventory;
 use pocketmine\item\StringToItemParser;
+use pocketmine\network\mcpe\protocol\types\BlockPaletteEntry;
+use pocketmine\network\mcpe\protocol\types\CacheableNbt;
 use pocketmine\network\mcpe\protocol\types\ItemTypeEntry;
 use pocketmine\world\format\io\GlobalBlockStateHandlers;
 use ReflectionException;
 use ReflectionMethod;
 use ReflectionProperty;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BlockBuilder;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\IBlockCustom;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\IPermutationBlock;
 use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
@@ -57,6 +62,11 @@ final class SymplyBlockFactory
 
 	/** @var array<string, Block> */
 	private array $overwrite = [];
+
+	/**
+	 * @var array<string, BlockBuilder>
+	 */
+	private array $blockToBlockBuilder = [];
 
 	public function __construct(private readonly bool $asyncMode = false){}
 	/**
@@ -98,12 +108,12 @@ final class SymplyBlockFactory
 			SymplyBlockPalette::getInstance()->insertState($blockStateDictionaryEntry);
 			GlobalBlockStateHandlers::getUpgrader()->getBlockIdMetaUpgrader()->addIdMetaToStateMapping($blockStateDictionaryEntry->getStateName(), $blockStateDictionaryEntry->getMeta(), $blockStateDictionaryEntry->generateStateData());
 		}
-		SymplyCache::getInstance()->addBlockBuilder($blockBuilder);
 		GlobalBlockStateHandlers::getSerializer()->map($blockCustom, $serializer);
 		GlobalBlockStateHandlers::getDeserializer()->map($identifier, $deserializer);
 		StringToItemParser::getInstance()->registerBlock($identifier, fn() => $blockCustom);
 		$item = $blockCustom->asItem();
 		CreativeInventory::getInstance()->add($item);
+		$this->addBlockBuilder($blockCustom, $blockBuilder);
 	}
 
 	/**
@@ -220,6 +230,24 @@ final class SymplyBlockFactory
 			}
 		}
 	}
+
+
+	public function initBlockBuilders() : void
+	{
+		uksort($this->blockToBlockBuilder, static function(string $a, string $b) : int {
+			return strcmp(hash("fnv164", $a), hash("fnv164", $b));
+		});
+		foreach($this->blockToBlockBuilder as  $blockBuilder) {
+			$vanillaBlockId = SymplyCache::$blockIdNext++;
+			$itemId = 255 - $vanillaBlockId;
+			$identifier = $blockBuilder->getNamespaceId();
+			SymplyBlockFactory::getInstance($this->asyncMode)->registerBlockItem(new ItemTypeEntry($identifier, $itemId, false));
+			LegacyItemIdToStringIdMap::getInstance()->add($identifier, $itemId);
+			LegacyBlockIdToStringIdMap::getInstance()->add($identifier, $vanillaBlockId);
+			if (!$this->asyncMode)
+				SymplyCache::getInstance()->addBlockPaletteEntry(new BlockPaletteEntry($identifier, new CacheableNbt($blockBuilder->toPacket($vanillaBlockId))));
+		}
+	}
 	/**
 	 * @return (Block&IBlockCustom)[]
 	 */
@@ -259,6 +287,16 @@ final class SymplyBlockFactory
 	public function getVanilla(string $id) : ?Block
 	{
 		return  $this->getOverwrite($id) ?? ($this->vanilla[$id] ?? null);
+	}
+
+	private function addBlockBuilder((Block&IBlockCustom)|string $block, BlockBuilder $blockBuilder) : void
+	{
+		$this->blockToBlockBuilder[is_string($block) ? $block : $block->getIdInfo()->getNamespaceId()] = $blockBuilder;
+	}
+
+	public function getBlockBuilder((Block&IBlockCustom)|string $block): BlockBuilder
+	{
+		return $this->blockToBlockBuilder[is_string($block) ? $block : $block->getIdInfo()->getNamespaceId()];
 	}
 
 	public static function getInstance(bool $asyncMode = false) : self

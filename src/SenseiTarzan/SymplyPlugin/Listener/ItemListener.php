@@ -43,6 +43,7 @@ use pocketmine\world\format\io\GlobalItemDataHandlers;
 use ReflectionMethod;
 use SenseiTarzan\ExtraEvent\Class\EventAttribute;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\ICustomItem;
+use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
 
 class ItemListener
 {
@@ -66,7 +67,7 @@ class ItemListener
 			}elseif ($data instanceof ReleaseItemTransactionData && $data->getActionType() == ReleaseItemTransactionData::ACTION_RELEASE)
 			{
 				$event->cancel();
-				$this->handleUseItemTransaction($origin, $data);
+				$this->releaseHeldItem($origin, $origin->getPlayer());
 			}
 		}
 	}
@@ -173,7 +174,6 @@ class ItemListener
 				$this->returnItemsFromAction->invoke($player, $oldItem, $item, $returnedItems);
 				return true;
 			}
-
 			return false;
 		} finally {
 			$player->setUsingItem(false);
@@ -189,7 +189,8 @@ class ItemListener
 		if ($ticks > 0) {
 			$player->resetItemCooldown($item, $ticks);
 			if ($item instanceof ICustomItem) {
-				$category = $item->getItemBuilder()->getCooldownComponent()?->getCategory() ?? $item->getIdentifier()->getNamespaceId();
+				$itemBuilder = SymplyItemFactory::getInstance()->getItemBuilder($item);
+				$category = $itemBuilder->getCooldownComponent()?->getCategory() ?? $item->getIdentifier()->getNamespaceId();
 			} else {
 				$category = GlobalItemDataHandlers::getSerializer()->serializeType($item)->getName();
 			}

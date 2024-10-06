@@ -59,7 +59,7 @@ class Main extends PluginBase
 	protected function onEnable() : void
 	{
 		$this->getScheduler()->scheduleDelayedTask(new ClosureTask(static function () {
-			SymplyCache::getInstance()->initBlockBuilders();
+			SymplyBlockFactory::getInstance()->initBlockBuilders();
 			foreach (SymplyBlockFactory::getInstance()->getCustomAll() as $block){
 				if(!CreativeInventory::getInstance()->contains($block->asItem()))
 					CreativeInventory::getInstance()->add($block->asItem());

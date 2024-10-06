@@ -32,7 +32,6 @@ use function assert;
 
 class Item extends PMItem implements ICustomItem
 {
-	private ItemBuilder $itemBuilder;
 	public function __construct(ItemIdentifier $identifier, string $name = "Unknown", array $enchantmentTags = [])
 	{
 		parent::__construct($identifier, $name, $enchantmentTags);
@@ -44,9 +43,9 @@ class Item extends PMItem implements ICustomItem
 		return $identifier;
 	}
 	public function getItemBuilder() : ItemBuilder{
-		return isset($this->itemBuilder) ? $this->itemBuilder: ($this->itemBuilder = ItemBuilder::create()->setItem($this)
+		return ItemBuilder::create()->setItem($this)
 			->setDefaultMaxStack()
 			->setDefaultName()
-			->setCreativeInfo(new ItemCreativeInfo(CategoryCreativeEnum::ALL, GroupCreativeEnum::NONE)));
+			->setCreativeInfo(new ItemCreativeInfo(CategoryCreativeEnum::ALL, GroupCreativeEnum::NONE));
 	}
 }

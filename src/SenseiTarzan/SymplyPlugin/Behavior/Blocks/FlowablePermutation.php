@@ -31,7 +31,6 @@ use function assert;
 abstract class FlowablePermutation extends PMFlowable implements IPermutationBlock
 {
 
-	private BlockPermutationBuilder $blockBuilder;
 
 	public function __construct(
 		BlockIdentifier $idInfo,
@@ -51,7 +50,7 @@ abstract class FlowablePermutation extends PMFlowable implements IPermutationBlo
 
 	public function getBlockBuilder() : BlockPermutationBuilder
 	{
-		return isset($this->blockBuilder) ? $this->blockBuilder : $this->blockBuilder = BlockPermutationBuilder::create()
+		return BlockPermutationBuilder::create()
 			->setBlock($this);
 	}
 }

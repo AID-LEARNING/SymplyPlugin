@@ -57,7 +57,6 @@ class Crops extends PMCrops implements IPermutationBlock
 {
 	use AgeableTrait;
 	use StaticSupportTrait;
-	private BlockPermutationBuilder $blockBuilder;
 
 	public const MAX_AGE = 7;
 
