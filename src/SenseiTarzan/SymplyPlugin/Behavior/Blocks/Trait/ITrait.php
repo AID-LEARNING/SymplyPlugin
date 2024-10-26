@@ -21,35 +21,15 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks;
+namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Trait;
 
-use pocketmine\block\BlockTypeInfo;
-use pocketmine\block\Flowable as PMFlowable;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BlockPermutationBuilder;
-use function assert;
+use BackedEnum;
+use pocketmine\nbt\tag\CompoundTag;
 
-abstract class FlowablePermutation extends PMFlowable implements IPermutationBlock
+interface ITrait
 {
+	public function getName() : string|BackedEnum;
 
-	public function __construct(
-		BlockIdentifier $idInfo,
-		string          $name,
-		BlockTypeInfo   $typeInfo
-	)
-	{
-		parent::__construct($idInfo, $name, $typeInfo);
-	}
-
-	public function getIdInfo() : BlockIdentifier
-	{
-		$idInfo = parent::getIdInfo();
-		assert($idInfo instanceof BlockIdentifier);
-		return $idInfo;
-	}
-
-	public function getBlockBuilder() : BlockPermutationBuilder
-	{
-		return BlockPermutationBuilder::create()
-			->setBlock($this);
-	}
+	public function injectData(array &$listPropertyName, array &$data) : void;
+	public function toNbt() : CompoundTag;
 }

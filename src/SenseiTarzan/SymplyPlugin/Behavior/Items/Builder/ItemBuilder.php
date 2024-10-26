@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Builder;
 
+use BackedEnum;
 use pocketmine\item\Item as PMItem;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\NBT;
@@ -69,6 +70,7 @@ use SenseiTarzan\SymplyPlugin\Behavior\Items\Property\UseAnimationProperty;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Property\UseDurationProperty;
 use function array_map;
 use function assert;
+use function is_string;
 use function round;
 
 final class ItemBuilder
@@ -151,7 +153,8 @@ final class ItemBuilder
 	 * @return $this
 	 */
 	public function addComponent(IComponent $component) : self{
-		$this->components[$component->getName()] = $component;
+		$name = $component->getName();
+		$this->components[(is_string($name) ? $name : $name->value)] = $component;
 		return $this;
 	}
 
@@ -162,9 +165,9 @@ final class ItemBuilder
 	{
 		return $this->components;
 	}
-	public function getComponent(string $name) : ?IComponent
+	public function getComponent(string|BackedEnum $name) : ?IComponent
 	{
-		return $this->components[$name] ?? null;
+		return $this->components[(is_string($name) ? $name : $name->value)] ?? null;
 	}
 
 	/**
@@ -181,7 +184,8 @@ final class ItemBuilder
 	 */
 	public function addProperty(ItemProperty $properties) : self
 	{
-		$this->properties[$properties->getName()] = $properties;
+		$name = $properties->getName();
+		$this->properties[is_string($name) ? $name : $name->value] = $properties;
 		return $this;
 	}
 
@@ -193,9 +197,9 @@ final class ItemBuilder
 		return $this->properties;
 	}
 
-	public function getProperty(string $name) : ?ItemProperty
+	public function getProperty(string|BackedEnum $name) : ?ItemProperty
 	{
-		return $this->properties[$name] ?? null;
+		return $this->properties[(is_string($name) ? $name : $name->value)] ?? null;
 	}
 
 	/**

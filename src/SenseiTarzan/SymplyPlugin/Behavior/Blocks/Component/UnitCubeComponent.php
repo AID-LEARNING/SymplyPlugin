@@ -23,20 +23,25 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component;
 
+use BackedEnum;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\Tag;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 
-class UnitCubeComponent implements IComponent
+/**
+ * @deprecated
+ */
+class UnitCubeComponent extends AbstractComponent
 {
 
-	public function getName() : string
+	public function getName() : string|BackedEnum
 	{
 		return ComponentName::UNIT_CUBE;
 	}
 
-	public function toNbt() : CompoundTag
+	protected function value() : Tag
 	{
-		return CompoundTag::create()->setTag($this->getName(), CompoundTag::create());
+		return CompoundTag::create();
 	}
 }

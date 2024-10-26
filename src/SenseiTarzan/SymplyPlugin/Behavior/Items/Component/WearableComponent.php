@@ -24,11 +24,12 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Component;
 
 use pocketmine\nbt\tag\CompoundTag;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use pocketmine\nbt\tag\Tag;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\SlotEnum;
 
-class WearableComponent implements IComponent
+class WearableComponent extends AbstractComponent
 {
 
 	public function __construct(private readonly SlotEnum $slot, private readonly int $protection = 1) {}
@@ -38,10 +39,10 @@ class WearableComponent implements IComponent
 		return ComponentName::WEARABLE;
 	}
 
-	public function toNbt() : CompoundTag
+	protected function value() : Tag
 	{
-	   return CompoundTag::create()->setTag($this->getName(), CompoundTag::create()
-		   ->setInt("protection", $this->protection)
-		   ->setString("slot", $this->slot->value));
+		return CompoundTag::create()
+			->setInt("protection", $this->protection)
+			->setString("slot", $this->slot->value);
 	}
 }

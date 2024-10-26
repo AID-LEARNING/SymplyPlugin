@@ -28,7 +28,6 @@ use pocketmine\entity\effect\VanillaEffects;
 use pocketmine\item\Item;
 use pocketmine\item\VanillaItems;
 use pocketmine\player\Player;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\BlockIdentifier;
 use function pow;
 
 class BlockUtils
@@ -111,7 +110,7 @@ class BlockUtils
 			$tick = 1.0 / $destroySpeed;
 			if ($block->getBreakInfo()->isToolCompatible(VanillaItems::AIR()))
 				return (self::getDestroySpeed($player, $block, $item) * $tick) * 0.033333335;
-			else if ($block->getBreakInfo()->isToolCompatible($item))
+			elseif ($block->getBreakInfo()->isToolCompatible($item))
 				return (self::getDestroySpeed($player, $block, $item) * $tick) * 0.033333335;
 			else
 				return ((self::getDestroySpeed($player, $block, $item) * $tick) * 0.0099999998);

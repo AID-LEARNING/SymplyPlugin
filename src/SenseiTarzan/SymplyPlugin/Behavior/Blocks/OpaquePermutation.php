@@ -31,7 +31,6 @@ use function assert;
 abstract class OpaquePermutation extends PMOpaque implements IPermutationBlock
 {
 
-
 	public function __construct(
 		BlockIdentifier $idInfo,
 		string          $name,

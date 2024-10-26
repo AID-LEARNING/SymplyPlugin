@@ -24,10 +24,11 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Component;
 
 use pocketmine\nbt\tag\CompoundTag;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use pocketmine\nbt\tag\Tag;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 
-class BlockPlacerComponent implements IComponent
+class BlockPlacerComponent extends AbstractComponent
 {
 
 	public function __construct(private readonly string $blockIdentifier, private readonly bool $useBlockDescription = false)
@@ -44,11 +45,11 @@ class BlockPlacerComponent implements IComponent
 		return $this->useBlockDescription;
 	}
 
-	public function toNbt() : CompoundTag
+	protected function value() : Tag
 	{
-	   return CompoundTag::create()->setTag($this->getName(), CompoundTag::create()
-	   ->setString("block", $this->getBlockIdentifier())
-	   ->setByte("use_block_description", $this->isUseBlockDescription() ? 1 : 0));
+		return CompoundTag::create()
+			->setString("block", $this->getBlockIdentifier())
+			->setByte("use_block_description", $this->isUseBlockDescription() ? 1 : 0);
 	}
 
 	public function getName() : string

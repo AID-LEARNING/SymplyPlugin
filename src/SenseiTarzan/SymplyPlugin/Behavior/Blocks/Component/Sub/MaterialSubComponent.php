@@ -28,15 +28,15 @@ use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\RenderMethodEnum;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\TargetMaterialEnum;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\Sub\ISubComponent;
 
-final class MaterialSubComponent implements ISubComponent
+final readonly class MaterialSubComponent implements ISubComponent
 {
 
 	public function __construct(
-		protected readonly TargetMaterialEnum|string $target,
-		protected readonly string $texture,
-		protected readonly RenderMethodEnum $renderMethod,
-		protected readonly bool   $faceDimming = true,
-		protected readonly bool   $ambientOcclusion = true
+		protected TargetMaterialEnum|string $target,
+		protected string                    $texture,
+		protected RenderMethodEnum          $renderMethod,
+		protected bool                      $faceDimming = true,
+		protected bool                      $ambientOcclusion = true
 	)
 	{
 	}

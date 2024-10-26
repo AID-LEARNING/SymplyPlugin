@@ -103,12 +103,12 @@ class Crops extends PMCrops implements IPermutationBlock
 
 	public function serializeState(BlockStateWriter $writer) : void
 	{
-		$writer->writeInt(PropertyName::CROPS, $this->getAge());
+		$writer->writeInt(PropertyName::CROPS->value, $this->getAge());
 	}
 
 	public function deserializeState(BlockStateReader $reader) : void
 	{
-		$this->age = $reader->readBoundedInt(PropertyName::CROPS, 0, static::MAX_AGE);
+		$this->age = $reader->readBoundedInt(PropertyName::CROPS->value, 0, static::MAX_AGE);
 	}
 
 	public function getBlockBuilder() : BlockPermutationBuilder
@@ -126,7 +126,7 @@ class Crops extends PMCrops implements IPermutationBlock
 				->setCollisionBox(new Vector3(-8, 0, -8), new Vector3(16, 16, 16), false);
 			foreach ($ages as $age) {
 				$blockBuilder->addPermutation(Permutations::create()
-					->setCondition("query.block_property('" . PropertyName::CROPS . "') == $age")
+					->setCondition("query.block_state('" . PropertyName::CROPS->value . "') == $age")
 					->setMaterialInstance(materials: [
 						new MaterialSubComponent(TargetMaterialEnum::ALL, $identifier . "_$age", RenderMethodEnum::ALPHA_TEST)
 					]));

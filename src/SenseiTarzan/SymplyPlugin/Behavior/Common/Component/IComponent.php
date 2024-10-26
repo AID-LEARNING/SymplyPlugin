@@ -23,11 +23,12 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Behavior\Common\Component;
 
+use BackedEnum;
 use pocketmine\nbt\tag\CompoundTag;
 
 interface IComponent
 {
 
-	public function getName() : string;
+	public function getName() : string|BackedEnum;
 	public function toNbt() : CompoundTag;
 }

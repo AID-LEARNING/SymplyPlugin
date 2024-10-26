@@ -26,14 +26,15 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Component;
 use pocketmine\block\Block;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
+use pocketmine\nbt\tag\Tag;
 use pocketmine\world\format\io\GlobalBlockStateHandlers;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 use function array_map;
 use function implode;
 use function is_string;
 
-class DiggerComponent implements IComponent
+class DiggerComponent extends AbstractComponent
 {
 	/** @var ListTag<CompoundTag> */
 	private ListTag $diggers;
@@ -88,17 +89,16 @@ class DiggerComponent implements IComponent
 		return $this;
 	}
 
-	public function toNbt() : CompoundTag
-	{
-	   return CompoundTag::create()
-		   ->setTag($this->getName(), CompoundTag::create()
-			   ->setTag("destroy_speeds", $this->getDiggers())
-			   ->setTag("on_dig", CompoundTag::create())
-			   ->setByte("use_efficiency", $this->isEfficiency() ? 1 : 0));
-	}
-
 	public function getName() : string
 	{
 		return ComponentName::DIGGER;
+	}
+
+	protected function value() : Tag
+	{
+		return CompoundTag::create()
+			->setTag("destroy_speeds", $this->getDiggers())
+			->setTag("on_dig", CompoundTag::create())
+			->setByte("use_efficiency", $this->isEfficiency() ? 1 : 0);
 	}
 }

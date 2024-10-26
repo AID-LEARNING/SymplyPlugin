@@ -23,12 +23,14 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component;
 
+use BackedEnum;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\Tag;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 use function is_bool;
 
-class GeometryComponent implements IComponent
+class GeometryComponent extends AbstractComponent
 {
 	public function __construct(
 		private readonly string $identifier,
@@ -43,7 +45,7 @@ class GeometryComponent implements IComponent
 		return new self($identifier);
 	}
 
-	public function getName() : string
+	public function getName() : string|BackedEnum
 	{
 		return ComponentName::GEOMETRY;
 	}
@@ -74,10 +76,12 @@ class GeometryComponent implements IComponent
 		return $this->identifier;
 	}
 
-	public function toNbt() : CompoundTag
+	protected function value() : Tag
 	{
 		$nbt = CompoundTag::create()
-			->setString("identifier", $this->getIdentifier());
+			->setString("identifier", $this->getIdentifier())
+			->setByte("legacyBlockLightAbsorption", 0)
+			->setByte("legacyTopRotation", 0);
 		if ($this->culling !== null) {
 			$nbt->setString("culling", $this->culling);
 		}
@@ -85,12 +89,12 @@ class GeometryComponent implements IComponent
 			$bone_visibility = CompoundTag::create();
 			foreach ($this->boneVisibilities as $identifier => $value) {
 				$bone_visibility->setTag($identifier, CompoundTag::create()
-					->setString("expression", is_bool($value) ? ($value ? "1.000000" : "0.000000") : $value)
+					->setString("expression", is_bool($value) ? ($value ? "true" : "false") : $value)
 					->setInt("version", 1));
 			}
 			$nbt->setTag("bone_visibility", $bone_visibility);
 		}
-		return CompoundTag::create()->setTag($this->getName(), $nbt);
+		return  $nbt;
 	}
 
 }

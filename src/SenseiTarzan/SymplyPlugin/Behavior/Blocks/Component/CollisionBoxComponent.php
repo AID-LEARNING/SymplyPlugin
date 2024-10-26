@@ -23,12 +23,13 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component;
 
-use pocketmine\nbt\tag\CompoundTag;
+use BackedEnum;
+use pocketmine\nbt\tag\Tag;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub\HitBoxSubComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 
-class CollisionBoxComponent implements IComponent
+class CollisionBoxComponent extends AbstractComponent
 {
 	public function __construct(
 		protected ?HitBoxSubComponent $value = null,
@@ -37,14 +38,13 @@ class CollisionBoxComponent implements IComponent
 		$this->value ??= new HitBoxSubComponent();
 	}
 
-	public function getName() : string
+	public function getName() : string|BackedEnum
 	{
 		return ComponentName::COLLISION_BOX;
 	}
 
-	public function toNbt() : CompoundTag
+	protected function value() : Tag
 	{
-		return CompoundTag::create()
-			->setTag($this->getName(), $this->value->toNbt());
+		return $this->value->toNbt();
 	}
 }

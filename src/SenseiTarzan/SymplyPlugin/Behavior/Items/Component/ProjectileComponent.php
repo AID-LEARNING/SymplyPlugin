@@ -24,10 +24,11 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Component;
 
 use pocketmine\nbt\tag\CompoundTag;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use pocketmine\nbt\tag\Tag;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 
-class ProjectileComponent implements IComponent
+class ProjectileComponent extends AbstractComponent
 {
 	public function __construct(
 		private readonly float  $minimumCriticalPower,
@@ -41,10 +42,10 @@ class ProjectileComponent implements IComponent
 		return ComponentName::PROJECTILE;
 	}
 
-	public function toNbt() : CompoundTag
+	protected function value() : Tag
 	{
-		return CompoundTag::create()->setTag($this->getName(), CompoundTag::create()
-		->setFloat("minimum_critical_power", $this->minimumCriticalPower)
-		->setString("projectile_entity", $this->projectileEntity));
+		return CompoundTag::create()
+			->setFloat("minimum_critical_power", $this->minimumCriticalPower)
+			->setString("projectile_entity", $this->projectileEntity);
 	}
 }

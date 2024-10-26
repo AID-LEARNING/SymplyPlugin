@@ -23,33 +23,40 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component;
 
+use BackedEnum;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\Tag;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 use function intdiv;
+use function is_array;
 
-final class TransformationComponent implements IComponent
+final class TransformationComponent extends AbstractComponent
 {
+	/**
+	 * @param Vector3|Vector3[] $rotation
+	 * @param Vector3|Vector3[] $scale
+	 */
 	public function __construct(
-		private readonly Vector3 $rotation = new Vector3(0,0,0),
-		private readonly Vector3 $scale = new Vector3(1,1,1),
+		private readonly Vector3|array $rotation = new Vector3(0,0,0),
+		private readonly Vector3|array $scale = new Vector3(1,1,1),
 		private readonly Vector3 $translation = new Vector3(0,0,0)
 	)
 	{
 	}
 
-	public function getName() : string
+	public function getName() : string|BackedEnum
 	{
 		return ComponentName::TRANSFORMATION;
 	}
 
-	public function getRotation() : Vector3
+	public function getRotation() : Vector3|array
 	{
 		return $this->rotation;
 	}
 
-	public function getScale() : Vector3
+	public function getScale() : Vector3|array
 	{
 		return $this->scale;
 	}
@@ -58,20 +65,46 @@ final class TransformationComponent implements IComponent
 	{
 		return $this->translation;
 	}
-
-	public function toNbt() : CompoundTag
+	protected function value() : Tag
 	{
-		return CompoundTag::create()->setTag($this->getName(),
-		CompoundTag::create()
-			->setInt("RX", intdiv((int) $this->getRotation()->getX(), 90))
-			->setInt("RY",  intdiv((int) $this->getRotation()->getY(), 90))
-			->setInt("RZ", intdiv((int) $this->getRotation()->getZ(), 90))
-			->setFloat("SX", $this->getScale()->getX())
-			->setFloat("SY", $this->getScale()->getY())
-			->setFloat("SZ", $this->getScale()->getZ())
-			->setFloat("TX", $this->getTranslation()->getX())
+		$data = CompoundTag::create();
+		if (is_array($this->getRotation())) {
+			$rotation = $this->getRotation()[0];
+			$offset = $this->getRotation()[1];
+			$data->setInt("RX", intdiv((int) $rotation->getFloorZ(), 90))
+				->setFloat("RXP", $offset->getX())
+				->setInt("RY",  intdiv((int) $rotation->getFloorY(), 90))
+				->setFloat("RYP", $offset->getY())
+				->setInt("RZ", intdiv((int) $rotation->getFloorZ(), 90))
+				->setFloat("RZP", $offset->getZ());
+		}else {
+			$data->setInt("RX", intdiv((int) $this->getRotation()->getX(), 90))
+				->setFloat("RXP", 0)
+				->setInt("RY", intdiv((int) $this->getRotation()->getY(), 90))
+				->setFloat("RYP", 0)
+				->setInt("RZ", intdiv((int) $this->getRotation()->getZ(), 90))
+				->setFloat("RZP", 0);
+		}
+		if (is_array($this->getScale())){
+			$scale = $this->getScale()[0];
+			$offset = $this->getScale()[1];
+			$data->setFloat("SX", $scale->getX())
+				->setFloat("SXP", $offset->getX())
+				->setFloat("SY", $scale->getY())
+				->setFloat("SYP", $offset->getY())
+				->setFloat("SZ", $scale->getZ())
+				->setFloat("SZP", $offset->getZ());
+		}else {
+			$data->setFloat("SX", $this->getScale()->getX())
+				->setFloat("SXP", 0)
+				->setFloat("SY", $this->getScale()->getY())
+				->setFloat("SYP", 0)
+				->setFloat("SZ", $this->getScale()->getZ())
+				->setFloat("SZP", 0);
+		}
+		$data->setFloat("TX", $this->getTranslation()->getX())
 			->setFloat("TY", $this->getTranslation()->getY())
-			->setFloat("TZ", $this->getTranslation()->getZ())
-		);
+			->setFloat("TZ", $this->getTranslation()->getZ());
+		return  $data;
 	}
 }

@@ -23,15 +23,17 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component;
 
+use BackedEnum;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\Tag;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub\MaterialMappingSubComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub\MaterialSubComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\TargetMaterialEnum;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 use function is_string;
 
-class MaterialInstancesComponent implements IComponent
+class MaterialInstancesComponent extends AbstractComponent
 {
 	/**
 	 * @param MaterialMappingSubComponent[] $mappings
@@ -45,14 +47,13 @@ class MaterialInstancesComponent implements IComponent
 	{
 	}
 
-	public function getName() : string
+	public function getName() : string|BackedEnum
 	{
 		return ComponentName::MATERIAL_INSTANCES;
 	}
 
-	public function toNbt() : CompoundTag
+	protected function value() : Tag
 	{
-
 		$materials = CompoundTag::create();
 		$mappings = CompoundTag::create();
 		if (!empty($this->materials)) {
@@ -72,9 +73,8 @@ class MaterialInstancesComponent implements IComponent
 				$mappings = $mappings->merge($mapping->toNbt());
 			}
 		}
-		return CompoundTag::create()->setTag($this->getName(),
-			CompoundTag::create()
-				->setTag("mappings", $mappings)
-				->setTag("materials", $materials));
+		return CompoundTag::create()
+			->setTag("mappings", $mappings)
+			->setTag("materials", $materials);
 	}
 }

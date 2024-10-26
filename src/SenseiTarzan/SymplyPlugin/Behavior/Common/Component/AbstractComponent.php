@@ -21,35 +21,19 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks;
+namespace SenseiTarzan\SymplyPlugin\Behavior\Common\Component;
 
-use pocketmine\block\BlockTypeInfo;
-use pocketmine\block\Flowable as PMFlowable;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BlockPermutationBuilder;
-use function assert;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\Tag;
+use function is_string;
 
-abstract class FlowablePermutation extends PMFlowable implements IPermutationBlock
+abstract class AbstractComponent  implements IComponent
 {
+	abstract protected function value() : Tag;
 
-	public function __construct(
-		BlockIdentifier $idInfo,
-		string          $name,
-		BlockTypeInfo   $typeInfo
-	)
+	public function toNbt() : CompoundTag
 	{
-		parent::__construct($idInfo, $name, $typeInfo);
-	}
-
-	public function getIdInfo() : BlockIdentifier
-	{
-		$idInfo = parent::getIdInfo();
-		assert($idInfo instanceof BlockIdentifier);
-		return $idInfo;
-	}
-
-	public function getBlockBuilder() : BlockPermutationBuilder
-	{
-		return BlockPermutationBuilder::create()
-			->setBlock($this);
+		$name = $this->getName();
+		return CompoundTag::create()->setTag((is_string($name) ? $name : $name->value), $this->value());
 	}
 }

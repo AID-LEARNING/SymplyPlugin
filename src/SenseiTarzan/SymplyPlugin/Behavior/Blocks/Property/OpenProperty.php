@@ -21,35 +21,14 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks;
+namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property;
 
-use pocketmine\block\BlockTypeInfo;
-use pocketmine\block\Flowable as PMFlowable;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BlockPermutationBuilder;
-use function assert;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\PropertyName;
 
-abstract class FlowablePermutation extends PMFlowable implements IPermutationBlock
+final class OpenProperty extends BooleanProperty
 {
-
-	public function __construct(
-		BlockIdentifier $idInfo,
-		string          $name,
-		BlockTypeInfo   $typeInfo
-	)
+	public function __construct()
 	{
-		parent::__construct($idInfo, $name, $typeInfo);
-	}
-
-	public function getIdInfo() : BlockIdentifier
-	{
-		$idInfo = parent::getIdInfo();
-		assert($idInfo instanceof BlockIdentifier);
-		return $idInfo;
-	}
-
-	public function getBlockBuilder() : BlockPermutationBuilder
-	{
-		return BlockPermutationBuilder::create()
-			->setBlock($this);
+		parent::__construct(PropertyName::OPEN_STATE);
 	}
 }

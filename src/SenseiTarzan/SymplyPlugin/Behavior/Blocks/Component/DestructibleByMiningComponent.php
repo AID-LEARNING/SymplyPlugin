@@ -23,11 +23,13 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component;
 
-use pocketmine\nbt\tag\CompoundTag;
+use BackedEnum;
+use pocketmine\nbt\tag\FloatTag;
+use pocketmine\nbt\tag\Tag;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 
-class DestructibleByMiningComponent implements IComponent
+class DestructibleByMiningComponent extends AbstractComponent
 {
 
 	public function __construct(
@@ -36,13 +38,13 @@ class DestructibleByMiningComponent implements IComponent
 	{
 	}
 
-	public function getName() : string
+	public function getName() : string|BackedEnum
 	{
 		return ComponentName::DESTRUCTIBLE_BY_MINING;
 	}
 
-	public function toNbt() : CompoundTag
+	protected function value() : Tag
 	{
-		return 	CompoundTag::create()->setFloat($this->getName(), $this->value);
+		return new FloatTag($this->value);
 	}
 }

@@ -23,16 +23,17 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property;
 
+use BackedEnum;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\ListTag;
 
 class BooleanProperty extends BlockProperty
 {
-	public function __construct(string $identifier)
+	public function __construct(string|BackedEnum $identifier)
 	{
 		parent::__construct($identifier, new ListTag([
-			new ByteTag(true),
-			new ByteTag(false),
+			new ByteTag(1),
+			new ByteTag(0),
 		]));
 	}
 }

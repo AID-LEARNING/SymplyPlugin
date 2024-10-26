@@ -24,11 +24,12 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Component;
 
 use pocketmine\nbt\tag\CompoundTag;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use pocketmine\nbt\tag\Tag;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\TextureTypeEnum;
 
-class ArmorComponent implements IComponent
+class ArmorComponent extends AbstractComponent
 {
 
 	public function __construct(private readonly TextureTypeEnum $textureType = TextureTypeEnum::NONE)
@@ -40,10 +41,10 @@ class ArmorComponent implements IComponent
 		return $this->textureType;
 	}
 
-	public function toNbt() : CompoundTag
+	protected function value() : Tag
 	{
-		return CompoundTag::create()->setTag($this->getName(), CompoundTag::create()
-			->setString("texture_type", $this->getTextureType()->value));
+		return CompoundTag::create()
+			->setString("texture_type", $this->getTextureType()->value);
 	}
 
 	public function getName() : string

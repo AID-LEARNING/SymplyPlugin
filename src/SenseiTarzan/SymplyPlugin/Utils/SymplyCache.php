@@ -24,25 +24,14 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Utils;
 
 use pmmp\thread\ThreadSafeArray;
-use pocketmine\block\Block;
-use pocketmine\data\bedrock\block\upgrade\LegacyBlockIdToStringIdMap;
-use pocketmine\data\bedrock\item\upgrade\LegacyItemIdToStringIdMap;
 use pocketmine\network\mcpe\protocol\ItemComponentPacket;
 use pocketmine\network\mcpe\protocol\types\BlockPaletteEntry;
-use pocketmine\network\mcpe\protocol\types\CacheableNbt;
 use pocketmine\network\mcpe\protocol\types\ItemComponentPacketEntry;
 use pocketmine\network\mcpe\protocol\types\ItemTypeEntry;
 use pocketmine\utils\SingletonTrait;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BlockBuilder;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\IBlockCustom;
-use SenseiTarzan\SymplyPlugin\Behavior\Items\Builder\ItemBuilder;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Item;
-use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockFactory;
-use WeakMap;
 use function array_merge;
 use function array_values;
-use function hash;
-use function strcmp;
 use function usort;
 
 final class SymplyCache
@@ -127,7 +116,6 @@ final class SymplyCache
 	{
 		$this->blockPaletteEntries[] = $blockPaletteEntry;
 	}
-
 
 	public function addTransmitterBlockCustom(ThreadSafeArray $arrayClosure) : void
 	{

@@ -47,7 +47,11 @@ use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BlockBuilder;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\IBlockCustom;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\IPermutationBlock;
 use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
+use function hash;
+use function is_string;
 use function mb_strtoupper;
+use function strcmp;
+use function uksort;
 
 final class SymplyBlockFactory
 {
@@ -63,9 +67,7 @@ final class SymplyBlockFactory
 	/** @var array<string, Block> */
 	private array $overwrite = [];
 
-	/**
-	 * @var array<string, BlockBuilder>
-	 */
+	/** @var array<string, BlockBuilder> */
 	private array $blockToBlockBuilder = [];
 
 	public function __construct(private readonly bool $asyncMode = false){}
@@ -231,7 +233,6 @@ final class SymplyBlockFactory
 		}
 	}
 
-
 	public function initBlockBuilders() : void
 	{
 		uksort($this->blockToBlockBuilder, static function(string $a, string $b) : int {
@@ -294,7 +295,7 @@ final class SymplyBlockFactory
 		$this->blockToBlockBuilder[is_string($block) ? $block : $block->getIdInfo()->getNamespaceId()] = $blockBuilder;
 	}
 
-	public function getBlockBuilder((Block&IBlockCustom)|string $block): BlockBuilder
+	public function getBlockBuilder((Block&IBlockCustom)|string $block) : BlockBuilder
 	{
 		return $this->blockToBlockBuilder[is_string($block) ? $block : $block->getIdInfo()->getNamespaceId()];
 	}

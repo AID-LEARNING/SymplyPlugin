@@ -27,12 +27,12 @@ use pocketmine\nbt\tag\CompoundTag;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\TargetMaterialEnum;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\Sub\ISubComponent;
 
-final class MaterialMappingSubComponent implements ISubComponent
+final readonly class MaterialMappingSubComponent implements ISubComponent
 {
 
 	public function __construct(
-		protected readonly TargetMaterialEnum $target,
-		protected readonly string $mapping
+		protected TargetMaterialEnum $target,
+		protected string             $mapping
 	)
 	{
 	}

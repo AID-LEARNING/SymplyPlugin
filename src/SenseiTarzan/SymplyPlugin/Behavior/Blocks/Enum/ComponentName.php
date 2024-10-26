@@ -23,18 +23,18 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum;
 
-final class ComponentName
+enum ComponentName : string
 {
-	const BREATHABILITY = "minecraft:breathability";
-	const COLLISION_BOX = "minecraft:collision_box";
-	const CRAFTING_TABLE = "minecraft:crafting_table";
-	const DESTRUCTIBLE_BY_MINING = "minecraft:destructible_by_mining";
-	const GEOMETRY = "minecraft:geometry";
-	const MATERIAL_INSTANCES = "minecraft:material_instances";
-	const ON_INTERACT = "minecraft:on_interact";
-	const PLACEMENT_FILTER = "minecraft:placement_filter";
-	const SELECTION_BOX = "minecraft:selection_box";
-	const TRANSFORMATION = "minecraft:transformation";
-	const UNIT_CUBE = "minecraft:unit_cube";
+	case BREATHABILITY = "minecraft:breathability";
+	case COLLISION_BOX = "minecraft:collision_box";
+	case CRAFTING_TABLE = "minecraft:crafting_table";
+	case DESTRUCTIBLE_BY_MINING = "minecraft:destructible_by_mining";
+	case GEOMETRY = "minecraft:geometry";
+	case MATERIAL_INSTANCES = "minecraft:material_instances";
+	case ON_INTERACT = "minecraft:on_interact";
+	case PLACEMENT_FILTER = "minecraft:placement_filter";
+	case SELECTION_BOX = "minecraft:selection_box";
+	case TRANSFORMATION = "minecraft:transformation";
+	case UNIT_CUBE = "minecraft:unit_cube";
 
 }

@@ -24,10 +24,11 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Component;
 
 use pocketmine\nbt\tag\CompoundTag;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use pocketmine\nbt\tag\Tag;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 
-class DurabilityComponent implements IComponent
+class DurabilityComponent extends AbstractComponent
 {
 
 	public function __construct(private readonly int $maxDurability)
@@ -44,9 +45,9 @@ class DurabilityComponent implements IComponent
 		return ComponentName::DURABILITY;
 	}
 
-	public function toNbt() : CompoundTag
+	protected function value() : Tag
 	{
-		return CompoundTag::create()->setTag($this->getName(), CompoundTag::create()
-			->setInt("max_durability", $this->maxDurability));
+		return CompoundTag::create()
+			->setInt("max_durability", $this->maxDurability);
 	}
 }

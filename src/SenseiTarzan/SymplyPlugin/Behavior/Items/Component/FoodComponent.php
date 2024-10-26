@@ -27,11 +27,12 @@ use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\ListTag;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use pocketmine\nbt\tag\Tag;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 use function array_map;
 
-class FoodComponent implements IComponent
+class FoodComponent extends AbstractComponent
 {
 
 	/**
@@ -58,19 +59,17 @@ class FoodComponent implements IComponent
 		return ComponentName::FOOD;
 	}
 
-	public function toNbt() : CompoundTag
+	protected function value() : Tag
 	{
-	   return CompoundTag::create()->setTag($this->getName(),
-		   CompoundTag::create()
-			   ->setByte("can_always_eat", $this->canAlwaysEat ? 1 : 0)
-			   ->setInt("cooldown_time", $this->cooldownTime)
-			   ->setString("cooldown_type", $this->cooldownType)
-			   ->setTag("effects", new ListTag([]))
-			   ->setInt("nutrition", $this->nutrition)
-			   ->setInt("on_use_action", $this->onUseAction)
-			   ->setTag("on_use_range", new ListTag(array_map(fn(float $value) => new FloatTag($value), $this->onUseRange), NBT::TAG_Float))
-			   ->setFloat("saturation_modifier", $this->saturationModifier)
-			   ->setString("using_converts_to", $this->usingConvertsTo)
-	   );
+		return CompoundTag::create()
+			->setByte("can_always_eat", $this->canAlwaysEat ? 1 : 0)
+			->setInt("cooldown_time", $this->cooldownTime)
+			->setString("cooldown_type", $this->cooldownType)
+			->setTag("effects", new ListTag([]))
+			->setInt("nutrition", $this->nutrition)
+			->setInt("on_use_action", $this->onUseAction)
+			->setTag("on_use_range", new ListTag(array_map(fn(float $value) => new FloatTag($value), $this->onUseRange), NBT::TAG_Float))
+			->setFloat("saturation_modifier", $this->saturationModifier)
+			->setString("using_converts_to", $this->usingConvertsTo);
 	}
 }

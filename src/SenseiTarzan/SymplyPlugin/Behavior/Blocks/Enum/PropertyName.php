@@ -23,9 +23,10 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum;
 
-final class PropertyName
+enum PropertyName : string
 {
-	const CROPS = "symply:crops";
-	const ROTATION = "symply:rotation";
-	const SLAB_STATE = "symply:slab_state";
+	case CROPS = "symply:crops";
+	case ROTATION = "symply:rotation";
+	case SLAB_STATE = "symply:slab_state";
+	case OPEN_STATE = "symply:open";
 }

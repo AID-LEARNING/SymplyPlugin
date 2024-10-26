@@ -1,5 +1,6 @@
 .idea
 out/vendor
+vendor
 .phar
 PocketMine-MP.phar
 .php-cs-fixer.cache

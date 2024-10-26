@@ -26,7 +26,6 @@ namespace SenseiTarzan\SymplyPlugin\Listener;
 use pocketmine\block\Block;
 use pocketmine\event\EventPriority;
 use pocketmine\event\server\DataPacketReceiveEvent;
-use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\NetworkSession;
 use pocketmine\network\mcpe\protocol\InventoryTransactionPacket;
@@ -44,7 +43,7 @@ use SenseiTarzan\SymplyPlugin\Player\BlockBreakRequest;
 use SenseiTarzan\SymplyPlugin\Utils\BlockUtils;
 use WeakMap;
 use function array_filter;
-use function array_key_first;
+use function array_push;
 use function count;
 use function floor;
 
@@ -52,7 +51,6 @@ class ClientBreakListener
 {
 	/** @phpstan-var WeakMap<NetworkSession, BlockBreakRequest> */
 	private WeakMap $breaks;
-
 
 	const MAX_DISTANCE_BREAK = 16 ** 2;
 

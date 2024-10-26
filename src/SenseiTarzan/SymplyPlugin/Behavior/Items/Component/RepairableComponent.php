@@ -26,17 +26,18 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Component;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use pocketmine\nbt\tag\Tag;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\sub\RepairableSubComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 
-readonly class RepairableComponent implements IComponent
+class RepairableComponent extends AbstractComponent
 {
 
 	/**
 	 * @param RepairableSubComponent[] $repair_items
 	 */
-	public function __construct(private array $repair_items = [])
+	public function __construct(private readonly array $repair_items = [])
 	{
 	}
 
@@ -45,12 +46,12 @@ readonly class RepairableComponent implements IComponent
 		return ComponentName::REPAIRABLE;
 	}
 
-	public function toNbt() : CompoundTag
+	protected function value() : Tag
 	{
 		$repair_items = new ListTag([], NBT::TAG_Compound);
 		foreach ($this->repair_items as $repair_item) {
 			$repair_items->push($repair_item->toNbt());
 		}
-		return CompoundTag::create()->setTag($this->getName(), CompoundTag::create()->setTag("repair_items", $repair_items));
+		return CompoundTag::create()->setTag("repair_items", $repair_items);
 	}
 }

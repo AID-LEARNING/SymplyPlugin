@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Enum;
 
-final class ComponentName
+enum ComponentName : string
 {
 	const COOLDOWN = "minecraft:cooldown";
 

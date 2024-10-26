@@ -28,13 +28,9 @@ use pocketmine\inventory\CreativeInventory;
 use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\ClosureTask;
 use pocketmine\Server;
-use pocketmine\world\World;
 use SenseiTarzan\ExtraEvent\Component\EventLoader;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockFactory;
-use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockPalette;
-use SenseiTarzan\SymplyPlugin\Behavior\SymplyEntityFactory;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
-use SenseiTarzan\SymplyPlugin\Class\FixBlockPalette;
 use SenseiTarzan\SymplyPlugin\Listener\BehaviorListener;
 use SenseiTarzan\SymplyPlugin\Listener\ClientBreakListener;
 use SenseiTarzan\SymplyPlugin\Listener\ItemListener;
@@ -42,7 +38,6 @@ use SenseiTarzan\SymplyPlugin\Manager\SymplyCraftManager;
 use SenseiTarzan\SymplyPlugin\Task\AsyncOverwriteTask;
 use SenseiTarzan\SymplyPlugin\Task\AsyncRegisterBehaviorsTask;
 use SenseiTarzan\SymplyPlugin\Task\AsyncRegisterVanillaTask;
-use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
 
 class Main extends PluginBase
 {

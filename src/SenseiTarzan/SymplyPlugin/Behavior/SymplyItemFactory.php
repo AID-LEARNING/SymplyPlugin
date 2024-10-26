@@ -45,6 +45,7 @@ use ReflectionProperty;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Builder\ItemBuilder;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\ICustomItem;
 use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
+use function is_string;
 use function mb_strtoupper;
 
 final class SymplyItemFactory
@@ -60,9 +61,7 @@ final class SymplyItemFactory
 	/** @var array<string, Item> */
 	private array $overwrite = [];
 
-	/**
-	 * @var array<string, ItemBuilder>
-	 */
+	/** @var array<string, ItemBuilder> */
 	private array $itemToItemBuilder = [];
 
 	public function __construct(private readonly bool $asyncMode = false)
@@ -249,7 +248,7 @@ final class SymplyItemFactory
 		$this->itemToItemBuilder[is_string($item) ? $item : $item->getIdentifier()->getNamespaceId()] = $itemBuilder;
 	}
 
-	public function getItemBuilder((Item&ICustomItem)|string $item): ItemBuilder
+	public function getItemBuilder((Item&ICustomItem)|string $item) : ItemBuilder
 	{
 		return $this->itemToItemBuilder[is_string($item) ? $item : $item->getIdentifier()->getNamespaceId()];
 	}
