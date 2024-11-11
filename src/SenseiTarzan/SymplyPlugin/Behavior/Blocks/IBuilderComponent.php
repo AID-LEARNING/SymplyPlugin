@@ -38,7 +38,7 @@ interface IBuilderComponent
 	 * Permet de mettre un geometry custom sur le block
 	 * @return $this
 	 */
-	public function setGeometry(string $identifier, ?string $culling = null, ?array $boneVisibilities = null) : static;
+	public function setGeometry(string $identifier, ?array $boneVisibilities = null) : static;
 
 	/**
 	 * Permet de dire que le bloc kest un cube complet

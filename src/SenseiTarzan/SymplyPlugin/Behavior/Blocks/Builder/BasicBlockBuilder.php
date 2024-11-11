@@ -51,8 +51,8 @@ class BasicBlockBuilder  implements IBuilderComponent
 		return $this;
 	}
 
-	public function setGeometry(string $identifier, ?string $culling = null, ?array $boneVisibilities = null) : static{
-		return $this->addComponent(new GeometryComponent($identifier, $culling, $boneVisibilities));
+	public function setGeometry(string $identifier, ?array $boneVisibilities = null) : static{
+		return $this->addComponent(new GeometryComponent($identifier, $boneVisibilities));
 	}
 
 	/**
