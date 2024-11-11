@@ -47,6 +47,7 @@ use SenseiTarzan\SymplyPlugin\Behavior\Items\ICustomItem;
 use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
 use function is_string;
 use function mb_strtoupper;
+use function serialize;
 
 final class SymplyItemFactory
 {
@@ -72,12 +73,12 @@ final class SymplyItemFactory
 	/**
 	 * @param Closure(): (Item&ICustomItem) $itemClosure
 	 */
-	public function register(Closure $itemClosure, ?Closure $serializer = null, ?Closure $deserializer = null) : void
+	public function register(Closure $itemClosure, ?Closure $serializer = null, ?Closure $deserializer = null, ?array $argv = null) : void
 	{
 		/**
 		 * @var (Item&ICustomItem) $itemCustom
 		 */
-		$itemCustom = $itemClosure();
+		$itemCustom = $itemClosure($argv);
 		$identifier = $itemCustom->getIdentifier()->getNamespaceId();
 		if (isset($this->custom[$identifier])){
 			throw new InvalidArgumentException("Item ID {$itemCustom->getIdentifier()->getNamespaceId()} is already used by another item");
@@ -94,7 +95,7 @@ final class SymplyItemFactory
 		$this->addItemBuilder($itemCustom, $itemBuilder);
 		if (!$this->asyncMode) {
 			SymplyCache::getInstance()->addItemsComponentPacketEntry(new ItemComponentPacketEntry($identifier, new CacheableNbt($itemCustom->getItemBuilder()->toPacket($itemId))));
-			SymplyCache::getInstance()->addTransmitterItemCustom(ThreadSafeArray::fromArray([$itemClosure, $serializer, $deserializer]));
+			SymplyCache::getInstance()->addTransmitterItemCustom(ThreadSafeArray::fromArray([$itemClosure, $serializer, $deserializer, serialize($argv)]));
 		}
 	}
 

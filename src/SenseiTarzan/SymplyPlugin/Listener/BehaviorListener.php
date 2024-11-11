@@ -62,9 +62,8 @@ readonly class BehaviorListener
 					"data_driven_items" => true
 				], true);
 			} elseif ($packet instanceof BiomeDefinitionListPacket) {
-				foreach ($targets as $target) {
+				foreach ($targets as $target)
 					$target->sendDataPacket(SymplyCache::getInstance()->getItemsComponentPacket());
-				}
 			}elseif ($packet instanceof  CraftingDataPacket){
 				$packets[$index] = SymplyDataCraftingDataCache::getInstance()->getCache(Main::getInstance()->getSymplyCraftManager());
 			}

@@ -40,6 +40,7 @@ use pocketmine\network\mcpe\protocol\types\inventory\UseItemTransactionData;
 use pocketmine\player\Player;
 use pocketmine\utils\AssumptionFailedError;
 use pocketmine\world\format\io\GlobalItemDataHandlers;
+use ReflectionException;
 use ReflectionMethod;
 use SenseiTarzan\ExtraEvent\Class\EventAttribute;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\ICustomItem;
@@ -54,6 +55,9 @@ class ItemListener
 		$this->returnItemsFromAction = new ReflectionMethod(Player::class, "returnItemsFromAction");
 	}
 
+	/**
+	 * @throws ReflectionException
+	 */
 	#[EventAttribute(EventPriority::LOWEST)]
 	public function onInventoryPacket(DataPacketReceiveEvent $event) : void
 	{
@@ -72,6 +76,9 @@ class ItemListener
 		}
 	}
 
+	/**
+	 * @throws ReflectionException
+	 */
 	public function handleUseItemTransaction(NetworkSession $session, UseItemTransactionData $data) : void
 	{
 		$player = $session->getPlayer();
@@ -88,6 +95,7 @@ class ItemListener
 	 * Activates the item in hand, for example throwing a projectile.
 	 *
 	 * @return bool if it did something
+	 * @throws ReflectionException
 	 */
 	public function useHeldItem(NetworkSession $session, Player $player) : bool
 	{
@@ -124,6 +132,7 @@ class ItemListener
 	 * Consumes the currently-held item.
 	 *
 	 * @return bool if the consumption succeeded.
+	 * @throws ReflectionException
 	 */
 	public function consumeHeldItem(NetworkSession $session, Player $player) : bool
 	{

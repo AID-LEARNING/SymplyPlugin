@@ -34,7 +34,6 @@ class GeometryComponent extends AbstractComponent
 {
 	public function __construct(
 		private readonly string $identifier,
-		private ?string         $culling = null,
 		private ?array          $boneVisibilities = null
 	)
 	{
@@ -48,12 +47,6 @@ class GeometryComponent extends AbstractComponent
 	public function getName() : string|BackedEnum
 	{
 		return ComponentName::GEOMETRY;
-	}
-
-	public function setCulling(?string $culling) : self
-	{
-		$this->culling = $culling;
-		return $this;
 	}
 
 	public function setBoneVisibilities(?array $boneVisibilities) : self
@@ -82,15 +75,10 @@ class GeometryComponent extends AbstractComponent
 			->setString("identifier", $this->getIdentifier())
 			->setByte("legacyBlockLightAbsorption", 0)
 			->setByte("legacyTopRotation", 0);
-		if ($this->culling !== null) {
-			$nbt->setString("culling", $this->culling);
-		}
 		if ($this->boneVisibilities !== null) {
 			$bone_visibility = CompoundTag::create();
 			foreach ($this->boneVisibilities as $identifier => $value) {
-				$bone_visibility->setTag($identifier, CompoundTag::create()
-					->setString("expression", is_bool($value) ? ($value ? "true" : "false") : $value)
-					->setInt("version", 1));
+				$bone_visibility->setString($identifier, (is_bool($value) ? ($value ? "true" : "false") : $value));
 			}
 			$nbt->setTag("bone_visibility", $bone_visibility);
 		}

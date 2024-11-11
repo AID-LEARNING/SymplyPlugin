@@ -28,6 +28,7 @@ use pocketmine\scheduler\AsyncTask;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockFactory;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
 use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
+use function unserialize;
 
 class AsyncRegisterBehaviorsTask extends AsyncTask
 {
@@ -46,12 +47,12 @@ class AsyncRegisterBehaviorsTask extends AsyncTask
 	 */
 	public function onRun() : void
 	{
-		foreach ($this->blockFuncs as [$blockClosure, $serialize, $deserialize]) {
-			SymplyBlockFactory::getInstance(true)->register($blockClosure, $serialize, $deserialize);
+		foreach ($this->blockFuncs as [$blockClosure, $serialize, $deserialize, $argv]) {
+			SymplyBlockFactory::getInstance(true)->register($blockClosure, $serialize, $deserialize, unserialize($argv, ['allowed_classes' => true]));
 		}
 		SymplyBlockFactory::getInstance()->initBlockBuilders();
-		foreach ($this->itemFuncs as [$itemClosure, $serialize, $deserialize]){
-			SymplyItemFactory::getInstance(true)->register($itemClosure, $serialize, $deserialize);
+		foreach ($this->itemFuncs as [$itemClosure, $serialize, $deserialize, $argv]){
+			SymplyItemFactory::getInstance(true)->register($itemClosure, $serialize, $deserialize, unserialize($argv, ['allowed_classes' => true]));
 		}
 	}
 }

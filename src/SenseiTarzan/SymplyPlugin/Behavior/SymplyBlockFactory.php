@@ -50,6 +50,7 @@ use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
 use function hash;
 use function is_string;
 use function mb_strtoupper;
+use function serialize;
 use function strcmp;
 use function uksort;
 
@@ -74,10 +75,10 @@ final class SymplyBlockFactory
 	/**
 	 * @param Closure(): (Block&IBlockCustom) $blockClosure
 	 */
-	public function register(Closure $blockClosure, ?Closure $serializer = null, ?Closure $deserializer = null) : void
+	public function register(Closure $blockClosure, ?Closure $serializer = null, ?Closure $deserializer = null, ?array $argv = null) : void
 	{
 		/** @var (Block&IBlockCustom) $blockCustom */
-		$blockCustom = $blockClosure();
+		$blockCustom = $blockClosure($argv);
 		$identifier = $blockCustom->getIdInfo()->getNamespaceId();
 		if (isset($this->custom[$identifier])) {
 			throw new InvalidArgumentException("Block ID {$blockCustom->getIdInfo()->getNamespaceId()} is already used by another block");
@@ -86,7 +87,7 @@ final class SymplyBlockFactory
 		$this->custom[$identifier] = $blockCustom;
 		RuntimeBlockStateRegistry::getInstance()->register($blockCustom);
 		if (!$this->asyncMode)
-			SymplyCache::getInstance()->addTransmitterBlockCustom(ThreadSafeArray::fromArray([$blockClosure, $serializer, $deserializer]));
+			SymplyCache::getInstance()->addTransmitterBlockCustom(ThreadSafeArray::fromArray([$blockClosure, $serializer, $deserializer, serialize($argv)]));
 		if ($blockCustom instanceof IPermutationBlock) {
 			$serializer ??= static function (Block&IPermutationBlock $block) use ($identifier) : BlockStateWriter {
 				$writer = BlockStateWriter::create($identifier);

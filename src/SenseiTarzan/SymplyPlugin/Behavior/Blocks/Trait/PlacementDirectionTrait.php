@@ -36,7 +36,7 @@ use function array_map;
 readonly class PlacementDirectionTrait implements ITrait
 {
 
-	public function __construct(private bool $cardinalDirection = false, private bool $facingDirection = false, private float $yRotationOffset = 180)
+		public function __construct(private bool $cardinalDirection = false, private bool $facingDirection = false, private float $yRotationOffset = 180)
 	{
 		if ($this->cardinalDirection && $this->facingDirection)
 			throw new \InvalidArgumentException("The cardinal direction is already set.");

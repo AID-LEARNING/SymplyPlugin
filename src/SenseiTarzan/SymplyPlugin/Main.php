@@ -107,8 +107,7 @@ class Main extends PluginBase
 	 */
 	protected function onDisable() : void
 	{
-		if ($this->getServer()->isRunning()){
+		if ($this->getServer()->isRunning())
 			throw new Exception("you dont can disable this plugin because your break intergrity of SymplyPlugin");
-		}
 	}
 }
