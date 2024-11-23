@@ -30,6 +30,7 @@ use pocketmine\scheduler\ClosureTask;
 use pocketmine\Server;
 use SenseiTarzan\ExtraEvent\Component\EventLoader;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockFactory;
+use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockPalette;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
 use SenseiTarzan\SymplyPlugin\Listener\BehaviorListener;
 use SenseiTarzan\SymplyPlugin\Listener\ClientBreakListener;
@@ -38,6 +39,9 @@ use SenseiTarzan\SymplyPlugin\Manager\SymplyCraftManager;
 use SenseiTarzan\SymplyPlugin\Task\AsyncOverwriteTask;
 use SenseiTarzan\SymplyPlugin\Task\AsyncRegisterBehaviorsTask;
 use SenseiTarzan\SymplyPlugin\Task\AsyncRegisterVanillaTask;
+use SenseiTarzan\SymplyPlugin\Task\AsyncSortBlockStateTask;
+use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
+use function boolval;
 
 class Main extends PluginBase
 {
@@ -48,6 +52,8 @@ class Main extends PluginBase
 	public function onLoad() : void
 	{
 		self::$instance = $this;
+		$this->saveDefaultConfig();
+		SymplyCache::getInstance()->setBlockNetworkIdsAreHashes(boolval($this->getConfig()->get("blockNetworkIdsAreHashes")));
 		$this->symplyCraftManager = new SymplyCraftManager($this);
 	}
 
@@ -55,6 +61,7 @@ class Main extends PluginBase
 	{
 		$this->getScheduler()->scheduleDelayedTask(new ClosureTask(static function () {
 			SymplyBlockFactory::getInstance()->initBlockBuilders();
+			SymplyBlockPalette::getInstance()->sort(SymplyCache::getInstance()->isBlockNetworkIdsAreHashes());
 			foreach (SymplyBlockFactory::getInstance()->getCustomAll() as $block){
 				if(!CreativeInventory::getInstance()->contains($block->asItem()))
 					CreativeInventory::getInstance()->add($block->asItem());
@@ -84,6 +91,7 @@ class Main extends PluginBase
 				$asyncPool->submitTaskToWorker(new AsyncRegisterVanillaTask(), $worker);
 				$asyncPool->submitTaskToWorker(new AsyncRegisterBehaviorsTask(), $worker);
 				$asyncPool->submitTaskToWorker(new AsyncOverwriteTask(), $worker);
+				$asyncPool->submitTaskToWorker(new AsyncSortBlockStateTask(), $worker);
 			});
 			Main::getInstance()->getSymplyCraftManager()->onLoad();
 		}),0);

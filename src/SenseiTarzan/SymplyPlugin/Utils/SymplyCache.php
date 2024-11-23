@@ -59,6 +59,8 @@ final class SymplyCache
 	private ThreadSafeArray $transmitterItemVanilla;
 	public ItemComponentPacket $itemComponentPacket;
 
+	public bool	$blockNetworkIdsAreHashes = false;
+
 	public function __construct(private bool $asyncMode = false)
 	{
 		$this->itemTypeEntries = [];
@@ -213,6 +215,16 @@ final class SymplyCache
 			$this->itemComponentPacket = ItemComponentPacket::create($this->getItemsComponentPacketEntries());
 		}
 		return $this->itemComponentPacket;
+	}
+
+	public function isBlockNetworkIdsAreHashes() : bool
+	{
+		return $this->blockNetworkIdsAreHashes;
+	}
+
+	public function setBlockNetworkIdsAreHashes(bool $blockNetworkIdsAreHashes) : void
+	{
+		$this->blockNetworkIdsAreHashes = $blockNetworkIdsAreHashes;
 	}
 
 	/**

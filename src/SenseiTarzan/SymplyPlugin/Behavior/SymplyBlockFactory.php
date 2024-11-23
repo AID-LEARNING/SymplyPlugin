@@ -47,6 +47,7 @@ use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BlockBuilder;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\IBlockCustom;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\IPermutationBlock;
 use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
+use function gc_collect_cycles;
 use function hash;
 use function is_string;
 use function mb_strtoupper;
@@ -107,10 +108,14 @@ final class SymplyBlockFactory
 			$serializer ??= static fn() => BlockStateWriter::create($identifier);
 			$deserializer ??= static fn(BlockStateReader $reader) => $blockCustom;
 		}
+		$blockStateDictionaryEntries = [];
 		foreach ($blockBuilder->toBlockStateDictionaryEntry() as $blockStateDictionaryEntry){
-			SymplyBlockPalette::getInstance()->insertState($blockStateDictionaryEntry);
+			$blockStateDictionaryEntries[] = $blockStateDictionaryEntry;
 			GlobalBlockStateHandlers::getUpgrader()->getBlockIdMetaUpgrader()->addIdMetaToStateMapping($blockStateDictionaryEntry->getStateName(), $blockStateDictionaryEntry->getMeta(), $blockStateDictionaryEntry->generateStateData());
 		}
+		SymplyBlockPalette::getInstance()->insertStates($blockStateDictionaryEntries);
+		unset($iterator);
+		gc_collect_cycles();
 		GlobalBlockStateHandlers::getSerializer()->map($blockCustom, $serializer);
 		GlobalBlockStateHandlers::getDeserializer()->map($identifier, $deserializer);
 		StringToItemParser::getInstance()->registerBlock($identifier, fn() => $blockCustom);
