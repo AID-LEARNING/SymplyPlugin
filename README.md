@@ -1,4 +1,4 @@
-# SymplyPluin
+# SymplyPlugin
 ## Config 
 ### blockNetworkIdsAreHashes is true
 
