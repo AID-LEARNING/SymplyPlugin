@@ -89,17 +89,16 @@ class ClientBreakListener
 							$cancel = true;
 							$vector3 = new Vector3($blockAction->getBlockPosition()->getX(), $blockAction->getBlockPosition()->getY(), $blockAction->getBlockPosition()->getZ());
 							$block = $player->getWorld()->getBlock($vector3);
-							if ($block->getBreakInfo()->breaksInstantly()) continue;
+							if(!$player->attackBlock($vector3, $blockAction->getFace()))
+								$this->onFailedBlockAction($session, $player, $vector3, $blockAction->getFace());
+							if ($block->getBreakInfo()->breaksInstantly())
+								continue;
 							$speed = BlockUtils::getDestroyRate($player, $block);
 							$this->breaks->offsetSet($session, new BlockBreakRequest($player->getWorld(), $vector3, $speed));
-							if(!$player->attackBlock($vector3, $blockAction->getFace())){
-								$this->onFailedBlockAction($session, $player, $vector3, $blockAction->getFace());
-							}else{
-								$player->getWorld()->broadcastPacketToViewers(
-									$vector3,
-									LevelEventPacket::create(LevelEvent::BLOCK_START_BREAK, (int) floor( $speed * 65535.0), $vector3)
-								);
-							}
+							$player->getWorld()->broadcastPacketToViewers(
+								$vector3,
+								LevelEventPacket::create(LevelEvent::BLOCK_START_BREAK, (int) floor( $speed * 65535.0), $vector3)
+							);
 						} elseif ($action === PlayerAction::CRACK_BREAK) {
 							if ($this->breaks->offsetExists($session)) {
 								$cancel = true;
