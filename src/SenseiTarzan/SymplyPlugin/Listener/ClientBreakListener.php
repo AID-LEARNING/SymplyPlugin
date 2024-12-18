@@ -38,6 +38,7 @@ use pocketmine\network\mcpe\protocol\types\PlayerBlockAction;
 use pocketmine\network\mcpe\protocol\types\PlayerBlockActionStopBreak;
 use pocketmine\network\mcpe\protocol\types\PlayerBlockActionWithBlockInfo;
 use pocketmine\player\Player;
+use ReflectionProperty;
 use SenseiTarzan\ExtraEvent\Class\EventAttribute;
 use SenseiTarzan\SymplyPlugin\Player\BlockBreakRequest;
 use SenseiTarzan\SymplyPlugin\Utils\BlockUtils;
@@ -78,30 +79,29 @@ class ClientBreakListener
 				 * @var int $k
 				 * @var PlayerBlockAction $blockAction
 				 */
-				$blockActions = array_filter($blockActions, fn(PlayerBlockAction $blockAction) => $blockAction->getActionType() === PlayerAction::START_BREAK ||
-					$blockAction->getActionType() === PlayerAction::CRACK_BREAK ||
-					$blockAction->getActionType() === PlayerAction::ABORT_BREAK ||
-					$blockAction instanceof PlayerBlockActionStopBreak);
-				foreach ($blockActions as $blockAction) {
+				foreach ($blockActions as $index => $blockAction) {
 					$action = $blockAction->getActionType();
 					if ($blockAction instanceof PlayerBlockActionWithBlockInfo) {
 						if ($action === PlayerAction::START_BREAK) {
-							$cancel = true;
 							$vector3 = new Vector3($blockAction->getBlockPosition()->getX(), $blockAction->getBlockPosition()->getY(), $blockAction->getBlockPosition()->getZ());
 							$block = $player->getWorld()->getBlock($vector3);
-							if(!$player->attackBlock($vector3, $blockAction->getFace()))
-								$this->onFailedBlockAction($session, $player, $vector3, $blockAction->getFace());
 							if ($block->getBreakInfo()->breaksInstantly())
 								continue;
 							$speed = BlockUtils::getDestroyRate($player, $block);
 							$this->breaks->offsetSet($session, new BlockBreakRequest($player->getWorld(), $vector3, $speed));
-							$player->getWorld()->broadcastPacketToViewers(
-								$vector3,
-								LevelEventPacket::create(LevelEvent::BLOCK_START_BREAK, (int) floor( $speed * 65535.0), $vector3)
-							);
+
+							if(!$player->attackBlock($vector3, $blockAction->getFace()))
+							{
+								$this->onFailedBlockAction($session, $player, $vector3, $blockAction->getFace());
+							}else {
+								$player->getWorld()->broadcastPacketToViewers(
+									$vector3,
+									LevelEventPacket::create(LevelEvent::BLOCK_START_BREAK, (int)floor($speed * 65535.0), $vector3)
+								);
+							}
+							unset($blockActions[$index]);
 						} elseif ($action === PlayerAction::CRACK_BREAK) {
 							if ($this->breaks->offsetExists($session)) {
-								$cancel = true;
 								$vector3 = new Vector3($blockAction->getBlockPosition()->getX(), $blockAction->getBlockPosition()->getY(), $blockAction->getBlockPosition()->getZ());
 								$block = $player->getWorld()->getBlock($vector3);
 								$breakRequest = $this->breaks->offsetGet($session);
@@ -114,12 +114,14 @@ class ClientBreakListener
 									unset($this->breaks[$session]);
 								}
 							}
+							unset($blockActions[$index]);
 						} elseif ($blockAction->getActionType() === PlayerAction::ABORT_BREAK) {
 							$vector3 = new Vector3($blockAction->getBlockPosition()->getX(), $blockAction->getBlockPosition()->getY(), $blockAction->getBlockPosition()->getZ());
 							if ($this->breaks->offsetExists($session)) {
 								$player->stopBreakBlock($vector3);
 								unset($this->breaks[$session]);
 							}
+							unset($blockActions[$index]);
 						}
 					} elseif ($blockAction instanceof PlayerBlockActionStopBreak) {
 						if ($this->breaks->offsetExists($session)) {
@@ -127,9 +129,8 @@ class ClientBreakListener
 						}
 					}
 				}
+				(new ReflectionProperty($packet, "blockActions"))->setValue($packet, $blockActions);
 			}
-			if ($cancel)
-				$event->cancel();
 		}/*else if($packet instanceof  InventoryTransactionPacket){
 			$data = $packet->trData;
 			if ($data instanceof UseItemTransactionData && $data->getActionType() === UseItemTransactionData::ACTION_BREAK_BLOCK){
