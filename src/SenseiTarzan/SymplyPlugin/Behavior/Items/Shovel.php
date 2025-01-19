@@ -24,9 +24,18 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items;
 
 use pocketmine\item\Shovel as PMShovel;
+use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
+
 class Shovel extends PMShovel implements ICustomItem
 {
 	use HackToolTrait;
+
+    public function getCooldownTag(): ?string
+    {
+        $itemBuilder = SymplyItemFactory::getInstance()->getItemBuilder($this);
+        return $itemBuilder->getCooldownComponent()?->getCategory() ?? null;
+    }
+
 	public function getBlockToolHarvestLevel() : int{
 		return $this->tierHack->getHarvestLevel();
 	}

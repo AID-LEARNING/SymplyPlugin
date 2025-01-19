@@ -24,10 +24,17 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items;
 
 use pocketmine\item\Pickaxe as PMPickaxe;
+use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
 
 class Pickaxe extends PMPickaxe implements ICustomItem
 {
 	use HackToolTrait;
+
+    public function getCooldownTag(): ?string
+    {
+        $itemBuilder = SymplyItemFactory::getInstance()->getItemBuilder($this);
+        return $itemBuilder->getCooldownComponent()?->getCategory() ?? null;
+    }
 
 	public function getBlockToolHarvestLevel() : int{
 		return $this->tierHack->getHarvestLevel();

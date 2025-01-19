@@ -38,7 +38,7 @@ use function is_string;
 /**
  * @internal
  */
-class BasicBlockBuilder  implements IBuilderComponent
+class BasicBlockBuilder implements IBuilderComponent
 {
 
 	/** @var IComponent[] */

@@ -30,6 +30,7 @@ use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\GroupCreativeEnum;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Builder\ItemBuilder;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\DurabilityComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Info\ItemCreativeInfo;
+use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
 use function assert;
 
 abstract class Durable extends PMDurable implements ICustomItem
@@ -38,6 +39,12 @@ abstract class Durable extends PMDurable implements ICustomItem
 	{
 		parent::__construct($identifier, $name, $enchantmentTags);
 	}
+
+    public function getCooldownTag(): ?string
+    {
+        $itemBuilder = SymplyItemFactory::getInstance()->getItemBuilder($this);
+        return $itemBuilder->getCooldownComponent()?->getCategory() ?? null;
+    }
 
 	public function getIdentifier() : ItemIdentifier
 	{

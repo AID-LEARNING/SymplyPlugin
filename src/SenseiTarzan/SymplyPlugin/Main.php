@@ -97,7 +97,7 @@ class Main extends PluginBase
 		}),0);
 		EventLoader::loadEventWithClass($this, new BehaviorListener(false));
 		EventLoader::loadEventWithClass($this, new ClientBreakListener());
-		EventLoader::loadEventWithClass($this, new ItemListener());
+		//EventLoader::loadEventWithClass($this, new ItemListener());
 	}
 
 	public static function getInstance() : Main

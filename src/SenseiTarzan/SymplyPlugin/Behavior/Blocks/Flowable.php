@@ -30,7 +30,6 @@ use function assert;
 
 class Flowable extends PMFlowable implements IBlockCustom
 {
-	private BlockBuilder $blockBuilder;
 	public function __construct(
 		BlockIdentifier $idInfo,
 		string          $name,

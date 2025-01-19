@@ -24,9 +24,18 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items;
 
 use pocketmine\item\Sword as PMSword;
+use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
+
 class Sword extends PMSword implements ICustomItem
 {
 	use HackToolTrait;
+
+    public function getCooldownTag(): ?string
+    {
+        $itemBuilder = SymplyItemFactory::getInstance()->getItemBuilder($this);
+        return $itemBuilder->getCooldownComponent()?->getCategory() ?? null;
+    }
+
 	public function getAttackPoints() : int
 	{
 		return $this->tierHack->getBaseAttackPoints();

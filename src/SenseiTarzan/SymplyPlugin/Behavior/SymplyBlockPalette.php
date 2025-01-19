@@ -136,6 +136,8 @@ final class SymplyBlockPalette
 					} else {
 						$stateDataToStateIdLookup[$name][$blockState->getRawStateProperties()] = $stateId;
 					}
+					if ($name === "olympia:anti_pearl_block")
+						var_dump($stateDataToStateIdLookup);
 					$sortedStates[$stateId] = $blockState;
 				}
 			}
