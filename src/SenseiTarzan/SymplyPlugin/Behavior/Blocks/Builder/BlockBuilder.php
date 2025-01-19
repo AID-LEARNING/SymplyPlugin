@@ -99,7 +99,7 @@ class BlockBuilder extends BasicBlockBuilder
 				->setFloat("value", $this->blockCustom->getBreakInfo()->getHardness() * 3.33334))
 			->setTag("minecraft:friction", CompoundTag::create()
 				->setFloat("value", 1 - $this->blockCustom->getFrictionFactor()));
-		foreach ($this->getComponents() as $component) {
+		foreach ($this->getComponents() as $_ => $component) {
 			$componentsTags = $componentsTags->merge($component->toNbt());
 		}
 		return $componentsTags;

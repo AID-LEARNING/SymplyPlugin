@@ -30,9 +30,12 @@ use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\MaterialInstancesCompone
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\OnInteractComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\SelectionBoxComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub\HitBoxSubComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub\MaterialMappingSubComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub\MaterialSubComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\TransformationComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\IBuilderComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use SenseiTarzan\SymplyPlugin\Utils\Vector3WithOffset;
 use function is_string;
 
 /**
@@ -64,15 +67,32 @@ class BasicBlockBuilder implements IBuilderComponent
 	}
 
 	public function setMaterialInstance(array $mappings = [], array $materials = []) : static{
-		return $this->addComponent(new MaterialInstancesComponent($mappings, $materials));
+        $fixed = [
+            array(...array_filter(
+                $mappings,
+                fn($object) => $object instanceof MaterialMappingSubComponent
+            ), ...array_filter(
+                $materials,
+                fn($object) => $object instanceof MaterialMappingSubComponent
+            )),
+            array(...array_filter(
+                $mappings,
+                fn($object) => $object instanceof MaterialSubComponent
+            ), ...array_filter(
+                $materials,
+                fn($object) => $object instanceof MaterialSubComponent
+            ))
+        ];
+		return $this->addComponent(new MaterialInstancesComponent($fixed[0], $fixed[1]));
 	}
 
-	/**
-	 * @param Vector3|Vector3[]|null $rotation
-	 * @param Vector3|Vector3[]|null $scale
-	 * @return $this
-	 */
-	public function setTransformationComponent(Vector3|array|null $rotation = null, Vector3|array|null $scale = null, Vector3|null $translation = null) : static{
+    /**
+     * @param Vector3|\SenseiTarzan\SymplyPlugin\Utils\Vector3WithOffset|null $rotation
+     * @param Vector3|Vector3WithOffset|null $scale
+     * @param Vector3|null $translation
+     * @return $this
+     */
+	public function setTransformationComponent(Vector3|Vector3WithOffset|null $rotation = null, Vector3|Vector3WithOffset|null $scale = null, Vector3|null $translation = null) : static{
 		return $this->addComponent(new TransformationComponent($rotation ?? Vector3::zero(), $scale ?? new Vector3(1,1,1), $translation ?? Vector3::zero()));
 	}
 
