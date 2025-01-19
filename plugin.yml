@@ -4,5 +4,7 @@ version: 0.0.3
 main: SenseiTarzan\SymplyPlugin\Main
 description: "System of custom Block et Item best that Customies and support recipes json"
 load: STARTUP
+softdepend:
+  - "DEVirion"
 loadbefore:
   - "WaterLogging"
