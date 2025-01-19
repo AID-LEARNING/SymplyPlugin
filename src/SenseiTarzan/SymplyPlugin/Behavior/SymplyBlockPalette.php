@@ -120,7 +120,7 @@ final class SymplyBlockPalette
 		if ($blockNetworkIdsAreHashes){
 			foreach ($states as $name => $blockStates) {
 				$numberState = count($blockStates);
-				foreach ($blockStates as $blockState) {
+				foreach ($blockStates as $_ => $blockState) {
 					$data = BlockStateDictionaryEntry::decodeStateProperties($blockState->getRawStateProperties());
 					ksort($data);
 					$test = CompoundTag::create();
@@ -136,8 +136,6 @@ final class SymplyBlockPalette
 					} else {
 						$stateDataToStateIdLookup[$name][$blockState->getRawStateProperties()] = $stateId;
 					}
-					if ($name === "olympia:anti_pearl_block")
-						var_dump($stateDataToStateIdLookup);
 					$sortedStates[$stateId] = $blockState;
 				}
 			}
@@ -149,9 +147,9 @@ final class SymplyBlockPalette
 		$sortedStates = [];
 		$stateId = 0;
 		$stateDataToStateIdLookup = [];
-		foreach($names as $name){
+		foreach($names as $_ => $name){
 			// With the sorted list of names, we can now go back and add all the states for each block in the correct order.
-			foreach($states[$name] as $state){
+			foreach($states[$name] as $__ =>$state){
 				$sortedStates[$stateId] = $state;
 				if(count($states[$name]) === 1) {
 					$stateDataToStateIdLookup[$name] = $stateId;
