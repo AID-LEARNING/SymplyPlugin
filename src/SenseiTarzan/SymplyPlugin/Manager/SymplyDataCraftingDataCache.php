@@ -98,17 +98,12 @@ class SymplyDataCraftingDataCache
 				);
 			}elseif($recipe instanceof SymplyShapedRecipe){
 				$inputs = [];
-                $height = $recipe->getHeight();
-                 $width = $recipe->getWidth();
-                 $totalElements = $height * $width;
-                 for ($index = 0; $index < $totalElements; ++$index) {
-                     $row = intdiv($index, $width);
-                     $column = $index % $width;
-
-                     $ingredient = $recipe->getIngredient($column, $row);
-                     $inputs[$row][$column] = $converter->coreRecipeIngredientToNet($ingredient);
-                 }
-				$recipesWithTypeIds[] = new ProtocolShapedRecipe(
+				for($row = 0, $height = $recipe->getHeight(); $row < $height; ++$row){
+					for($column = 0, $width = $recipe->getWidth(); $column < $width; ++$column){
+						$inputs[$row][$column] = $converter->coreRecipeIngredientToNet($recipe->getIngredient($column, $row));
+					}
+				}
+				$recipesWithTypeIds[] = $r = new ProtocolShapedRecipe(
 					CraftingDataPacket::ENTRY_SHAPED,
 					Binary::writeInt($index),
 					$inputs,
@@ -139,16 +134,13 @@ class SymplyDataCraftingDataCache
 					$index
 				);
 			}elseif($recipe instanceof ShapedRecipe){
-                $inputs = [];
-                $height = $recipe->getHeight();
-                $width = $recipe->getWidth();
-                $totalElements = $height * $width;
-                for ($index = 0; $index < $totalElements; ++$index) {
-                    $row = intdiv($index, $width);
-                    $column = $index % $width;
-                    $ingredient = $recipe->getIngredient($column, $row);
-                    $inputs[$row][$column] = $converter->coreRecipeIngredientToNet($ingredient);
-                }
+				$inputs = [];
+
+				for($row = 0, $height = $recipe->getHeight(); $row < $height; ++$row){
+					for($column = 0, $width = $recipe->getWidth(); $column < $width; ++$column){
+						$inputs[$row][$column] = $converter->coreRecipeIngredientToNet($recipe->getIngredient($column, $row));
+					}
+				}
 				$recipesWithTypeIds[] = $r = new ProtocolShapedRecipe(
 					CraftingDataPacket::ENTRY_SHAPED,
 					Binary::writeInt($index),
