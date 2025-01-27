@@ -30,37 +30,48 @@ use pocketmine\nbt\tag\Tag;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 
-class BlockPlacerComponent extends AbstractComponent
+class EntityPlacerComponent extends AbstractComponent
 {
 
-	public function __construct(private readonly string $blockIdentifier, private readonly array $useOn)
-	{
-	}
+    public function __construct(private readonly string $entityIdentifier, private readonly array $dispenseOn, private readonly array $useOn)
+    {
+    }
 
-	public function getBlockIdentifier() : string
-	{
-		return $this->blockIdentifier;
-	}
+    public function getEntityIdentifier(): string
+    {
+        return $this->entityIdentifier;
+    }
 
-	public function getUseOn() : array
-	{
-		return $this->useOn;
-	}
+    public function getDispenseOn(): array
+    {
+        return $this->dispenseOn;
+    }
+
+    public function getUseOn() : array
+    {
+        return $this->useOn;
+    }
 
     protected function value(): Tag
     {
+        $dispenseOnList = new ListTag();
+        foreach ($this->getDispenseOn() as $dispenseOn){
+            $dispenseOnList->push(new StringTag($dispenseOn));
+        }
+
         $useOnList = new ListTag();
         foreach ($this->getUseOn() as $useOn) {
             $useOnList->push(new StringTag($useOn));
         }
 
         return CompoundTag::create()
-            ->setString("block", $this->getBlockIdentifier())
+            ->setString("entity", $this->getEntityIdentifier())
+            ->setTag("dispense_on", $dispenseOnList)
             ->setTag("use_on", $useOnList);
     }
 
-	public function getName() : string
-	{
-		return ComponentName::BLOCK_PLACER;
-	}
+    public function getName() : string
+    {
+        return ComponentName::ENTITY_PLACER;
+    }
 }

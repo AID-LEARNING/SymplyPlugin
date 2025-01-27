@@ -35,7 +35,7 @@ enum ComponentName : string
 	const DIGGER = "minecraft:digger";
 	const DISPLAY_NAME = "minecraft:display_name";
 	const DURABILITY = "minecraft:durability";
-
+    const ENTITY_PLACER = "minecraft:entity_placer";
 	const FOOD = "minecraft:food";
 
 	const PROJECTILE = "minecraft:project";

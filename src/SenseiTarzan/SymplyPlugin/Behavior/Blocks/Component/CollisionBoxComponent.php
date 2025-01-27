@@ -46,6 +46,6 @@ class CollisionBoxComponent extends AbstractComponent
 
 	protected function value() : Tag
 	{
-		return $this->value?->toNbt() ?? new ByteTag(0);
+		return $this->value->toNbt();
 	}
 }
