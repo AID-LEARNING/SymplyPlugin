@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component;
 
 use BackedEnum;
+use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\Tag;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub\HitBoxSubComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
@@ -45,6 +46,6 @@ class CollisionBoxComponent extends AbstractComponent
 
 	protected function value() : Tag
 	{
-		return $this->value->toNbt();
+		return $this->value?->toNbt() ?? new ByteTag(0);
 	}
 }
