@@ -31,6 +31,7 @@ use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\DurabilityComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\WearableComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\EnchantSlotEnum;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\SlotEnum;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\TagEnum;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Info\ItemCreativeInfo;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Property\EnchantableSlotProperty;
 use function assert;
@@ -56,6 +57,8 @@ trait HackArmorTrait
 			->addComponent(new DurabilityComponent($this->getMaxDurability()))
 			->addComponent(new WearableComponent(SlotEnum::fromArmorTypeInfo($this->getArmorSlot()), $this->getDefensePoints()))
 			->addProperty(new EnchantableSlotProperty(EnchantSlotEnum::fromArmorTypeInfo($this->getArmorSlot())))
+            ->addTag(TagEnum::TAG_IS_ARMOR->value)
+            ->addTag(TagEnum::TAG_TRIMMABLE->value)
 			->setCreativeInfo(new ItemCreativeInfo(CategoryCreativeEnum::EQUIPMENT, GroupCreativeEnum::fromArmorTypeInfo($this->getArmorSlot())));
 	}
 }
