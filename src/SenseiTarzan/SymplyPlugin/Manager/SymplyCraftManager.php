@@ -59,85 +59,97 @@ class SymplyCraftManager
 	}
 
 	public function onLoad() : void
-	{
-		if ($this->craftManager === null){
-			$this->craftManager = $this->plugin->getServer()->getCraftingManager();
-		}
-		/**
-		 * @var ShapedModel $recipe
-		 */
-		foreach (SymplyCraftingManagerFromDataHelper::scanDirectoryToObjectFile($this->pathCraft, ["json"], ShapedModel::class) as $file => $recipe){
-			$ingredient = $recipe->key;
-			$result = $recipe->result;
-			array_walk($ingredient, function (ItemModel|string &$value){
-				$value = SymplyCraftingManagerFromDataHelper::deserializeIngredient($value);
-			});
-			if (is_array($result)) {
-				array_walk($result, function (&$value) {
-					$value = SymplyCraftingManagerFromDataHelper::deserializeItemStack($value);
-				});
-			}elseif (is_string($result) || $result instanceof ItemModel){
-				$result = [SymplyCraftingManagerFromDataHelper::deserializeItemStack($result)];
-			}else{
-				throw new SavedDataLoadingException("$file has not a good type on result key");
-			}
-			foreach ($recipe->tags as $tag){
-				if (empty($tag))
-					continue;
-				$this->getCraftingManager()->registerShapedRecipe(new SymplyShapedRecipe(
-					$recipe->pattern,
-					$ingredient,
-					$result,
-					$tag
-				));
-			}
-		}
-		/**
-		 * @var ShapelessModel $recipe
-		 */
-		foreach (SymplyCraftingManagerFromDataHelper::scanDirectoryToObjectFile($this->pathCraft, ["json"], ShapelessModel::class) as $file => $recipe){
-			$ingredient = $recipe->ingredients;
-			$result = $recipe->result;
-			array_walk($ingredient, function (ItemModel|string &$value){
-				$value = SymplyCraftingManagerFromDataHelper::deserializeIngredient($value);
-			});
-			if (is_array($result)) {
-				array_walk($result, function (&$value) {
-					$value = SymplyCraftingManagerFromDataHelper::deserializeItemStack($value);
-				});
-			}elseif (is_string($result) || $result instanceof ItemModel){
-				$result = [SymplyCraftingManagerFromDataHelper::deserializeItemStack($result)];
-			}else{
-				throw new SavedDataLoadingException("$file has not a good type on result key");
-			}
-			foreach ($recipe->tags as $tag){
-				if (empty($tag))
-					continue;
-				$this->getCraftingManager()->registerShapelessRecipe(new SymplyShapelessRecipe(
-					$ingredient,
-					$result,
-					$tag
-				));
-			}
-		}
-		/**
-		 * @var FurnaceModel $recipe
-		 */
-		foreach (SymplyCraftingManagerFromDataHelper::scanDirectoryToObjectFile($this->pathCraft, ["json"], FurnaceModel::class) as $recipe){
-			$ingredient = SymplyCraftingManagerFromDataHelper::deserializeIngredient($recipe->input);
-			$result = SymplyCraftingManagerFromDataHelper::deserializeItemStack($recipe->output);
-			foreach ($recipe->tags as $tag){
-				if (empty($tag) && isset(FurnaceType::getAll()[mb_strtoupper($tag)]))
-					continue;
-				$this->getCraftingManager()->getFurnaceRecipeManager(FurnaceType::getAll()[mb_strtoupper($tag)])->register(
-					new FurnaceRecipe(
-						$result,
-						$ingredient
-					)
-				);
-			}
-		}
-	}
+    {
+        if ($this->craftManager === null) {
+            $this->craftManager = $this->plugin->getServer()->getCraftingManager();
+        }
+        /**
+         * @var ShapedModel $recipe
+         */
+        foreach (SymplyCraftingManagerFromDataHelper::scanDirectoryToObjectFile($this->pathCraft, ["json"], ShapedModel::class) as $file => $recipe) {
+            $ingredient = $recipe->key;
+            $result = $recipe->result;
+            try {
+                array_walk($ingredient, function (ItemModel|string &$value) {
+                    $value = SymplyCraftingManagerFromDataHelper::deserializeIngredient($value);
+                });
+                if (is_array($result)) {
+                    array_walk($result, function (&$value) {
+                        $value = SymplyCraftingManagerFromDataHelper::deserializeItemStack($value);
+                    });
+                } elseif (is_string($result) || $result instanceof ItemModel) {
+                    $result = [SymplyCraftingManagerFromDataHelper::deserializeItemStack($result)];
+                } else {
+                    throw new SavedDataLoadingException("has not a good type on result key");
+                }
+                foreach ($recipe->tags as $tag) {
+                    if (empty($tag))
+                        continue;
+                    $this->getCraftingManager()->registerShapedRecipe(new SymplyShapedRecipe(
+                        $recipe->pattern,
+                        $ingredient,
+                        $result,
+                        $tag
+                    ));
+                }
+            } catch (\Throwable $throwable) {
+                $this->plugin->getLogger()->error("Error: $file - {$throwable->getMessage()}");
+            }
+        }
+        /**
+         * @var ShapelessModel $recipe
+         */
+        foreach (SymplyCraftingManagerFromDataHelper::scanDirectoryToObjectFile($this->pathCraft, ["json"], ShapelessModel::class) as $file => $recipe) {
+            $ingredient = $recipe->ingredients;
+            $result = $recipe->result;
+            try {
+                array_walk($ingredient, function (ItemModel|string &$value) {
+                    $value = SymplyCraftingManagerFromDataHelper::deserializeIngredient($value);
+                });
+                if (is_array($result)) {
+                    array_walk($result, function (&$value) {
+                        $value = SymplyCraftingManagerFromDataHelper::deserializeItemStack($value);
+                    });
+                } elseif (is_string($result) || $result instanceof ItemModel) {
+                    $result = [SymplyCraftingManagerFromDataHelper::deserializeItemStack($result)];
+                } else {
+                    throw new SavedDataLoadingException("has not a good type on result key");
+                }
+                foreach ($recipe->tags as $tag) {
+                    if (empty($tag))
+                        continue;
+                    $this->getCraftingManager()->registerShapelessRecipe(new SymplyShapelessRecipe(
+                        $ingredient,
+                        $result,
+                        $tag
+                    ));
+                }
+            } catch (\Throwable $throwable) {
+                $this->plugin->getLogger()->error("Error: $file - {$throwable->getMessage()}");
+            }
+        }
+        /**
+         * @var FurnaceModel $recipe
+         */
+        foreach (SymplyCraftingManagerFromDataHelper::scanDirectoryToObjectFile($this->pathCraft, ["json"], FurnaceModel::class) as $file => $recipe) {
+            try {
+                $ingredient = SymplyCraftingManagerFromDataHelper::deserializeIngredient($recipe->input);
+                $result = SymplyCraftingManagerFromDataHelper::deserializeItemStack($recipe->output);
+                foreach ($recipe->tags as $tag) {
+                    if (empty($tag) && isset(FurnaceType::getAll()[mb_strtoupper($tag)]))
+                        continue;
+                    $this->getCraftingManager()->getFurnaceRecipeManager(FurnaceType::getAll()[mb_strtoupper($tag)])->register(
+                        new FurnaceRecipe(
+                            $result,
+                            $ingredient
+                        )
+                    );
+                }
+            } catch (\Throwable $throwable) {
+                $this->plugin->getLogger()->error("Error: $file - {$throwable->getMessage()}");
+            }
+        }
+    }
 
 	public function getCraftingManager() : CraftingManager
 	{
