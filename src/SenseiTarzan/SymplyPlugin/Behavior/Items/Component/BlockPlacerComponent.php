@@ -24,6 +24,8 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Component;
 
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\ListTag;
+use pocketmine\nbt\tag\StringTag;
 use pocketmine\nbt\tag\Tag;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
@@ -31,7 +33,7 @@ use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 class BlockPlacerComponent extends AbstractComponent
 {
 
-	public function __construct(private readonly string $blockIdentifier, private readonly bool $useBlockDescription = false)
+	public function __construct(private readonly string $blockIdentifier, private readonly array $useOn)
 	{
 	}
 
@@ -40,16 +42,21 @@ class BlockPlacerComponent extends AbstractComponent
 		return $this->blockIdentifier;
 	}
 
-	public function isUseBlockDescription() : bool
+	public function getUseOn() : array
 	{
-		return $this->useBlockDescription;
+		return $this->useOn;
 	}
 
 	protected function value() : Tag
 	{
+        $useOnList = new ListTag();
+        foreach ($this->getUseOn() as $useOn){
+            $useOnList->push(new StringTag($useOn));
+        }
+
 		return CompoundTag::create()
 			->setString("block", $this->getBlockIdentifier())
-			->setByte("use_block_description", $this->isUseBlockDescription() ? 1 : 0);
+			->setTag("use_on", $useOnList);
 	}
 
 	public function getName() : string
