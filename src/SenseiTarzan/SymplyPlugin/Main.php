@@ -80,17 +80,21 @@ class Main extends PluginBase
 			}
             $server = Server::getInstance();
             $asyncPool = $server->getAsyncPool();
-            for ($worker = 0; $worker < $asyncPool->getSize(); $worker++) {
-                $asyncPool->submitTaskToWorker(new AsyncRegisterVanillaTask(), $worker);
-                $asyncPool->submitTaskToWorker(new AsyncRegisterBehaviorsTask(), $worker);
-                $asyncPool->submitTaskToWorker(new AsyncOverwriteTask(), $worker);
-                $asyncPool->submitTaskToWorker(new AsyncSortBlockStateTask(), $worker);
+            $workersPorperties = new \ReflectionProperty($asyncPool, 'workers');
+            $workers = $workersPorperties->getValue($asyncPool);
+            for ($workerId = 0; $workerId < $asyncPool->getSize(); ++$workerId) {
+                if (isset($workers[$workerId])) {
+                    $asyncPool->submitTaskToWorker(new AsyncRegisterVanillaTask(), $workerId);
+                    $asyncPool->submitTaskToWorker(new AsyncRegisterBehaviorsTask(), $workerId);
+                    $asyncPool->submitTaskToWorker(new AsyncOverwriteTask(), $workerId);
+                    $asyncPool->submitTaskToWorker(new AsyncSortBlockStateTask(), $workerId);
+                }
             }
-            $asyncPool->addWorkerStartHook(static function(int $worker) use($asyncPool) : void{
-                $asyncPool->submitTaskToWorker(new AsyncRegisterVanillaTask(), $worker);
-                $asyncPool->submitTaskToWorker(new AsyncRegisterBehaviorsTask(), $worker);
-                $asyncPool->submitTaskToWorker(new AsyncOverwriteTask(), $worker);
-                $asyncPool->submitTaskToWorker(new AsyncSortBlockStateTask(), $worker);
+            $asyncPool->addWorkerStartHook(static function(int $workerId) use($asyncPool) : void{
+                $asyncPool->submitTaskToWorker(new AsyncRegisterVanillaTask(), $workerId);
+                $asyncPool->submitTaskToWorker(new AsyncRegisterBehaviorsTask(), $workerId);
+                $asyncPool->submitTaskToWorker(new AsyncOverwriteTask(), $workerId);
+                $asyncPool->submitTaskToWorker(new AsyncSortBlockStateTask(), $workerId);
             });
 			Main::getInstance()->getSymplyCraftManager()->onLoad();
 		}),0);

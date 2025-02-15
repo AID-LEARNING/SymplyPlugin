@@ -29,6 +29,7 @@ use ReflectionException;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockFactory;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
 use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
+use Throwable;
 
 class AsyncOverwriteTask extends AsyncTask
 {
@@ -48,12 +49,16 @@ class AsyncOverwriteTask extends AsyncTask
 	 */
 	public function onRun() : void
 	{
-		foreach ($this->blockFuncs as [$blockClosure, $serialize, $deserialize]) {
-			SymplyBlockFactory::getInstance(true)->overwrite($blockClosure, $serialize, $deserialize);
-		}
+        try {
+            foreach ($this->blockFuncs as [$blockClosure, $serialize, $deserialize]) {
+                SymplyBlockFactory::getInstance(true)->overwrite($blockClosure, $serialize, $deserialize);
+            }
 
-		foreach ($this->itemFuncs as [$itemClosure, $serialize, $deserialize]){
-			SymplyItemFactory::getInstance(true)->overwrite($itemClosure, $serialize, $deserialize);
-		}
+            foreach ($this->itemFuncs as [$itemClosure, $serialize, $deserialize]) {
+                SymplyItemFactory::getInstance(true)->overwrite($itemClosure, $serialize, $deserialize);
+            }
+        }catch (Throwable){
+
+        }
 	}
 }

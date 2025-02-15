@@ -28,6 +28,7 @@ use pocketmine\scheduler\AsyncTask;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockFactory;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
 use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
+use Throwable;
 
 class AsyncRegisterVanillaTask extends AsyncTask
 {
@@ -46,11 +47,15 @@ class AsyncRegisterVanillaTask extends AsyncTask
 	 */
 	public function onRun() : void
 	{
-		foreach ($this->blockFuncs as [$blockClosure, $identifier,  $serialize, $deserialize]) {
-			SymplyBlockFactory::getInstance(true)->registerVanilla($blockClosure, $identifier,  $serialize, $deserialize);
-		}
-		foreach ($this->itemFuncs as [$itemClosure, $identifier, $serialize, $deserialize]){
-			SymplyItemFactory::getInstance(true)->registerVanilla($itemClosure, $identifier, $serialize, $deserialize);
-		}
+        try {
+            foreach ($this->blockFuncs as [$blockClosure, $identifier, $serialize, $deserialize]) {
+                SymplyBlockFactory::getInstance(true)->registerVanilla($blockClosure, $identifier, $serialize, $deserialize);
+            }
+            foreach ($this->itemFuncs as [$itemClosure, $identifier, $serialize, $deserialize]) {
+                SymplyItemFactory::getInstance(true)->registerVanilla($itemClosure, $identifier, $serialize, $deserialize);
+            }
+        }catch (Throwable) {
+
+        }
 	}
 }
