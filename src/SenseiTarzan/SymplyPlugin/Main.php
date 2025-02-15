@@ -80,19 +80,18 @@ class Main extends PluginBase
 			}
             $server = Server::getInstance();
             $asyncPool = $server->getAsyncPool();
+            for ($worker = 0; $worker < $asyncPool->getSize(); $worker++) {
+                $asyncPool->submitTaskToWorker(new AsyncRegisterVanillaTask(), $worker);
+                $asyncPool->submitTaskToWorker(new AsyncRegisterBehaviorsTask(), $worker);
+                $asyncPool->submitTaskToWorker(new AsyncOverwriteTask(), $worker);
+                $asyncPool->submitTaskToWorker(new AsyncSortBlockStateTask(), $worker);
+            }
             $asyncPool->addWorkerStartHook(static function(int $worker) use($asyncPool) : void{
                 $asyncPool->submitTaskToWorker(new AsyncRegisterVanillaTask(), $worker);
                 $asyncPool->submitTaskToWorker(new AsyncRegisterBehaviorsTask(), $worker);
                 $asyncPool->submitTaskToWorker(new AsyncOverwriteTask(), $worker);
                 $asyncPool->submitTaskToWorker(new AsyncSortBlockStateTask(), $worker);
             });
-			$worldManager = $server->getWorldManager();
-			$defaultWorld = $worldManager->getDefaultWorld()->getFolderName();
-			foreach ($worldManager->getWorlds() as $world){
-				$worldManager->unloadWorld($world, true);
-				$worldManager->loadWorld($world->getFolderName());
-			}
-			$worldManager->setDefaultWorld($worldManager->getWorldByName($defaultWorld));
 			Main::getInstance()->getSymplyCraftManager()->onLoad();
 		}),0);
 		EventLoader::loadEventWithClass($this, new BehaviorListener(false));
