@@ -23,18 +23,20 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Property;
 
+use BackedEnum;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\Tag;
+use function is_string;
 
 abstract class ItemProperty
 {
 
-	public function __construct(private readonly string $name, protected Tag $values) { }
+	public function __construct(private readonly string|BackedEnum $name, protected Tag $values) { }
 
 	/**
 	 * Returns the name of the block property provided in the constructor.
 	 */
-	public function getName() : string {
+	public function getName() : string|BackedEnum {
 		return $this->name;
 	}
 	/**
@@ -48,6 +50,7 @@ abstract class ItemProperty
 	 * Returns the block property in the correct NBT format supported by the client.
 	 */
 	public function toNBT() : CompoundTag {
-		return CompoundTag::create()->setTag($this->getName(), $this->getValues());
+		$name = $this->getName();
+		return CompoundTag::create()->setTag((is_string($name) ? $name : $name->value), $this->getValues());
 	}
 }

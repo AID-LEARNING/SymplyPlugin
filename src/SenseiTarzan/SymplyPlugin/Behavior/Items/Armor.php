@@ -26,6 +26,7 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Items;
 use pocketmine\item\Armor as PMArmor;
 use pocketmine\item\ArmorTypeInfo;
 use pocketmine\item\Item as PMItem;
+use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
 use function assert;
 
 abstract class Armor extends PMArmor implements ICustomItem
@@ -35,6 +36,12 @@ abstract class Armor extends PMArmor implements ICustomItem
 	{
 		parent::__construct($identifier, $name, $info, $enchantmentTags);
 	}
+
+    public function getCooldownTag(): ?string
+    {
+        $itemBuilder = SymplyItemFactory::getInstance()->getItemBuilder($this);
+        return $itemBuilder->getCooldownComponent()?->getCategory() ?? null;
+    }
 
 	public function getIdentifier() : ItemIdentifier
 	{

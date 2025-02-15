@@ -23,18 +23,20 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property;
 
+use BackedEnum;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
+use function is_string;
 
 abstract class BlockProperty
 {
 
-	public function __construct(private readonly string $name, protected ListTag $values) { }
+	public function __construct(private readonly string|BackedEnum $name, protected ListTag $values) { }
 
 	/**
 	 * Returns the name of the block property provided in the constructor.
 	 */
-	public function getName() : string {
+	public function getName() : string|BackedEnum {
 		return $this->name;
 	}
 
@@ -50,8 +52,9 @@ abstract class BlockProperty
 	 * Returns the block property in the correct NBT format supported by the client.
 	 */
 	public function toNBT() : CompoundTag {
+		$name = $this->getName();
 		return CompoundTag::create()
-			->setString("name", $this->name)
+			->setString("name", is_string($name) ? $name : $name->value)
 			->setTag("enum", $this->getValues());
 	}
 }

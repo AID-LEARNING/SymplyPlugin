@@ -43,18 +43,15 @@ class BlockUtils
 		$conduitPower = $effectManager->get(VanillaEffects::CONDUIT_POWER());
 		$miningFatigue = $effectManager->get(VanillaEffects::MINING_FATIGUE());
 /*		$helmet = $player->getArmorInventory()->getHelmet();*/
-		if ($haste) {
+		if ($haste)
 			$hasteLevel = $haste->getEffectLevel();
-		}
 		if ($conduitPower) {
 			$conduitPowerLevel = $conduitPower->getEffectLevel();
-			if ($hasteLevel < $conduitPowerLevel) {
+			if ($hasteLevel < $conduitPowerLevel)
 				$hasteLevel = $conduitPowerLevel;
-			}
 		}
-		if ($hasteLevel > 0) {
+		if ($hasteLevel > 0)
 			$speedBreak = $destroySpeed * (($hasteLevel * 0.2) + 1);
-		}
 		if ($miningFatigue) {
 			$slowMininLevel = $miningFatigue->getEffectLevel();
 			$speedBreak = pow(0.300000011920929, $slowMininLevel) * $speedBreak;
@@ -65,9 +62,8 @@ class BlockUtils
 				}*/
 		if (!$player->isOnGround()) {
 			/*			LABEL_14:*/
-			if (!$player->getAllowFlight()) {
+			if (!$player->getAllowFlight())
 				$speedBreak *= 0.2;
-			}
 		}
 		if ($player->isUnderwater()) {
 			/*			if ($helmet->getEnchantment(VanillaEnchantments::AQUA_AFFINITY())) { // no exist in pmmp
@@ -77,9 +73,8 @@ class BlockUtils
 				 if ( !v21 || !*v21 || ItemStackBase::isNull(v20) || !*((_BYTE *)v20 + 34) )
 				  return speedbreak * 0.2; ???????????
 			*/
-			if ($item->isNull()){
+			if ($item->isNull())
 				return $speedBreak * 0.2;
-			}
 		}
 		return $speedBreak;
 	}
@@ -93,42 +88,34 @@ class BlockUtils
 		$haste = $effectManager->get(VanillaEffects::HASTE());
 		$conduitPower = $effectManager->get(VanillaEffects::CONDUIT_POWER());
 		$miningFatigue = $effectManager->get(VanillaEffects::MINING_FATIGUE());
-		if ($haste) {
+		if ($haste)
 			$hasteLevel = $haste->getEffectLevel();
-		}
 		if ($conduitPower) {
 			$conduitPowerLevel = $conduitPower->getEffectLevel();
-			if ($hasteLevel < $conduitPowerLevel) {
+			if ($hasteLevel < $conduitPowerLevel)
 				$hasteLevel = $conduitPowerLevel;
-			}
 		}
-		if ($hasteLevel > 0) {
+		if ($hasteLevel > 0)
 			$speedBreaker = pow(1.200000047683716, (double) $hasteLevel) * $speedCalcul;
-		}
-		if (!$miningFatigue) {
-			return $speedBreaker;
-		}
-		return pow(0.699999988079071, $miningFatigue->getEffectLevel()) * $speedBreaker;
+		if ($miningFatigue)
+			$speedBreaker *= pow(0.699999988079071, $miningFatigue->getEffectLevel());
+		return $speedBreaker;
 	}
 
 	private static function getDestroyProgress(Player $player, Block $block) : float
 	{
 		$destroySpeed = $block->getBreakInfo()->getHardness();
 		$item = $player->getInventory()->getItemInHand();
-		if ($destroySpeed >= 0.0) {
-			if ($destroySpeed == 0.0) {
-				return 1.0;
-			}
+		if ($destroySpeed > 0.0) {
 			$tick = 1.0 / $destroySpeed;
-			if ($block->getBreakInfo()->isToolCompatible(VanillaItems::AIR())) {
+			if ($block->getBreakInfo()->isToolCompatible(VanillaItems::AIR()))
 				return (self::getDestroySpeed($player, $block, $item) * $tick) * 0.033333335;
-			}
-			if ($block->getBreakInfo()->isToolCompatible($item)) {
+			elseif ($block->getBreakInfo()->isToolCompatible($item))
 				return (self::getDestroySpeed($player, $block, $item) * $tick) * 0.033333335;
-			}
-			return (self::getDestroySpeed($player, $block, $item) * $tick) * 0.0099999998;
+			else
+				return ((self::getDestroySpeed($player, $block, $item) * $tick) * 0.0099999998);
 		}
-		return 0.0;
+		return 1.0;
 	}
 
 }

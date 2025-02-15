@@ -30,7 +30,6 @@ use function assert;
 
 class Flowable extends PMFlowable implements IBlockCustom
 {
-	private BlockBuilder $blockBuilder;
 	public function __construct(
 		BlockIdentifier $idInfo,
 		string          $name,
@@ -49,6 +48,6 @@ class Flowable extends PMFlowable implements IBlockCustom
 
 	public function getBlockBuilder() : BlockBuilder
 	{
-		return isset($this->blockBuilder) ? $this->blockBuilder : $this->blockBuilder = BlockBuilder::create()->setBlock($this);
+		return BlockBuilder::create()->setBlock($this);
 	}
 }

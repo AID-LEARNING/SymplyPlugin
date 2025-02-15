@@ -24,34 +24,26 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Utils;
 
 use pmmp\thread\ThreadSafeArray;
-use pocketmine\data\bedrock\block\upgrade\LegacyBlockIdToStringIdMap;
-use pocketmine\data\bedrock\item\upgrade\LegacyItemIdToStringIdMap;
 use pocketmine\network\mcpe\protocol\ItemComponentPacket;
 use pocketmine\network\mcpe\protocol\types\BlockPaletteEntry;
-use pocketmine\network\mcpe\protocol\types\CacheableNbt;
 use pocketmine\network\mcpe\protocol\types\ItemComponentPacketEntry;
 use pocketmine\network\mcpe\protocol\types\ItemTypeEntry;
 use pocketmine\utils\SingletonTrait;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BlockBuilder;
-use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockFactory;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Item;
 use function array_merge;
 use function array_values;
-use function hash;
-use function strcmp;
 use function usort;
 
-class SymplyCache
+final class SymplyCache
 {
 	use SingletonTrait;
 	public const BLOCK_ID_NEXT = 10000;
 	public const ITEM_ID_NEXT = 9950;
 	public static int $itemIdNext = self::ITEM_ID_NEXT;
+	public static int $blockIdNext = self::BLOCK_ID_NEXT;
 
 	/** @var array<string, ItemTypeEntry> */
 	private array $itemTypeEntries;
-
-	/** @var BlockBuilder[] */
-	private array $blockBuilders;
 
 	/** @var BlockPaletteEntry[] */
 	private array $blockPaletteEntries;
@@ -67,10 +59,11 @@ class SymplyCache
 	private ThreadSafeArray $transmitterItemVanilla;
 	public ItemComponentPacket $itemComponentPacket;
 
+	public bool	$blockNetworkIdsAreHashes = false;
+
 	public function __construct(private bool $asyncMode = false)
 	{
 		$this->itemTypeEntries = [];
-		$this->blockBuilders = [];
 		$this->blockPaletteEntries = [];
 		$this->itemsComponentPacketEntries = [];
 		if (!$this->asyncMode){
@@ -124,29 +117,6 @@ class SymplyCache
 	public function addBlockPaletteEntry(BlockPaletteEntry $blockPaletteEntry) : void
 	{
 		$this->blockPaletteEntries[] = $blockPaletteEntry;
-	}
-
-	public function addBlockBuilder(BlockBuilder $blockBuilder) : void
-	{
-		$this->blockBuilders[] = $blockBuilder;
-	}
-
-	public function initBlockBuilders() : void
-	{
-
-		usort($this->blockBuilders, static function(BlockBuilder $a, BlockBuilder $b) : int {
-			return strcmp(hash("fnv164", $a->getNamespaceId()), hash("fnv164", $b->getNamespaceId()));
-		});
-		foreach($this->blockBuilders as $i => $blockBuilder) {
-			$vanillaBlockId = self::BLOCK_ID_NEXT + $i;
-			$itemId = 255 - $vanillaBlockId;
-			$identifier = $blockBuilder->getNamespaceId();
-			SymplyBlockFactory::getInstance($this->asyncMode)->registerBlockItem(new ItemTypeEntry($identifier, $itemId, false));
-			LegacyItemIdToStringIdMap::getInstance()->add($identifier, $itemId);
-			LegacyBlockIdToStringIdMap::getInstance()->add($identifier, $vanillaBlockId);
-			if (!$this->asyncMode)
-				$this->addBlockPaletteEntry(new BlockPaletteEntry($identifier, new CacheableNbt($blockBuilder->toPacket($vanillaBlockId))));
-		}
 	}
 
 	public function addTransmitterBlockCustom(ThreadSafeArray $arrayClosure) : void
@@ -245,6 +215,16 @@ class SymplyCache
 			$this->itemComponentPacket = ItemComponentPacket::create($this->getItemsComponentPacketEntries());
 		}
 		return $this->itemComponentPacket;
+	}
+
+	public function isBlockNetworkIdsAreHashes() : bool
+	{
+		return $this->blockNetworkIdsAreHashes;
+	}
+
+	public function setBlockNetworkIdsAreHashes(bool $blockNetworkIdsAreHashes) : void
+	{
+		$this->blockNetworkIdsAreHashes = $blockNetworkIdsAreHashes;
 	}
 
 	/**

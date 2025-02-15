@@ -11,6 +11,7 @@ use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BlockPermutationBuilder;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\OnInteractComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub\MaterialSubComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Crops;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\PropertyName;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\RenderMethodEnum;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\TargetMaterialEnum;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Info\BlockCreativeInfo;
@@ -58,7 +59,7 @@ class EggPlantCrops extends Crops
 			->setCollisionBox(new Vector3(-8, 0, -8), new Vector3(16,16,16), false);
 		foreach ($ages as $age){
 			$builder->addPermutation(Permutations::create()
-				->setCondition("query.block_property('symply:crops') == $age")
+				->setCondition("query.block_state('" . PropertyName::CROPS->value."') == $age")
 				->setMaterialInstance(materials: [
 					new MaterialSubComponent(TargetMaterialEnum::ALL, $identifier . "_$age", RenderMethodEnum::ALPHA_TEST)
 				]));

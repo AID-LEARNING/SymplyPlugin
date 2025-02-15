@@ -25,18 +25,19 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Component;
 
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use pocketmine\nbt\tag\Tag;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\sub\AmmunitionSubComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 
-class ShooterComponent implements IComponent
+class ShooterComponent extends AbstractComponent
 {
 	/**
 	 * @param AmmunitionSubComponent[] $ammunitions
 	 */
 	public function __construct(
-		private array $ammunitions = [],
-		private readonly bool $chargeOnDraw = false,
+		private readonly array $ammunitions = [],
+		private readonly bool  $chargeOnDraw = false,
 		private readonly float $maxDrawDuration = 0.0,
 		private readonly bool  $scalePowerByDrawDuration = true
 	)
@@ -48,18 +49,17 @@ class ShooterComponent implements IComponent
 		return ComponentName::SHOOTER;
 	}
 
-	public function toNbt() : CompoundTag
+	protected function value() : Tag
 	{
 		$ammunitionListTag = new ListTag();
 		foreach ($this->ammunitions as $ammunition)
 		{
 			$ammunitionListTag->push($ammunition->toNbt());
 		}
-
-		return CompoundTag::create()->setTag($this->getName(), CompoundTag::create()
+		return CompoundTag::create()
 			->setTag("ammunition", $ammunitionListTag)
 			->setByte("charge_on_draw", $this->chargeOnDraw ? 1 : 0)
 			->setFloat("max_draw_duration", $this->maxDrawDuration)
-			->setByte("scale_power_by_draw_duration", $this->scalePowerByDrawDuration ? 1 : 0));
+			->setByte("scale_power_by_draw_duration", $this->scalePowerByDrawDuration ? 1 : 0);
 	}
 }

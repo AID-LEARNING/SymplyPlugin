@@ -24,12 +24,19 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items;
 
 use pocketmine\item\Axe as PMAxe;
+use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
 
 class Axe extends PMAxe implements ICustomItem
 {
 	use HackToolTrait;
 
-	public function getBlockToolHarvestLevel() : int
+    public function getCooldownTag(): ?string
+    {
+        $itemBuilder = SymplyItemFactory::getInstance()->getItemBuilder($this);
+        return $itemBuilder->getCooldownComponent()?->getCategory() ?? null;
+    }
+
+    public function getBlockToolHarvestLevel() : int
 	{
 		return $this->tierHack->getHarvestLevel();
 	}

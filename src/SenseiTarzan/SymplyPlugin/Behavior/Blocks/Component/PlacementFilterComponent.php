@@ -23,16 +23,18 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component;
 
+use BackedEnum;
 use pocketmine\block\Block;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
+use pocketmine\nbt\tag\Tag;
 use pocketmine\world\format\io\GlobalBlockStateHandlers;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 use function is_array;
 use function is_string;
 
-class PlacementFilterComponent implements IComponent
+class PlacementFilterComponent extends AbstractComponent
 {
 	public ListTag $filter;
 
@@ -75,13 +77,13 @@ class PlacementFilterComponent implements IComponent
 		return $this;
 	}
 
-	public function getName() : string
+	public function getName() : string|BackedEnum
 	{
 		return ComponentName::PLACEMENT_FILTER;
 	}
 
-	public function toNbt() : CompoundTag
+	protected function value() : Tag
 	{
-		return CompoundTag::create()->setTag($this->getName(), CompoundTag::create()->setTag("conditions", $this->filter));
+		return CompoundTag::create()->setTag("conditions", $this->filter);
 	}
 }

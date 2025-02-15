@@ -30,7 +30,6 @@ use function assert;
 
 class Transparent extends PMTransparent implements IBlockCustom
 {
-	private BlockBuilder $blockBuilder;
 
 	public function __construct(
 		BlockIdentifier $idInfo,
@@ -50,7 +49,7 @@ class Transparent extends PMTransparent implements IBlockCustom
 
 	public function getBlockBuilder() : BlockBuilder
 	{
-		return isset($this->blockBuilder) ? $this->blockBuilder : $this->blockBuilder = BlockBuilder::create()
+		return BlockBuilder::create()
 			->setBlock($this);
 	}
 }

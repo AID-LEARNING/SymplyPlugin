@@ -24,10 +24,11 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Component;
 
 use pocketmine\nbt\tag\CompoundTag;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use pocketmine\nbt\tag\Tag;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 
-class UseModifiersComponent implements IComponent
+class UseModifiersComponent extends AbstractComponent
 {
 
 	public function __construct(
@@ -42,14 +43,14 @@ class UseModifiersComponent implements IComponent
 		return ComponentName::USE_MODIFIERS;
 	}
 
-	public function toNbt() : CompoundTag
+	protected function value() : Tag
 	{
+
 		$nbt = CompoundTag::create()
 			->setFloat("use_duration", $this->useDuration);
 		if ($this->movementModifier !== null) {
 			$nbt->setFloat("movement_modifier", $this->movementModifier);
 		}
-		return CompoundTag::create()
-			->setTag($this->getName(), $nbt);
+		return  $nbt;
 	}
 }

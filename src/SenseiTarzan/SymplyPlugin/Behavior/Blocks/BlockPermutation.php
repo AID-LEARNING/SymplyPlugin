@@ -27,9 +27,8 @@ use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BlockPermutationBuilder;
 
 abstract class BlockPermutation extends Block implements IPermutationBlock
 {
-	private BlockPermutationBuilder $blockBuilder;
 	public function getBlockBuilder() : BlockPermutationBuilder{
-		return  isset($this->blockBuilder) ? $this->blockBuilder : $this->blockBuilder = BlockPermutationBuilder::create()
+		return  BlockPermutationBuilder::create()
 			->setBlock($this);
 	}
 }

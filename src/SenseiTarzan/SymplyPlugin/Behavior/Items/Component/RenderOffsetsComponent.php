@@ -24,12 +24,13 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Component;
 
 use pocketmine\nbt\tag\CompoundTag;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use pocketmine\nbt\tag\Tag;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\sub\RenderOffsetSubComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\RenderOffsetTypeEnum;
 
-class RenderOffsetsComponent implements IComponent
+class RenderOffsetsComponent extends AbstractComponent
 {
 
 	/**
@@ -46,10 +47,10 @@ class RenderOffsetsComponent implements IComponent
 
 	public function getName() : string
 	{
-		return ComponentName::PROJECTILE;
+		return ComponentName::RENDER_OFFSETS;
 	}
 
-	public function toNbt() : CompoundTag
+	protected function value() : Tag
 	{
 		$nbt = CompoundTag::create();
 
@@ -70,6 +71,6 @@ class RenderOffsetsComponent implements IComponent
 		if ($this->mode !== null){
 			$nbt->setString("value", $this->mode);
 		}
-		return CompoundTag::create()->setTag($this->getName(), $nbt);
+		return $nbt;
 	}
 }

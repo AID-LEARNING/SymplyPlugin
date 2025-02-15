@@ -24,8 +24,16 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items;
 
 use pocketmine\item\Hoe as PMHoe;
+use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
 
 class Hoe extends PMHoe implements ICustomItem
 {
 	use HackToolTrait;
+
+    public function getCooldownTag(): ?string
+    {
+        $itemBuilder = SymplyItemFactory::getInstance()->getItemBuilder($this);
+        return $itemBuilder->getCooldownComponent()?->getCategory() ?? null;
+    }
+
 }

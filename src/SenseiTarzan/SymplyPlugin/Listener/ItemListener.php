@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Listener;
 
 use pocketmine\entity\Attribute;
+use pocketmine\event\EventPriority;
 use pocketmine\event\player\PlayerItemConsumeEvent;
 use pocketmine\event\player\PlayerItemUseEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
@@ -39,10 +40,25 @@ use pocketmine\network\mcpe\protocol\types\inventory\UseItemTransactionData;
 use pocketmine\player\Player;
 use pocketmine\utils\AssumptionFailedError;
 use pocketmine\world\format\io\GlobalItemDataHandlers;
+use ReflectionException;
+use ReflectionMethod;
+use SenseiTarzan\ExtraEvent\Class\EventAttribute;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\ICustomItem;
+use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
 
 class ItemListener
 {
+	private ReflectionMethod $returnItemsFromAction;
+
+	public function __construct()
+	{
+		$this->returnItemsFromAction = new ReflectionMethod(Player::class, "returnItemsFromAction");
+	}
+
+	/**
+	 * @throws ReflectionException
+	 */
+	#[EventAttribute(EventPriority::LOWEST)]
 	public function onInventoryPacket(DataPacketReceiveEvent $event) : void
 	{
 		$origin = $event->getOrigin();
@@ -50,23 +66,19 @@ class ItemListener
 		if ($packet instanceof InventoryTransactionPacket) {
 			$data = $packet->trData;
 			if($data instanceof UseItemTransactionData && $data->getActionType() === UseItemTransactionData::ACTION_CLICK_AIR){
-
 				$event->cancel();
 				$this->handleUseItemTransaction($origin, $data);
 			}elseif ($data instanceof ReleaseItemTransactionData && $data->getActionType() == ReleaseItemTransactionData::ACTION_RELEASE)
 			{
 				$event->cancel();
-				$this->handleUseItemTransaction($origin, $data);
+				$this->releaseHeldItem($origin, $origin->getPlayer());
 			}
 		}
 	}
 
-	private function handleReleaseItemTransaction(NetworkSession $session, ReleaseItemTransactionData $data) : void{
-		$player = $session->getPlayer();
-		$player->selectHotbarSlot($data->getHotbarSlot());
-		$this->releaseHeldItem($session, $player);
-	}
-
+	/**
+	 * @throws ReflectionException
+	 */
 	public function handleUseItemTransaction(NetworkSession $session, UseItemTransactionData $data) : void
 	{
 		$player = $session->getPlayer();
@@ -83,6 +95,7 @@ class ItemListener
 	 * Activates the item in hand, for example throwing a projectile.
 	 *
 	 * @return bool if it did something
+	 * @throws ReflectionException
 	 */
 	public function useHeldItem(NetworkSession $session, Player $player) : bool
 	{
@@ -108,10 +121,7 @@ class ItemListener
 		}
 
 		$this->resetItemCooldown($session, $player, $item);
-
-		(function () use (&$oldItem, &$item, &$returnedItems) {
-			$this->returnItemsFromAction($oldItem, $item, $returnedItems);
-		})->call($player);
+		$this->returnItemsFromAction->invoke($player, $oldItem, $item, $returnedItems);
 
 		$player->setUsingItem($item instanceof Releasable && $item->canStartUsingItem($player));
 
@@ -122,6 +132,7 @@ class ItemListener
 	 * Consumes the currently-held item.
 	 *
 	 * @return bool if the consumption succeeded.
+	 * @throws ReflectionException
 	 */
 	public function consumeHeldItem(NetworkSession $session, Player $player) : bool
 	{
@@ -143,10 +154,7 @@ class ItemListener
 			$this->resetItemCooldown($session, $player, $slot);
 
 			$slot->pop();
-			(function () use (&$oldItem, &$slot) {
-				$this->returnItemsFromAction($oldItem, $slot, [$slot->getResidue()]);
-			})->call($player);
-
+			$this->returnItemsFromAction->invoke($player, $oldItem, $slot, [$slot->getResidue()]);
 			return true;
 		}
 
@@ -172,12 +180,9 @@ class ItemListener
 			$result = $item->onReleaseUsing($player, $returnedItems);
 			if ($result === ItemUseResult::SUCCESS) {
 				$this->resetItemCooldown($session, $player, $item);
-				(function () use (&$oldItem, &$item, &$returnedItems) {
-					$this->returnItemsFromAction($oldItem, $item, $returnedItems);
-				})->call($player);
+				$this->returnItemsFromAction->invoke($player, $oldItem, $item, $returnedItems);
 				return true;
 			}
-
 			return false;
 		} finally {
 			$player->setUsingItem(false);
@@ -193,7 +198,8 @@ class ItemListener
 		if ($ticks > 0) {
 			$player->resetItemCooldown($item, $ticks);
 			if ($item instanceof ICustomItem) {
-				$category = $item->getItemBuilder()->getCooldownComponent()?->getCategory() ?? $item->getIdentifier()->getNamespaceId();
+				$itemBuilder = SymplyItemFactory::getInstance()->getItemBuilder($item);
+				$category = $itemBuilder->getCooldownComponent()?->getCategory() ?? $item->getIdentifier()->getNamespaceId();
 			} else {
 				$category = GlobalItemDataHandlers::getSerializer()->serializeType($item)->getName();
 			}

@@ -23,25 +23,27 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component;
 
-use pocketmine\nbt\tag\CompoundTag;
+use BackedEnum;
+use pocketmine\nbt\tag\ByteTag;
+use pocketmine\nbt\tag\Tag;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 
-class BreathabilityComponent implements IComponent
+class BreathabilityComponent extends AbstractComponent
 {
 	public function __construct(
-		private bool $value
+		private readonly bool $value
 	)
 	{
 	}
 
-	public function getName() : string
+	public function getName() : string|BackedEnum
 	{
 		return ComponentName::BREATHABILITY;
 	}
 
-	public function toNbt() : CompoundTag
+	protected function value() : Tag
 	{
-		return CompoundTag::create()->setByte($this->getName(), $this->value ? 1 : 0);
+		return new ByteTag($this->value ? 1 : 0);
 	}
 }

@@ -30,6 +30,7 @@ use pocketmine\scheduler\ClosureTask;
 use pocketmine\Server;
 use SenseiTarzan\ExtraEvent\Component\EventLoader;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockFactory;
+use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockPalette;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
 use SenseiTarzan\SymplyPlugin\Listener\BehaviorListener;
 use SenseiTarzan\SymplyPlugin\Listener\ClientBreakListener;
@@ -38,7 +39,9 @@ use SenseiTarzan\SymplyPlugin\Manager\SymplyCraftManager;
 use SenseiTarzan\SymplyPlugin\Task\AsyncOverwriteTask;
 use SenseiTarzan\SymplyPlugin\Task\AsyncRegisterBehaviorsTask;
 use SenseiTarzan\SymplyPlugin\Task\AsyncRegisterVanillaTask;
+use SenseiTarzan\SymplyPlugin\Task\AsyncSortBlockStateTask;
 use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
+use function boolval;
 
 class Main extends PluginBase
 {
@@ -49,19 +52,16 @@ class Main extends PluginBase
 	public function onLoad() : void
 	{
 		self::$instance = $this;
+		$this->saveDefaultConfig();
+		SymplyCache::getInstance()->setBlockNetworkIdsAreHashes(boolval($this->getConfig()->get("blockNetworkIdsAreHashes")));
 		$this->symplyCraftManager = new SymplyCraftManager($this);
 	}
 
 	protected function onEnable() : void
 	{
-		$server = Server::getInstance();
-		$server->getAsyncPool()->addWorkerStartHook(static function(int $worker) use($server) : void{
-			$server->getAsyncPool()->submitTaskToWorker(new AsyncRegisterVanillaTask(), $worker);
-			$server->getAsyncPool()->submitTaskToWorker(new AsyncRegisterBehaviorsTask(), $worker);
-			$server->getAsyncPool()->submitTaskToWorker(new AsyncOverwriteTask(), $worker);
-		});
 		$this->getScheduler()->scheduleDelayedTask(new ClosureTask(static function () {
-			SymplyCache::getInstance()->initBlockBuilders();
+			SymplyBlockFactory::getInstance()->initBlockBuilders();
+			SymplyBlockPalette::getInstance()->sort(SymplyCache::getInstance()->isBlockNetworkIdsAreHashes());
 			foreach (SymplyBlockFactory::getInstance()->getCustomAll() as $block){
 				if(!CreativeInventory::getInstance()->contains($block->asItem()))
 					CreativeInventory::getInstance()->add($block->asItem());
@@ -78,11 +78,26 @@ class Main extends PluginBase
 				if(!CreativeInventory::getInstance()->contains($item))
 					CreativeInventory::getInstance()->add($item);
 			}
+            $server = Server::getInstance();
+            $asyncPool = $server->getAsyncPool();
+            $asyncPool->addWorkerStartHook(static function(int $worker) use($asyncPool) : void{
+                $asyncPool->submitTaskToWorker(new AsyncRegisterVanillaTask(), $worker);
+                $asyncPool->submitTaskToWorker(new AsyncRegisterBehaviorsTask(), $worker);
+                $asyncPool->submitTaskToWorker(new AsyncOverwriteTask(), $worker);
+                $asyncPool->submitTaskToWorker(new AsyncSortBlockStateTask(), $worker);
+            });
+			$worldManager = $server->getWorldManager();
+			$defaultWorld = $worldManager->getDefaultWorld()->getFolderName();
+			foreach ($worldManager->getWorlds() as $world){
+				$worldManager->unloadWorld($world, true);
+				$worldManager->loadWorld($world->getFolderName());
+			}
+			$worldManager->setDefaultWorld($worldManager->getWorldByName($defaultWorld));
 			Main::getInstance()->getSymplyCraftManager()->onLoad();
 		}),0);
 		EventLoader::loadEventWithClass($this, new BehaviorListener(false));
 		EventLoader::loadEventWithClass($this, new ClientBreakListener());
-		EventLoader::loadEventWithClass($this, ItemListener::class);
+		//EventLoader::loadEventWithClass($this, new ItemListener());
 	}
 
 	public static function getInstance() : Main
@@ -100,8 +115,7 @@ class Main extends PluginBase
 	 */
 	protected function onDisable() : void
 	{
-		if ($this->getServer()->isRunning()){
+		if ($this->getServer()->isRunning())
 			throw new Exception("you dont can disable this plugin because your break intergrity of SymplyPlugin");
-		}
 	}
 }

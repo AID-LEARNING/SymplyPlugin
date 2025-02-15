@@ -24,10 +24,11 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Component;
 
 use pocketmine\nbt\tag\CompoundTag;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use pocketmine\nbt\tag\Tag;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 
-class ThrowableComponent implements IComponent
+class ThrowableComponent extends AbstractComponent
 {
 	public function __construct(
 		private readonly bool  $doSwingAnimation = true,
@@ -45,13 +46,13 @@ class ThrowableComponent implements IComponent
 		return ComponentName::THROWABLE;
 	}
 
-	public function toNbt() : CompoundTag
+	protected function value() : Tag
 	{
-		return CompoundTag::create()->setTag($this->getName(), CompoundTag::create()->setByte("do_swing_animation", $this->doSwingAnimation ? 1 : 0)
-				->setFloat("launch_power_scale", $this->launchPowerScale)
-				->setFloat("max_draw_duration", $this->maxDrawDuration)
-				->setFloat("max_launch_power", $this->maxLaunchPower)
-				->setFloat("min_draw_duration", $this->minDrawDuration)
-				->setByte("scale_power_by_draw_duration", $this->scalePowerByDrawDuration ? 1 : 0));
+		return CompoundTag::create()->setByte("do_swing_animation", $this->doSwingAnimation ? 1 : 0)
+			->setFloat("launch_power_scale", $this->launchPowerScale)
+			->setFloat("max_draw_duration", $this->maxDrawDuration)
+			->setFloat("max_launch_power", $this->maxLaunchPower)
+			->setFloat("min_draw_duration", $this->minDrawDuration)
+			->setByte("scale_power_by_draw_duration", $this->scalePowerByDrawDuration ? 1 : 0);
 	}
 }

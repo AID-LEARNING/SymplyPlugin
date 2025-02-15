@@ -23,22 +23,24 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component;
 
+use BackedEnum;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\StringTag;
+use pocketmine\nbt\tag\Tag;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 use function array_map;
 use function array_merge;
 use function is_array;
 
-class CraftingTableComponent implements IComponent
+class CraftingTableComponent extends AbstractComponent
 {
 
 	public function __construct(
-		private array $craftingTags,
-		private int $gridSize,
-		private string $tableName
+		private array        $craftingTags,
+		private readonly int $gridSize,
+		private readonly string $tableName
 	)
 	{
 	}
@@ -57,16 +59,16 @@ class CraftingTableComponent implements IComponent
 		return $this;
 	}
 
-	public function getName() : string
+	public function getName() : string|BackedEnum
 	{
 		return ComponentName::CRAFTING_TABLE;
 	}
 
-	public function toNbt() : CompoundTag
+	protected function value() : Tag
 	{
-		return CompoundTag::create()->setTag($this->getName(), CompoundTag::create()
+		return CompoundTag::create()
 			->setTag("crafting_tags", new ListTag(array_map(fn(string $tag) => new StringTag($tag), $this->craftingTags)))
-		->setInt("grid_size", $this->gridSize)
-		->setString("table_name", $this->tableName));
+			->setInt("grid_size", $this->gridSize)
+			->setString("table_name", $this->tableName);
 	}
 }

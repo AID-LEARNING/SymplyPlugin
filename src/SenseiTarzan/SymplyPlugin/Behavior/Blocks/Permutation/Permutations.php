@@ -23,30 +23,19 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Permutation;
 
-use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\CollisionBoxComponent;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\GeometryComponent;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\MaterialInstancesComponent;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\OnInteractComponent;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\SelectionBoxComponent;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub\HitBoxSubComponent;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\TransformationComponent;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\UnitCubeComponent;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\IBuilderComponent;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BasicBlockBuilder;
 
-final class Permutations implements IBuilderComponent
+final class Permutations extends BasicBlockBuilder
 {
 	private string $condition;
 
-	private array $components = [];
 	public function __construct() {
 	}
 
 	public static function create() : Permutations
 	{
-		return (new Permutations())->setUnitCube();
+		return (new Permutations());
 	}
 
 	public function getCondition() : string
@@ -58,55 +47,6 @@ final class Permutations implements IBuilderComponent
 	{
 		$this->condition = $condition;
 		return $this;
-	}
-
-	/**
-	 * @return IComponent[]
-	 */
-	public function getComponents() : array
-	{
-		return $this->components;
-	}
-
-	public function addComponent(IComponent $component) : Permutations
-	{
-		if ($component instanceof GeometryComponent && $component->getIdentifier() !== "minecraft:geometry.full_block" && isset($this->components['minecraft:unit_cube'])){
-			unset($this->components['minecraft:unit_cube']);
-		}
-		$this->components[$component->getName()] = $component;
-		return $this;
-	}
-
-	public function setGeometry(string $identifier, ?string $culling = null, ?array $boneVisibilities = null) : static
-	{
-		return $this->addComponent(new GeometryComponent($identifier, $culling, $boneVisibilities));
-	}
-
-	public function setUnitCube() : static{
-		return $this->addComponent(new UnitCubeComponent());
-	}
-
-	public function setMaterialInstance(array $mappings = [], array $materials = []) : static{
-		return $this->addComponent(new MaterialInstancesComponent($mappings, $materials));
-	}
-
-	public function setTransformationComponent(?Vector3 $rotation = null, ?Vector3 $scale = null, ?Vector3 $translation = null) : static{
-		return $this->addComponent(new TransformationComponent($rotation ?? Vector3::zero(), $scale ?? Vector3::zero(), $translation ?? Vector3::zero()));
-	}
-
-	public function setCollisionBox(Vector3 $origin, Vector3 $size, bool $enable = true) : static
-	{
-		return $this->addComponent(new CollisionBoxComponent(new HitBoxSubComponent($enable, $origin, $size)));
-	}
-
-	public function setSelectionBox(Vector3 $origin, Vector3 $size, bool $enable = true) : static
-	{
-		return $this->addComponent(new SelectionBoxComponent(new HitBoxSubComponent($enable, $origin, $size)));
-	}
-
-	public function setOnInteract(?string $triggerType = null) : static
-	{
-		return $this->addComponent(new OnInteractComponent($triggerType));
 	}
 
 	/**

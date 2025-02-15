@@ -30,6 +30,7 @@ use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\GroupCreativeEnum;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Builder\ItemBuilder;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\AnimationEnum;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Info\ItemCreativeInfo;
+use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
 use function assert;
 
 abstract class Food extends PMFood implements ICustomItem
@@ -39,7 +40,13 @@ abstract class Food extends PMFood implements ICustomItem
 		parent::__construct($identifier, $name, $enchantmentTags);
 	}
 
-	public function getIdentifier() : ItemIdentifier
+    public function getCooldownTag(): ?string
+    {
+        $itemBuilder = SymplyItemFactory::getInstance()->getItemBuilder($this);
+        return $itemBuilder->getCooldownComponent()?->getCategory() ?? null;
+    }
+
+    public function getIdentifier() : ItemIdentifier
 	{
 		$identifier = (new \ReflectionProperty(PMItem::class, "identifier"))->getValue($this);
 		assert($identifier instanceof ItemIdentifier);

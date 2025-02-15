@@ -24,10 +24,11 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Component;
 
 use pocketmine\nbt\tag\CompoundTag;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
+use pocketmine\nbt\tag\Tag;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 
-class CooldownComponent implements IComponent
+class CooldownComponent extends AbstractComponent
 {
 	public function __construct(private readonly string $category, private readonly float $duration) {
 	}
@@ -47,10 +48,10 @@ class CooldownComponent implements IComponent
 		return $this->duration;
 	}
 
-	public function toNbt() : CompoundTag
+	protected function value() : Tag
 	{
-		return CompoundTag::create()->setTag($this->getName(), CompoundTag::create()
+		return CompoundTag::create()
 			->setString("category", $this->getCategory())
-			->setFloat("duration", $this->getDuration()));
+			->setFloat("duration", $this->getDuration());
 	}
 }
