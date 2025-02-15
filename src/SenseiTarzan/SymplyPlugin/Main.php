@@ -59,17 +59,17 @@ class Main extends PluginBase
 
 	protected function onEnable() : void
 	{
+        SymplyBlockFactory::getInstance()->initBlockBuilders();
+        SymplyBlockPalette::getInstance()->sort(SymplyCache::getInstance()->isBlockNetworkIdsAreHashes());
+        foreach (SymplyBlockFactory::getInstance()->getCustomAll() as $block){
+            if(!CreativeInventory::getInstance()->contains($block->asItem()))
+                CreativeInventory::getInstance()->add($block->asItem());
+        }
+        foreach (SymplyBlockFactory::getInstance()->getVanillaAll() as $block){
+            if(!CreativeInventory::getInstance()->contains($block->asItem()))
+                CreativeInventory::getInstance()->add($block->asItem());
+        }
 		$this->getScheduler()->scheduleDelayedTask(new ClosureTask(static function () {
-			SymplyBlockFactory::getInstance()->initBlockBuilders();
-			SymplyBlockPalette::getInstance()->sort(SymplyCache::getInstance()->isBlockNetworkIdsAreHashes());
-			foreach (SymplyBlockFactory::getInstance()->getCustomAll() as $block){
-				if(!CreativeInventory::getInstance()->contains($block->asItem()))
-					CreativeInventory::getInstance()->add($block->asItem());
-			}
-			foreach (SymplyBlockFactory::getInstance()->getVanillaAll() as $block){
-				if(!CreativeInventory::getInstance()->contains($block->asItem()))
-					CreativeInventory::getInstance()->add($block->asItem());
-			}
 			foreach (SymplyItemFactory::getInstance()->getCustomAll() as $item){
 				if(!CreativeInventory::getInstance()->contains($item))
 					CreativeInventory::getInstance()->add($item);
@@ -80,16 +80,7 @@ class Main extends PluginBase
 			}
             $server = Server::getInstance();
             $asyncPool = $server->getAsyncPool();
-            $workersPorperties = new \ReflectionProperty($asyncPool, 'workers');
-            $workers = $workersPorperties->getValue($asyncPool);
-            for ($workerId = 0; $workerId < $asyncPool->getSize(); ++$workerId) {
-                if (isset($workers[$workerId])) {
-                    $asyncPool->submitTaskToWorker(new AsyncRegisterVanillaTask(), $workerId);
-                    $asyncPool->submitTaskToWorker(new AsyncRegisterBehaviorsTask(), $workerId);
-                    $asyncPool->submitTaskToWorker(new AsyncOverwriteTask(), $workerId);
-                    $asyncPool->submitTaskToWorker(new AsyncSortBlockStateTask(), $workerId);
-                }
-            }
+
             $asyncPool->addWorkerStartHook(static function(int $workerId) use($asyncPool) : void{
                 $asyncPool->submitTaskToWorker(new AsyncRegisterVanillaTask(), $workerId);
                 $asyncPool->submitTaskToWorker(new AsyncRegisterBehaviorsTask(), $workerId);
