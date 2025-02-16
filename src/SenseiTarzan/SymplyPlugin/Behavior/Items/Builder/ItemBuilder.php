@@ -102,7 +102,9 @@ final class ItemBuilder
 
 	public function setItem(PMItem&ICustomItem $itemCustom) : self{
 		$this->item = $itemCustom;
-		return $this;
+		return $this
+            ->setDefaultName()
+            ->setFrameCountProperty(1);
 	}
 	/**
 	 * Permet de mettre dans dans l'inventaire creative

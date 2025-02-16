@@ -56,16 +56,12 @@ readonly class BehaviorListener
 				$packet->levelSettings->experiments = new Experiments([
 					"data_driven_items" => true
 				], true);
-				$packet->itemTable = SymplyCache::getInstance()->sortItemTypeEntries($packet->itemTable);
 				$packet->blockPalette = array_merge($packet->blockPalette, SymplyCache::getInstance()->getBlockPaletteEntries());
 			} elseif ($packet instanceof ResourcePackStackPacket) {
 				$packet->experiments = new Experiments([
 					"data_driven_items" => true
 				], true);
-			} elseif ($packet instanceof BiomeDefinitionListPacket) {
-				foreach ($targets as $target)
-					$target->sendDataPacket(SymplyCache::getInstance()->getItemsComponentPacket());
-			}elseif ($packet instanceof  CraftingDataPacket){
+			} elseif ($packet instanceof  CraftingDataPacket){
 				$packets[$index] = SymplyDataCraftingDataCache::getInstance()->getCache(Main::getInstance()->getSymplyCraftManager());
 			}
 		}

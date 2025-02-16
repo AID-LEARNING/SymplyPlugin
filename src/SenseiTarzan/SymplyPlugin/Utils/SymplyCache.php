@@ -26,6 +26,7 @@ namespace SenseiTarzan\SymplyPlugin\Utils;
 use pmmp\thread\ThreadSafeArray;
 use pocketmine\network\mcpe\protocol\ItemComponentPacket;
 use pocketmine\network\mcpe\protocol\types\BlockPaletteEntry;
+use pocketmine\network\mcpe\protocol\types\CacheableNbt;
 use pocketmine\network\mcpe\protocol\types\ItemComponentPacketEntry;
 use pocketmine\network\mcpe\protocol\types\ItemTypeEntry;
 use pocketmine\utils\SingletonTrait;
@@ -42,9 +43,6 @@ final class SymplyCache
 	public static int $itemIdNext = self::ITEM_ID_NEXT;
 	public static int $blockIdNext = self::BLOCK_ID_NEXT;
 
-	/** @var array<string, ItemTypeEntry> */
-	private array $itemTypeEntries;
-
 	/** @var BlockPaletteEntry[] */
 	private array $blockPaletteEntries;
 
@@ -57,13 +55,11 @@ final class SymplyCache
 	private ThreadSafeArray $transmitterItemOverwrite;
 	private ThreadSafeArray $transmitterBlockVanilla;
 	private ThreadSafeArray $transmitterItemVanilla;
-	public ItemComponentPacket $itemComponentPacket;
 
 	public bool	$blockNetworkIdsAreHashes = false;
 
 	public function __construct(private bool $asyncMode = false)
 	{
-		$this->itemTypeEntries = [];
 		$this->blockPaletteEntries = [];
 		$this->itemsComponentPacketEntries = [];
 		if (!$this->asyncMode){
@@ -85,28 +81,6 @@ final class SymplyCache
 			self::$instance = self::make($asyncMode);
 		}
 		return self::$instance;
-	}
-
-	public function setItemTypeEntries(array $itemTypeEntries) : void
-	{
-		$this->itemTypeEntries = $itemTypeEntries;
-	}
-
-	public function addItemTypeEntry(ItemTypeEntry $itemTypeEntry) : void
-	{
-		$this->itemTypeEntries[] = $itemTypeEntry;
-	}
-
-	public function sortItemTypeEntries(array $itemTypeEntries) : array
-	{
-		$data = array_merge($this->itemTypeEntries, $itemTypeEntries);
-		usort($data, static fn(ItemTypeEntry $a, ItemTypeEntry $b) => $a->getNumericId() > $b->getNumericId() ? 1 : -1);
-		return array_values($data);
-	}
-
-	public function getItemTypeEntries() : array
-	{
-		return $this->itemTypeEntries;
 	}
 
 	public function setBlockPaletteEntries(array $blockPaletteEntries) : void
@@ -195,26 +169,6 @@ final class SymplyCache
 	public function getTransmitterItemVanilla() : ThreadSafeArray
 	{
 		return $this->transmitterItemVanilla;
-	}
-
-	public function addItemsComponentPacketEntry(ItemComponentPacketEntry $entry) : void
-	{
-		$this->itemsComponentPacketEntries[] = $entry;
-	}
-
-	/**
-	 * @return array|ItemComponentPacketEntry[]
-	 */
-	public function getItemsComponentPacketEntries() : array
-	{
-		return $this->itemsComponentPacketEntries;
-	}
-
-	public function getItemsComponentPacket() : ItemComponentPacket{
-		if(!isset($this->itemComponentPacket)){
-			$this->itemComponentPacket = ItemComponentPacket::create($this->getItemsComponentPacketEntries());
-		}
-		return $this->itemComponentPacket;
 	}
 
 	public function isBlockNetworkIdsAreHashes() : bool

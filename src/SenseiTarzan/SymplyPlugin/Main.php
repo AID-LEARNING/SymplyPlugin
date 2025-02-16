@@ -80,7 +80,6 @@ class Main extends PluginBase
 			}
             $server = Server::getInstance();
             $asyncPool = $server->getAsyncPool();
-
             $asyncPool->addWorkerStartHook(static function(int $workerId) use($asyncPool) : void{
                 $asyncPool->submitTaskToWorker(new AsyncRegisterVanillaTask(), $workerId);
                 $asyncPool->submitTaskToWorker(new AsyncRegisterBehaviorsTask(), $workerId);

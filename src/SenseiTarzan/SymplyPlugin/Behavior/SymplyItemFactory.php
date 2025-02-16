@@ -85,7 +85,7 @@ final class SymplyItemFactory
 		}
 		$itemId = SymplyCache::$itemIdNext++;
 		$this->custom[$identifier] = $itemCustom;
-		$this->registerCustomItemMapping(new ItemTypeEntry($identifier, $itemId , true));
+		$this->registerCustomItemMapping(new ItemTypeEntry($identifier, $itemId , true, 1, new CacheableNbt($itemCustom->getItemBuilder()->toPacket($itemId))));
 		GlobalItemDataHandlers::getDeserializer()->map($identifier, $deserializer ??= static fn() => clone $itemCustom);
 		GlobalItemDataHandlers::getSerializer()->map($itemCustom, $serializer ??= static fn() => new SavedItemData($identifier));
 		StringToItemParser::getInstance()->register($identifier, static fn() => clone $itemCustom);
@@ -94,7 +94,6 @@ final class SymplyItemFactory
 		$itemBuilder = $itemCustom->getItemBuilder();
 		$this->addItemBuilder($itemCustom, $itemBuilder);
 		if (!$this->asyncMode) {
-			SymplyCache::getInstance()->addItemsComponentPacketEntry(new ItemComponentPacketEntry($identifier, new CacheableNbt($itemCustom->getItemBuilder()->toPacket($itemId))));
 			SymplyCache::getInstance()->addTransmitterItemCustom(ThreadSafeArray::fromArray([$itemClosure, $serializer, $deserializer, serialize($argv)]));
 		}
 	}
@@ -103,9 +102,6 @@ final class SymplyItemFactory
 	 * Registers a custom item ID to the required mappings in the global ItemTypeDictionary instance.
 	 */
 	public function registerCustomItemMapping(ItemTypeEntry $itemTypeEntry) : void {
-		if (!$this->asyncMode){
-			SymplyCache::getInstance()->addItemTypeEntry($itemTypeEntry);
-		}
 		$dictionary = TypeConverter::getInstance()->getItemTypeDictionary();
 		$reflection = new ReflectionClass($dictionary);
 
@@ -118,6 +114,10 @@ final class SymplyItemFactory
 		/** @var int[] $value */
 		$value = $stringToInt->getValue($dictionary);
 		$stringToInt->setValue($dictionary, $value + [$itemTypeEntry->getStringId() => $itemTypeEntry->getNumericId()]);
+        if (!$this->asyncMode){
+            $itemTypesProperty = $reflection->getProperty('itemTypes');
+            $itemTypesProperty->setValue($dictionary, array_merge($itemTypesProperty->getValue($dictionary), [$itemTypeEntry]));
+        }
 	}
 
 	/**

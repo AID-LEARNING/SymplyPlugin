@@ -36,6 +36,7 @@ use pocketmine\data\bedrock\item\BlockItemIdMap;
 use pocketmine\data\bedrock\item\upgrade\LegacyItemIdToStringIdMap;
 use pocketmine\inventory\CreativeInventory;
 use pocketmine\item\StringToItemParser;
+use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\mcpe\protocol\types\BlockPaletteEntry;
 use pocketmine\network\mcpe\protocol\types\CacheableNbt;
 use pocketmine\network\mcpe\protocol\types\ItemTypeEntry;
@@ -72,7 +73,11 @@ final class SymplyBlockFactory
 	/** @var array<string, BlockBuilder> */
 	private array $blockToBlockBuilder = [];
 
-	public function __construct(private readonly bool $asyncMode = false){}
+    private static CacheableNbt $emptyNBT;
+
+	public function __construct(private readonly bool $asyncMode = false){
+        self::$emptyNBT = new CacheableNbt(new CompoundTag());
+    }
 	/**
 	 * @param Closure(): (Block&IBlockCustom) $blockClosure
 	 */
@@ -248,7 +253,7 @@ final class SymplyBlockFactory
 			$vanillaBlockId = SymplyCache::$blockIdNext++;
 			$itemId = 255 - $vanillaBlockId;
 			$identifier = $blockBuilder->getNamespaceId();
-			SymplyBlockFactory::getInstance($this->asyncMode)->registerBlockItem(new ItemTypeEntry($identifier, $itemId, false));
+			SymplyBlockFactory::getInstance($this->asyncMode)->registerBlockItem(new ItemTypeEntry($identifier, $itemId, false, 2, self::$emptyNBT));
 			LegacyItemIdToStringIdMap::getInstance()->add($identifier, $itemId);
 			LegacyBlockIdToStringIdMap::getInstance()->add($identifier, $vanillaBlockId);
 			if (!$this->asyncMode)
