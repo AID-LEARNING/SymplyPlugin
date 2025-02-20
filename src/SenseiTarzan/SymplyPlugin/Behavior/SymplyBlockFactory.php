@@ -260,6 +260,7 @@ final class SymplyBlockFactory
 				SymplyCache::getInstance()->addBlockPaletteEntry(new BlockPaletteEntry($identifier, new CacheableNbt($blockBuilder->toPacket($vanillaBlockId))));
 		}
 	}
+
 	/**
 	 * @return (Block&IBlockCustom)[]
 	 */

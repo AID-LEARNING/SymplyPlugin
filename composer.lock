@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "229280b4a014b57f653ca239acc923f3",
+    "content-hash": "76380eda3252ed19296569d99d2e6f16",
     "packages": [],
     "packages-dev": [
         {
@@ -526,16 +526,16 @@
         },
         {
             "name": "friendsofphp/php-cs-fixer",
-            "version": "v3.68.3",
+            "version": "v3.68.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer.git",
-                "reference": "85fd31cced824749a732e697acdd1a3d657312f0"
+                "reference": "7bedb718b633355272428c60736dc97fb96daf27"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/85fd31cced824749a732e697acdd1a3d657312f0",
-                "reference": "85fd31cced824749a732e697acdd1a3d657312f0",
+                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/7bedb718b633355272428c60736dc97fb96daf27",
+                "reference": "7bedb718b633355272428c60736dc97fb96daf27",
                 "shasum": ""
             },
             "require": {
@@ -617,7 +617,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/issues",
-                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.68.3"
+                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.68.5"
             },
             "funding": [
                 {
@@ -625,7 +625,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-01-27T16:37:32+00:00"
+            "time": "2025-01-30T17:00:50+00:00"
         },
         {
             "name": "netresearch/jsonmapper",
@@ -973,16 +973,16 @@
         },
         {
             "name": "pocketmine/locale-data",
-            "version": "2.22.1",
+            "version": "2.22.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pmmp/Language.git",
-                "reference": "fa4e377c437391cfcfdedd08eea3a848eabd1b49"
+                "reference": "9033695e71dcacd7665e957c29fd2f29ba42fb67"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pmmp/Language/zipball/fa4e377c437391cfcfdedd08eea3a848eabd1b49",
-                "reference": "fa4e377c437391cfcfdedd08eea3a848eabd1b49",
+                "url": "https://api.github.com/repos/pmmp/Language/zipball/9033695e71dcacd7665e957c29fd2f29ba42fb67",
+                "reference": "9033695e71dcacd7665e957c29fd2f29ba42fb67",
                 "shasum": ""
             },
             "type": "library",
@@ -990,9 +990,9 @@
             "description": "Language resources used by PocketMine-MP",
             "support": {
                 "issues": "https://github.com/pmmp/Language/issues",
-                "source": "https://github.com/pmmp/Language/tree/2.22.1"
+                "source": "https://github.com/pmmp/Language/tree/2.22.2"
             },
-            "time": "2024-12-06T14:44:17+00:00"
+            "time": "2025-02-11T16:17:35+00:00"
         },
         {
             "name": "pocketmine/log",

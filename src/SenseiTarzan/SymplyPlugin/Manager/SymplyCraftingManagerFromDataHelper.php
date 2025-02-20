@@ -36,8 +36,10 @@ use pocketmine\data\bedrock\item\SavedItemStackData;
 use pocketmine\data\SavedDataLoadingException;
 use pocketmine\errorhandler\ErrorToExceptionHandler;
 use pocketmine\item\Item;
+use pocketmine\item\StringToItemParser;
 use pocketmine\nbt\LittleEndianNbtSerializer;
 use pocketmine\utils\Filesystem;
+use pocketmine\world\format\io\GlobalBlockStateHandlers;
 use pocketmine\world\format\io\GlobalItemDataHandlers;
 use SenseiTarzan\Path\PathScanner;
 use SenseiTarzan\SymplyPlugin\Models\ItemModel;
@@ -115,8 +117,9 @@ class SymplyCraftingManagerFromDataHelper
 			if($meta !== 0){
 				throw new SavedDataLoadingException("Meta should not be specified for blockitems");
 			}
+            $item = StringToItemParser::getInstance()->parse($name);
 			$blockStatesTag = $blockStatesRaw === null ?
-				[] :
+                ($item ? GlobalBlockStateHandlers::getSerializer()->serializeBlock($item->getBlock())->getStates() : []) :
 				(new LittleEndianNbtSerializer())
 					->read(ErrorToExceptionHandler::trapAndRemoveFalse(fn() => base64_decode($blockStatesRaw, true)))
 					->mustGetCompoundTag()
