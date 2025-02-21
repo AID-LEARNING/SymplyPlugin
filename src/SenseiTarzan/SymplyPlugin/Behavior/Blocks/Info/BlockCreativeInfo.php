@@ -23,6 +23,10 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Info;
 
+use BackedEnum;
+use pocketmine\inventory\CreativeCategory;
+use pocketmine\inventory\CreativeGroup;
+use pocketmine\item\Item;
 use pocketmine\nbt\tag\CompoundTag;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\CategoryCreativeEnum;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\GroupCreativeEnum;
@@ -30,7 +34,11 @@ use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\GroupCreativeEnum;
 class BlockCreativeInfo
 {
 
-	public function __construct(private readonly CategoryCreativeEnum $category, private readonly GroupCreativeEnum $group)
+	public function __construct(
+        private readonly CategoryCreativeEnum $category,
+        private readonly GroupCreativeEnum|BackedEnum|string $group,
+        private readonly ?Item  $item = null
+    )
 	{
 	}
 
@@ -39,15 +47,22 @@ class BlockCreativeInfo
 		return $this->category;
 	}
 
-	public function getGroup() : GroupCreativeEnum
+	public function getGroup() : GroupCreativeEnum|BackedEnum|string
 	{
 		return $this->group;
 	}
 
+    public function getIternalGroup(): ?CreativeGroup
+    {
+        $group = $this->getGroup();
+        return $this->item ? new CreativeGroup(is_string($group) ? $group : $group->value, $this->item): null;
+    }
+
 	public function toNbt() : CompoundTag
 	{
-		return CompoundTag::create()->setTag("menu_category", CompoundTag::create()
+        $group = $this->getGroup();
+		return CompoundTag::create()
 			->setString("category", $this->getCategory()->value ?? "")
-			->setString("group", $this->getGroup()->value ?? ""));
+			->setString("group", (is_string($group) ? $group : $group->value));
 	}
 }

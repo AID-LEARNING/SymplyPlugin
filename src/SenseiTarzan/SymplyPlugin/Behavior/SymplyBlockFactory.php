@@ -92,8 +92,9 @@ final class SymplyBlockFactory
 		$blockBuilder = $blockCustom->getBlockBuilder();
 		$this->custom[$identifier] = $blockCustom;
 		RuntimeBlockStateRegistry::getInstance()->register($blockCustom);
-		if (!$this->asyncMode)
-			SymplyCache::getInstance()->addTransmitterBlockCustom(ThreadSafeArray::fromArray([$blockClosure, $serializer, $deserializer, serialize($argv)]));
+		if (!$this->asyncMode) {
+            SymplyCache::getInstance()->addTransmitterBlockCustom(ThreadSafeArray::fromArray([$blockClosure, $serializer, $deserializer, serialize($argv)]));
+        }
 		if ($blockCustom instanceof IPermutationBlock) {
 			$serializer ??= static function (Block&IPermutationBlock $block) use ($identifier) : BlockStateWriter {
 				$writer = BlockStateWriter::create($identifier);
@@ -119,14 +120,14 @@ final class SymplyBlockFactory
 			GlobalBlockStateHandlers::getUpgrader()->getBlockIdMetaUpgrader()->addIdMetaToStateMapping($blockStateDictionaryEntry->getStateName(), $blockStateDictionaryEntry->getMeta(), $blockStateDictionaryEntry->generateStateData());
 		}
 		SymplyBlockPalette::getInstance()->insertStates($blockStateDictionaryEntries);
-		unset($iterator);
-		gc_collect_cycles();
 		GlobalBlockStateHandlers::getSerializer()->map($blockCustom, $serializer);
 		GlobalBlockStateHandlers::getDeserializer()->map($identifier, $deserializer);
 		StringToItemParser::getInstance()->registerBlock($identifier, fn() => $blockCustom);
 		$item = $blockCustom->asItem();
-		CreativeInventory::getInstance()->add($item);
+        $creative = $blockBuilder->getCreativeInfo();
+        CreativeInventory::getInstance()->add($item, $creative->getCategory()->toInternalCategory(), $creative->getIternalGroup());
 		$this->addBlockBuilder($blockCustom, $blockBuilder);
+
 	}
 
 	/**

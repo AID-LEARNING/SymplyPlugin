@@ -90,8 +90,9 @@ final class SymplyItemFactory
 		GlobalItemDataHandlers::getSerializer()->map($itemCustom, $serializer ??= static fn() => new SavedItemData($identifier));
 		StringToItemParser::getInstance()->register($identifier, static fn() => clone $itemCustom);
 		LegacyItemIdToStringIdMap::getInstance()->add($identifier, $itemId);
-		CreativeInventory::getInstance()->add($itemCustom);
 		$itemBuilder = $itemCustom->getItemBuilder();
+        $creative = $itemBuilder->getCreativeInfo();
+        CreativeInventory::getInstance()->add($itemCustom, $creative->getCategory()->toInternalCategory(), $creative->getIternalGroup());
 		$this->addItemBuilder($itemCustom, $itemBuilder);
 		if (!$this->asyncMode) {
 			SymplyCache::getInstance()->addTransmitterItemCustom(ThreadSafeArray::fromArray([$itemClosure, $serializer, $deserializer, serialize($argv)]));

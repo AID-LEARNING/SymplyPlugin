@@ -84,7 +84,8 @@ class BlockBuilder extends BasicBlockBuilder
 
 	public function getPropertiesTag() : CompoundTag
 	{
-		return CompoundTag::create()->merge($this->getCreativeInfo()->toNbt())
+		return CompoundTag::create()->
+            setTag("menu_category", $this->creativeInfo->toNbt())
 			->setTag("blockTags", new ListTag(array_map(fn(string $tag) => new StringTag($tag), $this->blockCustom->getTypeTags())));
 	}
 
@@ -99,6 +100,7 @@ class BlockBuilder extends BasicBlockBuilder
 				->setFloat("value", $this->blockCustom->getBreakInfo()->getHardness() * 3.33334))
 			->setTag("minecraft:friction", CompoundTag::create()
 				->setFloat("value", 1 - $this->blockCustom->getFrictionFactor()));
+        $componentsTags->setTag("minecraft:creative_category", $this->creativeInfo->toNbt());
 		foreach ($this->getComponents() as $_ => $component) {
 			$componentsTags = $componentsTags->merge($component->toNbt());
 		}

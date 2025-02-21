@@ -61,18 +61,24 @@ class Main extends PluginBase
 	{
         SymplyBlockFactory::getInstance()->initBlockBuilders();
         SymplyBlockPalette::getInstance()->sort(SymplyCache::getInstance()->isBlockNetworkIdsAreHashes());
-        foreach (SymplyBlockFactory::getInstance()->getCustomAll() as $block){
-            if(!CreativeInventory::getInstance()->contains($block->asItem()))
-                CreativeInventory::getInstance()->add($block->asItem());
-        }
-        foreach (SymplyBlockFactory::getInstance()->getVanillaAll() as $block){
-            if(!CreativeInventory::getInstance()->contains($block->asItem()))
-                CreativeInventory::getInstance()->add($block->asItem());
-        }
 		$this->getScheduler()->scheduleDelayedTask(new ClosureTask(static function () {
+            foreach (SymplyBlockFactory::getInstance()->getCustomAll() as $block){
+                if(!CreativeInventory::getInstance()->contains($block->asItem())) {
+                    $builder = SymplyBlockFactory::getInstance()->getBlockBuilder($block);
+                    $creative = $builder->getCreativeInfo();
+                    CreativeInventory::getInstance()->add($block->asItem(), $creative->getCategory()->toInternalCategory(), $creative->getIternalGroup());
+                }
+            }
+            foreach (SymplyBlockFactory::getInstance()->getVanillaAll() as $block){
+                if(!CreativeInventory::getInstance()->contains($block->asItem()))
+                    CreativeInventory::getInstance()->add($block->asItem());
+            }
 			foreach (SymplyItemFactory::getInstance()->getCustomAll() as $item){
-				if(!CreativeInventory::getInstance()->contains($item))
-					CreativeInventory::getInstance()->add($item);
+				if(!CreativeInventory::getInstance()->contains($item)) {
+                    $builder = SymplyItemFactory::getInstance()->getItemBuilder($item);
+                    $creative = $builder->getCreativeInfo();
+                    CreativeInventory::getInstance()->add($item, $creative->getCategory()->toInternalCategory(), $creative->getIternalGroup());
+                }
 			}
 			foreach (SymplyItemFactory::getInstance()->getVanillaAll() as $item){
 				if(!CreativeInventory::getInstance()->contains($item))
