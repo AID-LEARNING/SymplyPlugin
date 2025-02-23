@@ -30,7 +30,7 @@ class SeedCustom extends Item
 	public function getItemBuilder(): ItemBuilder
 	{
 		return parent::getItemBuilder()
-			->setCreativeInfo(new ItemCreativeInfo(CategoryCreativeEnum::NATURE, GroupCreativeEnum::SEED))
+			->setCreativeInfo(new ItemCreativeInfo(CategoryCreativeEnum::NATURE))
 			->setIcon(match ($this->getIdentifier()->getNamespaceId()) {
 				"symply:eggplant_seed" => "eggplant_seeds",
 				"symply:cotton_seed" => "cotton_seeds",

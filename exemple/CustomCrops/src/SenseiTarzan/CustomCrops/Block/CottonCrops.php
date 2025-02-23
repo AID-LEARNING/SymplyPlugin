@@ -5,8 +5,10 @@ namespace SenseiTarzan\CustomCrops\Block;
 use pocketmine\block\utils\FortuneDropHelper;
 use pocketmine\block\Wheat;
 use pocketmine\item\Item;
+use pocketmine\item\VanillaItems;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
+use SenseiTarzan\CustomCrops\Enum\CreativeGroupCustom;
 use SenseiTarzan\CustomCrops\Enum\ExtraItem;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BlockPermutationBuilder;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\OnInteractComponent;
@@ -48,14 +50,16 @@ class CottonCrops extends Crops
 		return parent::onInteract($item, $face, $clickVector, $player, $returnedItems);
 	}
 
-	public function asItem(): Item
-	{
-		return ExtraItem::COTTON_SEED();
-	}
+    public function asItem(): Item
+    {
+        return ExtraItem::COTTON_SEED();
+    }
 
-	public function getBlockBuilder(): BlockPermutationBuilder
+
+    public function getBlockBuilder(): BlockPermutationBuilder
 	{
 		return parent::getBlockBuilder()
+            ->setCreativeInfo(new BlockCreativeInfo(CategoryCreativeEnum::NATURE, CreativeGroupCustom::CROPS()))
 			->setGeometry("geometry.plantv3");
 	}
 }

@@ -95,14 +95,7 @@ trait HackToolTrait
 				BlockToolType::SHOVEL => EnchantSlotEnum::SHOVEL,
 				default => EnchantSlotEnum::SWORD
 			}))
-			->setCreativeInfo(new ItemCreativeInfo(CategoryCreativeEnum::EQUIPMENT, match ($this->getBlockToolType()) {
-				BlockToolType::AXE => GroupCreativeEnum::AXE,
-				BlockToolType::HOE => GroupCreativeEnum::HOE,
-				BlockToolType::SWORD => GroupCreativeEnum::SWORD,
-				BlockToolType::PICKAXE => GroupCreativeEnum::PICKAXE,
-				BlockToolType::SHOVEL => GroupCreativeEnum::SHOVEL,
-				default => GroupCreativeEnum::NONE
-			}))
+			->setCreativeInfo(new ItemCreativeInfo(CategoryCreativeEnum::EQUIPMENT))
 			->addTag(match ($this->getBlockToolType()){
 				BlockToolType::AXE => "minecraft:is_axe",
 				BlockToolType::HOE => "minecraft:is_hoe",

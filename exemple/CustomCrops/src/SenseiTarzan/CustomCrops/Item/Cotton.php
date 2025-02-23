@@ -14,7 +14,7 @@ class Cotton extends Item
 	public function getItemBuilder(): ItemBuilder
 	{
 		return parent::getItemBuilder()
-			->setCreativeInfo(new ItemCreativeInfo(CategoryCreativeEnum::NATURE, GroupCreativeEnum::NONE))
+			->setCreativeInfo(new ItemCreativeInfo(CategoryCreativeEnum::NATURE))
 			->setIcon("cotton");
 	}
 }

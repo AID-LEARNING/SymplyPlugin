@@ -189,26 +189,6 @@ final class SymplyCache
 		$this->blockNetworkIdsAreHashes = $blockNetworkIdsAreHashes;
 	}
 
-    public function addCreativeGroup(CreativeCategory $category, ?CreativeGroup $creativeGroup) : ?CreativeGroup
-    {
-        $name = '';
-        if ($creativeGroup) {
-            $name = $creativeGroup->getName();
-            $name = is_string($name) ? $name : $name->getText();
-        }
-        if(strlen($name) === 0)
-            return $creativeGroup;
-        if(isset($this->creativeGroupsUnique[$category->name][$name])){
-            return $this->creativeGroupsUnique[$category->name][$name];
-        }
-        return ($this->creativeGroupsUnique[$category->name][$name] = $creativeGroup);
-    }
-
-    public function clearCreativeGroup() : void
-    {
-        unset($this->creativeGroupsUnique);
-    }
-
 	/**
 	 * @return BlockPaletteEntry[]
 	 */

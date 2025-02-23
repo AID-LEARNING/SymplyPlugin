@@ -58,6 +58,6 @@ abstract class Durable extends PMDurable implements ICustomItem
 			->setDefaultMaxStack()
 			->setDefaultName()
 			->addComponent(new DurabilityComponent($this->getMaxDurability()))
-			->setCreativeInfo(new ItemCreativeInfo(CategoryCreativeEnum::ITEMS, GroupCreativeEnum::NONE));
+			->setCreativeInfo(new ItemCreativeInfo(CategoryCreativeEnum::ITEMS));
 	}
 }

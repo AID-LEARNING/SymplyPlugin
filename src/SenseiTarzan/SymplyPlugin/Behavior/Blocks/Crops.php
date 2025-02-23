@@ -120,7 +120,7 @@ class Crops extends PMCrops implements IPermutationBlock
 				->setMaterialInstance(materials: [
 					new MaterialSubComponent(TargetMaterialEnum::ALL, $identifier . "_0", RenderMethodEnum::ALPHA_TEST)
 				])
-				->setCreativeInfo(new BlockCreativeInfo(CategoryCreativeEnum::NATURE, GroupCreativeEnum::SEED))
+				->setCreativeInfo(new BlockCreativeInfo(CategoryCreativeEnum::NATURE))
 				->addProperty(new CropsProperty($ages))
 				->addComponent(new OnInteractComponent())
 				->setCollisionBox(new Vector3(-8, 0, -8), new Vector3(16, 16, 16), false);

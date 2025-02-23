@@ -5,7 +5,9 @@ namespace SenseiTarzan\CustomCrops\Block;
 use pocketmine\block\utils\FortuneDropHelper;
 use pocketmine\block\Wheat;
 use pocketmine\item\Item;
+use pocketmine\item\VanillaItems;
 use pocketmine\math\Vector3;
+use SenseiTarzan\CustomCrops\Enum\CreativeGroupCustom;
 use SenseiTarzan\CustomCrops\Enum\ExtraItem;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BlockPermutationBuilder;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\OnInteractComponent;
@@ -37,11 +39,10 @@ class EggPlantCrops extends Crops
 			];
 		}
 	}
-
-	public function asItem(): Item
-	{
-		return ExtraItem::EGGPLANT_SEED();
-	}
+    public function asItem(): Item
+    {
+        return ExtraItem::EGGPLANT_SEED();
+    }
 
 	public function getBlockBuilder(): BlockPermutationBuilder
 	{
@@ -52,10 +53,10 @@ class EggPlantCrops extends Crops
 			->setMaterialInstance(materials: [
 				new MaterialSubComponent(TargetMaterialEnum::ALL, $identifier . "_0", RenderMethodEnum::ALPHA_TEST)
 			])
-			->setCreativeInfo(new BlockCreativeInfo(CategoryCreativeEnum::NATURE, GroupCreativeEnum::SEED))
 			->addProperty(new CropsProperty($ages))
 			->setGeometry("geometry.crop.v2")
 			->addComponent(new OnInteractComponent())
+            ->setCreativeInfo(new BlockCreativeInfo(CategoryCreativeEnum::NATURE, CreativeGroupCustom::CROPS()))
 			->setCollisionBox(new Vector3(-8, 0, -8), new Vector3(16,16,16), false);
 		foreach ($ages as $age){
 			$builder->addPermutation(Permutations::create()

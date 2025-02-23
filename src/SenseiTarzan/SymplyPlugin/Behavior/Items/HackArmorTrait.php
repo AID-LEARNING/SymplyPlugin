@@ -56,6 +56,6 @@ trait HackArmorTrait
 			->addComponent(new DurabilityComponent($this->getMaxDurability()))
 			->addComponent(new WearableComponent(SlotEnum::fromArmorTypeInfo($this->getArmorSlot()), $this->getDefensePoints()))
 			->addProperty(new EnchantableSlotProperty(EnchantSlotEnum::fromArmorTypeInfo($this->getArmorSlot())))
-			->setCreativeInfo(new ItemCreativeInfo(CategoryCreativeEnum::EQUIPMENT, GroupCreativeEnum::fromArmorTypeInfo($this->getArmorSlot())));
+			->setCreativeInfo(new ItemCreativeInfo(CategoryCreativeEnum::EQUIPMENT));
 	}
 }

@@ -67,9 +67,7 @@ class Main extends PluginBase
                 if(!CreativeInventory::getInstance()->contains($item)) {
                     $builder = SymplyItemFactory::getInstance()->getItemBuilder($item);
                     $creative = $builder->getCreativeInfo();
-                    $category = $creative->getCategory()->toInternalCategory();
-                    $group = SymplyCache::getInstance()->addCreativeGroup($category, $creative->getIternalGroup());
-                    CreativeInventory::getInstance()->add($item, $category, $group);
+                    CreativeInventory::getInstance()->add($item, $creative->getCategory()->toInternalCategory(), $creative->getGroup());
                 }
             }
             foreach (SymplyItemFactory::getInstance()->getVanillaAll() as $item){
@@ -80,16 +78,13 @@ class Main extends PluginBase
                 if(!CreativeInventory::getInstance()->contains($block->asItem())) {
                     $builder = SymplyBlockFactory::getInstance()->getBlockBuilder($block);
                     $creative = $builder->getCreativeInfo();
-                    $category = $creative->getCategory()->toInternalCategory();
-                    $group = SymplyCache::getInstance()->addCreativeGroup($category, $creative->getIternalGroup());
-                    CreativeInventory::getInstance()->add($block->asItem(), $category, $group);
+                    CreativeInventory::getInstance()->add($block->asItem(), $creative->getCategory()->toInternalCategory(), $creative->getGroup());
                 }
             }
             foreach (SymplyBlockFactory::getInstance()->getVanillaAll() as $block){
                 if(!CreativeInventory::getInstance()->contains($block->asItem()))
                     CreativeInventory::getInstance()->add($block->asItem());
             }
-            SymplyCache::getInstance()->clearCreativeGroup();
             $server = Server::getInstance();
             $asyncPool = $server->getAsyncPool();
             $asyncPool->addWorkerStartHook(static function(int $workerId) use($asyncPool) : void{

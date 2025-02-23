@@ -23,21 +23,16 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Info;
 
-use BackedEnum;
-use pocketmine\inventory\CreativeCategory;
 use pocketmine\inventory\CreativeGroup;
-use pocketmine\item\Item;
 use pocketmine\nbt\tag\CompoundTag;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\CategoryCreativeEnum;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\GroupCreativeEnum;
 
 class BlockCreativeInfo
 {
 
 	public function __construct(
         private readonly CategoryCreativeEnum $category,
-        private readonly GroupCreativeEnum|BackedEnum|string $group,
-        private readonly ?Item  $item = null
+        private readonly ?CreativeGroup       $group = null,
     )
 	{
 	}
@@ -47,23 +42,17 @@ class BlockCreativeInfo
 		return $this->category;
 	}
 
-	public function getGroup() : GroupCreativeEnum|BackedEnum|string
-	{
-		return $this->group;
-	}
-
-    public function getIternalGroup(): ?CreativeGroup
+    public function getGroup(): ?CreativeGroup
     {
-        $group = $this->getGroup();
-        return $this->item ? new CreativeGroup(is_string($group) ? $group : $group->value, $this->item): null;
+        return $this->group;
     }
 
 	public function toNbt() : CompoundTag
 	{
         $group = $this->getGroup();
-        $name = (is_string($group) ? $group : $group->value);
+        $name = $group?->getName() ?? "";
 		return CompoundTag::create()
 			->setString("category", $this->getCategory()->value ?? "")
-			->setString("group", (str_starts_with($name, "minecraft:") ? $name : ("minecraft:" . $name)));
+			->setString("group", ((str_starts_with($name, "minecraft:") || empty($name)) ? $name : ("minecraft:" . $name)));
 	}
 }

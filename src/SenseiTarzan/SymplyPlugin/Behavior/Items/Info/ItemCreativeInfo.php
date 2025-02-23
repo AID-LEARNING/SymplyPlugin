@@ -35,8 +35,7 @@ class ItemCreativeInfo
 
 	public function __construct(
         private readonly CategoryCreativeEnum         $category,
-        private readonly GroupCreativeEnum|BackedEnum|string $group,
-        private readonly ?Item                        $item = null
+        private readonly ?CreativeGroup $group = null
     )
 	{
 	}
@@ -46,23 +45,16 @@ class ItemCreativeInfo
 		return $this->category;
 	}
 
-    public function getGroup() : GroupCreativeEnum|BackedEnum|string
+    public function getGroup() : ?CreativeGroup
     {
         return $this->group;
     }
-
-    public function getIternalGroup(): ?CreativeGroup
-    {
-        $group = $this->getGroup();
-        return $this->item ? new CreativeGroup(is_string($group) ? $group : $group->value, $this->item) : null;
-    }
-
 	public function toNbt() : CompoundTag
 	{
         $group = $this->getGroup();
-        $name = (is_string($group) ? $group : $group->value);
+        $name = $group?->getName() ?? "";
 		return CompoundTag::create()
 			->setInt("creative_category", $this->getCategory()->toItemCategory() ?? 0)
-			->setString("creative_group", (str_starts_with($name, "minecraft:") ? $name : ("minecraft:" . $name)));
+			->setString("creative_group", ((str_starts_with($name, "minecraft:") || empty($name)) ? $name : ("minecraft:" . $name)));
 	}
 }

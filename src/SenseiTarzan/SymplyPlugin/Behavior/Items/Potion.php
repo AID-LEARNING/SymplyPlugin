@@ -62,7 +62,7 @@ abstract class Potion extends PMFood implements ICustomItem
 				8,
 				8
 			])
-			->setCreativeInfo(new ItemCreativeInfo(CategoryCreativeEnum::EQUIPMENT, GroupCreativeEnum::MISC_FOOD))
+			->setCreativeInfo(new ItemCreativeInfo(CategoryCreativeEnum::EQUIPMENT))
 			->setUseAnimationProperty(AnimationEnum::DRINK)
 			->setUseDurationProperty(32)
 			->addTag("minecraft:is_food");

@@ -55,6 +55,6 @@ class Item extends PMItem implements ICustomItem
 		return ItemBuilder::create()->setItem($this)
 			->setDefaultMaxStack()
 			->setDefaultName()
-			->setCreativeInfo(new ItemCreativeInfo(CategoryCreativeEnum::ALL, GroupCreativeEnum::NONE));
+			->setCreativeInfo(new ItemCreativeInfo(CategoryCreativeEnum::ALL));
 	}
 }

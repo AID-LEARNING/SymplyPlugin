@@ -64,7 +64,7 @@ class BlockBuilder extends BasicBlockBuilder
 	public static function create() : static{
 		return (new static())
 			->setGeometry("minecraft:geometry.full_block")
-			->setCreativeInfo(new BlockCreativeInfo(CategoryCreativeEnum::CONSTRUCTION, GroupCreativeEnum::NONE));
+			->setCreativeInfo(new BlockCreativeInfo(CategoryCreativeEnum::CONSTRUCTION));
 	}
 
 	public function setBlock(Block&IBlockCustom $blockCustom) : static{
