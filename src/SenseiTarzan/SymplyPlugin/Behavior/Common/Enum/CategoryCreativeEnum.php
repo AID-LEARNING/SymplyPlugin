@@ -43,13 +43,13 @@ enum CategoryCreativeEnum : string
 			default => 0
 		};
 	}
-    public function toInternalCategory() : CreativeCategory
-    {
-        return match ($this){
-            self::CONSTRUCTION => CreativeCategory::CONSTRUCTION,
-            self::NATURE => CreativeCategory::NATURE,
-            self::EQUIPMENT => CreativeCategory::EQUIPMENT,
-            default => CreativeCategory::ITEMS
-        };
-    }
+	public function toInternalCategory() : CreativeCategory
+	{
+		return match ($this){
+			self::CONSTRUCTION => CreativeCategory::CONSTRUCTION,
+			self::NATURE => CreativeCategory::NATURE,
+			self::EQUIPMENT => CreativeCategory::EQUIPMENT,
+			default => CreativeCategory::ITEMS
+		};
+	}
 }

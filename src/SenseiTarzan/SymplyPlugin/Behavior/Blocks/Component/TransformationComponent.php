@@ -34,11 +34,6 @@ use function intdiv;
 
 final class TransformationComponent extends AbstractComponent
 {
-    /**
-     * @param Vector3|\SenseiTarzan\SymplyPlugin\Utils\Vector3WithOffset $rotation
-     * @param Vector3|Vector3WithOffset $scale
-     * @param Vector3 $translation
-     */
 	public function __construct(
 		private readonly Vector3|Vector3WithOffset $rotation = new Vector3(0,0,0),
 		private readonly Vector3|Vector3WithOffset $scale = new Vector3(1,1,1),
@@ -69,7 +64,7 @@ final class TransformationComponent extends AbstractComponent
 	protected function value() : Tag
 	{
 		$data = CompoundTag::create();
-        $infoRotation = $this->getRotation();
+		$infoRotation = $this->getRotation();
 		if ($infoRotation instanceof Vector3WithOffset) {
 			$offset = $infoRotation->getOffset();
 			$data->setInt("RX", intdiv((int) $infoRotation->getFloorZ(), 90))
@@ -86,9 +81,9 @@ final class TransformationComponent extends AbstractComponent
 				->setInt("RZ", intdiv((int) $this->getRotation()->getZ(), 90))
 				->setFloat("RZP", 0);
 		}
-        $infoScale = $this->getScale();
-        if ($infoScale instanceof Vector3WithOffset) {
-            $offset = $infoScale->getOffset();
+		$infoScale = $this->getScale();
+		if ($infoScale instanceof Vector3WithOffset) {
+			$offset = $infoScale->getOffset();
 			$data->setFloat("SX", $infoScale->getX())
 				->setFloat("SXP", $offset->getX())
 				->setFloat("SY", $infoScale->getY())

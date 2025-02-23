@@ -23,21 +23,20 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Info;
 
-use BackedEnum;
 use pocketmine\inventory\CreativeGroup;
-use pocketmine\item\Item;
 use pocketmine\nbt\tag\CompoundTag;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\CategoryCreativeEnum;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\GroupCreativeEnum;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\VanillaGroupMinecraft;
+use function is_string;
+use function str_starts_with;
 
 class ItemCreativeInfo
 {
 
 	public function __construct(
-        private readonly CategoryCreativeEnum         $category,
-        private readonly ?CreativeGroup $group = null
-    )
+		private readonly CategoryCreativeEnum         $category,
+		private readonly ?CreativeGroup $group = null
+	)
 	{
 	}
 
@@ -46,20 +45,20 @@ class ItemCreativeInfo
 		return $this->category;
 	}
 
-    public function getGroup() : ?CreativeGroup
-    {
-        return $this->group;
-    }
+	public function getGroup() : ?CreativeGroup
+	{
+		return $this->group;
+	}
 
-    private function getGroupName() : string
-    {
-        $name = $this->group?->getName() ?? "";
-        return is_string($name) ? $name : $name->getText();
-    }
+	private function getGroupName() : string
+	{
+		$name = $this->group?->getName() ?? "";
+		return is_string($name) ? $name : $name->getText();
+	}
 
 	public function toNbt() : CompoundTag
 	{
-        $name = $this->getGroupName();
+		$name = $this->getGroupName();
 		return CompoundTag::create()
 			->setInt("creative_category", $this->getCategory()->toItemCategory() ?? 0)
 			->setString("creative_group", ((empty($name) || isset(VanillaGroupMinecraft::ITEM_GROUP_VANILLA[$name]) || str_starts_with($name, "minecraft:")) ? $name : ("minecraft:" . $name)));

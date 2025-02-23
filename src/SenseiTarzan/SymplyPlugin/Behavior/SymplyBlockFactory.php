@@ -48,7 +48,6 @@ use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BlockBuilder;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\IBlockCustom;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\IPermutationBlock;
 use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
-use function gc_collect_cycles;
 use function hash;
 use function is_string;
 use function mb_strtoupper;
@@ -73,11 +72,11 @@ final class SymplyBlockFactory
 	/** @var array<string, BlockBuilder> */
 	private array $blockToBlockBuilder = [];
 
-    private static CacheableNbt $emptyNBT;
+	private static CacheableNbt $emptyNBT;
 
 	public function __construct(private readonly bool $asyncMode = false){
-        self::$emptyNBT = new CacheableNbt(new CompoundTag());
-    }
+		self::$emptyNBT = new CacheableNbt(new CompoundTag());
+	}
 	/**
 	 * @param Closure(): (Block&IBlockCustom) $blockClosure
 	 */
@@ -93,8 +92,8 @@ final class SymplyBlockFactory
 		$this->custom[$identifier] = $blockCustom;
 		RuntimeBlockStateRegistry::getInstance()->register($blockCustom);
 		if (!$this->asyncMode) {
-            SymplyCache::getInstance()->addTransmitterBlockCustom(ThreadSafeArray::fromArray([$blockClosure, $serializer, $deserializer, serialize($argv)]));
-        }
+			SymplyCache::getInstance()->addTransmitterBlockCustom(ThreadSafeArray::fromArray([$blockClosure, $serializer, $deserializer, serialize($argv)]));
+		}
 		if ($blockCustom instanceof IPermutationBlock) {
 			$serializer ??= static function (Block&IPermutationBlock $block) use ($identifier) : BlockStateWriter {
 				$writer = BlockStateWriter::create($identifier);
@@ -124,8 +123,8 @@ final class SymplyBlockFactory
 		GlobalBlockStateHandlers::getDeserializer()->map($identifier, $deserializer);
 		StringToItemParser::getInstance()->registerBlock($identifier, fn() => $blockCustom);
 		$item = $blockCustom->asItem();
-        $creative = $blockBuilder->getCreativeInfo();
-        CreativeInventory::getInstance()->add($item, $creative->getCategory()->toInternalCategory(), $creative->getGroup());
+		$creative = $blockBuilder->getCreativeInfo();
+		CreativeInventory::getInstance()->add($item, $creative->getCategory()->toInternalCategory(), $creative->getGroup());
 		$this->addBlockBuilder($blockCustom, $blockBuilder);
 
 	}

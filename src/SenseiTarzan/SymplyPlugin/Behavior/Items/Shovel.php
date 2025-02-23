@@ -30,11 +30,11 @@ class Shovel extends PMShovel implements ICustomItem
 {
 	use HackToolTrait;
 
-    public function getCooldownTag(): ?string
-    {
-        $itemBuilder = SymplyItemFactory::getInstance()->getItemBuilder($this);
-        return $itemBuilder->getCooldownComponent()?->getCategory() ?? null;
-    }
+	public function getCooldownTag() : ?string
+	{
+		$itemBuilder = SymplyItemFactory::getInstance()->getItemBuilder($this);
+		return $itemBuilder->getCooldownComponent()?->getCategory() ?? null;
+	}
 
 	public function getBlockToolHarvestLevel() : int{
 		return $this->tierHack->getHarvestLevel();

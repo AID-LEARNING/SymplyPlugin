@@ -49,16 +49,16 @@ class AsyncOverwriteTask extends AsyncTask
 	 */
 	public function onRun() : void
 	{
-        try {
-            foreach ($this->blockFuncs as [$blockClosure, $serialize, $deserialize]) {
-                SymplyBlockFactory::getInstance(true)->overwrite($blockClosure, $serialize, $deserialize);
-            }
+		try {
+			foreach ($this->blockFuncs as [$blockClosure, $serialize, $deserialize]) {
+				SymplyBlockFactory::getInstance(true)->overwrite($blockClosure, $serialize, $deserialize);
+			}
 
-            foreach ($this->itemFuncs as [$itemClosure, $serialize, $deserialize]) {
-                SymplyItemFactory::getInstance(true)->overwrite($itemClosure, $serialize, $deserialize);
-            }
-        }catch (Throwable){
+			foreach ($this->itemFuncs as [$itemClosure, $serialize, $deserialize]) {
+				SymplyItemFactory::getInstance(true)->overwrite($itemClosure, $serialize, $deserialize);
+			}
+		}catch (Throwable){
 
-        }
+		}
 	}
 }

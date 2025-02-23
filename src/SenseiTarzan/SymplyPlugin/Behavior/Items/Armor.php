@@ -37,11 +37,11 @@ abstract class Armor extends PMArmor implements ICustomItem
 		parent::__construct($identifier, $name, $info, $enchantmentTags);
 	}
 
-    public function getCooldownTag(): ?string
-    {
-        $itemBuilder = SymplyItemFactory::getInstance()->getItemBuilder($this);
-        return $itemBuilder->getCooldownComponent()?->getCategory() ?? null;
-    }
+	public function getCooldownTag() : ?string
+	{
+		$itemBuilder = SymplyItemFactory::getInstance()->getItemBuilder($this);
+		return $itemBuilder->getCooldownComponent()?->getCategory() ?? null;
+	}
 
 	public function getIdentifier() : ItemIdentifier
 	{

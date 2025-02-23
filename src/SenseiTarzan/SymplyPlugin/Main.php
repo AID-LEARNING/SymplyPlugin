@@ -25,7 +25,6 @@ namespace SenseiTarzan\SymplyPlugin;
 
 use Exception;
 use pocketmine\inventory\CreativeInventory;
-use pocketmine\nbt\LittleEndianNbtSerializer;
 use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\ClosureTask;
 use pocketmine\Server;
@@ -44,6 +43,10 @@ use SenseiTarzan\SymplyPlugin\Task\AsyncRegisterVanillaTask;
 use SenseiTarzan\SymplyPlugin\Task\AsyncSortBlockStateTask;
 use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
 use function boolval;
+use function strlen;
+use function strtolower;
+use function strtoupper;
+use function var_dump;
 
 class Main extends PluginBase
 {
@@ -59,54 +62,54 @@ class Main extends PluginBase
 		$this->symplyCraftManager = new SymplyCraftManager($this);
 	}
 
-    private function camelToSnakeCase(string $string): string
-    {
-        $word = "";
-        for ($i = 0; $i < strlen($string); $i++) {
-            $char = $string[$i];
-            if (strtolower($char) !== $char) {
-                $word .= "_";
-            }
-            $word .= $char;
-        }
-        return strtoupper($word);
-    }
+	private function camelToSnakeCase(string $string) : string
+	{
+		$word = "";
+		for ($i = 0; $i < strlen($string); $i++) {
+			$char = $string[$i];
+			if (strtolower($char) !== $char) {
+				$word .= "_";
+			}
+			$word .= $char;
+		}
+		return strtoupper($word);
+	}
 	protected function onEnable() : void
 	{
-        SymplyBlockFactory::getInstance()->initBlockBuilders();
-        SymplyBlockPalette::getInstance()->sort(SymplyCache::getInstance()->isBlockNetworkIdsAreHashes());
-        var_dump(VanillaGroupMinecraft::CHESTPLATE());
+		SymplyBlockFactory::getInstance()->initBlockBuilders();
+		SymplyBlockPalette::getInstance()->sort(SymplyCache::getInstance()->isBlockNetworkIdsAreHashes());
+		var_dump(VanillaGroupMinecraft::CHESTPLATE());
 		$this->getScheduler()->scheduleDelayedTask(new ClosureTask(static function () {
-            foreach (SymplyItemFactory::getInstance()->getCustomAll() as $item){
-                if(!CreativeInventory::getInstance()->contains($item)) {
-                    $builder = SymplyItemFactory::getInstance()->getItemBuilder($item);
-                    $creative = $builder->getCreativeInfo();
-                    CreativeInventory::getInstance()->add($item, $creative->getCategory()->toInternalCategory(), $creative->getGroup());
-                }
-            }
-            foreach (SymplyItemFactory::getInstance()->getVanillaAll() as $item){
-                if(!CreativeInventory::getInstance()->contains($item))
-                    CreativeInventory::getInstance()->add($item);
-            }
-            foreach (SymplyBlockFactory::getInstance()->getCustomAll() as $block){
-                if(!CreativeInventory::getInstance()->contains($block->asItem())) {
-                    $builder = SymplyBlockFactory::getInstance()->getBlockBuilder($block);
-                    $creative = $builder->getCreativeInfo();
-                    CreativeInventory::getInstance()->add($block->asItem(), $creative->getCategory()->toInternalCategory(), $creative->getGroup());
-                }
-            }
-            foreach (SymplyBlockFactory::getInstance()->getVanillaAll() as $block){
-                if(!CreativeInventory::getInstance()->contains($block->asItem()))
-                    CreativeInventory::getInstance()->add($block->asItem());
-            }
-            $server = Server::getInstance();
-            $asyncPool = $server->getAsyncPool();
-            $asyncPool->addWorkerStartHook(static function(int $workerId) use($asyncPool) : void{
-                $asyncPool->submitTaskToWorker(new AsyncRegisterVanillaTask(), $workerId);
-                $asyncPool->submitTaskToWorker(new AsyncRegisterBehaviorsTask(), $workerId);
-                $asyncPool->submitTaskToWorker(new AsyncOverwriteTask(), $workerId);
-                $asyncPool->submitTaskToWorker(new AsyncSortBlockStateTask(), $workerId);
-            });
+			foreach (SymplyItemFactory::getInstance()->getCustomAll() as $item){
+				if(!CreativeInventory::getInstance()->contains($item)) {
+					$builder = SymplyItemFactory::getInstance()->getItemBuilder($item);
+					$creative = $builder->getCreativeInfo();
+					CreativeInventory::getInstance()->add($item, $creative->getCategory()->toInternalCategory(), $creative->getGroup());
+				}
+			}
+			foreach (SymplyItemFactory::getInstance()->getVanillaAll() as $item){
+				if(!CreativeInventory::getInstance()->contains($item))
+					CreativeInventory::getInstance()->add($item);
+			}
+			foreach (SymplyBlockFactory::getInstance()->getCustomAll() as $block){
+				if(!CreativeInventory::getInstance()->contains($block->asItem())) {
+					$builder = SymplyBlockFactory::getInstance()->getBlockBuilder($block);
+					$creative = $builder->getCreativeInfo();
+					CreativeInventory::getInstance()->add($block->asItem(), $creative->getCategory()->toInternalCategory(), $creative->getGroup());
+				}
+			}
+			foreach (SymplyBlockFactory::getInstance()->getVanillaAll() as $block){
+				if(!CreativeInventory::getInstance()->contains($block->asItem()))
+					CreativeInventory::getInstance()->add($block->asItem());
+			}
+			$server = Server::getInstance();
+			$asyncPool = $server->getAsyncPool();
+			$asyncPool->addWorkerStartHook(static function(int $workerId) use($asyncPool) : void{
+				$asyncPool->submitTaskToWorker(new AsyncRegisterVanillaTask(), $workerId);
+				$asyncPool->submitTaskToWorker(new AsyncRegisterBehaviorsTask(), $workerId);
+				$asyncPool->submitTaskToWorker(new AsyncOverwriteTask(), $workerId);
+				$asyncPool->submitTaskToWorker(new AsyncSortBlockStateTask(), $workerId);
+			});
 			Main::getInstance()->getSymplyCraftManager()->onLoad();
 		}),0);
 		EventLoader::loadEventWithClass($this, new BehaviorListener(false));

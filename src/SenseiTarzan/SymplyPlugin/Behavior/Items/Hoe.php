@@ -30,10 +30,10 @@ class Hoe extends PMHoe implements ICustomItem
 {
 	use HackToolTrait;
 
-    public function getCooldownTag(): ?string
-    {
-        $itemBuilder = SymplyItemFactory::getInstance()->getItemBuilder($this);
-        return $itemBuilder->getCooldownComponent()?->getCategory() ?? null;
-    }
+	public function getCooldownTag() : ?string
+	{
+		$itemBuilder = SymplyItemFactory::getInstance()->getItemBuilder($this);
+		return $itemBuilder->getCooldownComponent()?->getCategory() ?? null;
+	}
 
 }

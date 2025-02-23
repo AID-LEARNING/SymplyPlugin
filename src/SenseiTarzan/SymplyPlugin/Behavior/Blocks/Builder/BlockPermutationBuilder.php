@@ -129,19 +129,19 @@ final class BlockPermutationBuilder extends BlockBuilder
 	{
 		$properties = $this->getProperties();
 		if (empty($properties) && empty($this->traits))
-        {
-            yield from parent::toBlockStateDictionaryEntry();
-        }else {
-            $listBlockPropertyName = array_keys($properties);
-            $datas = array_map(fn(BlockProperty $property) => $property->getValueInRaw(), array_values($properties));
-            foreach ($this->traits as $_ => $trait)
-                $trait->injectData($listBlockPropertyName, $datas);
-            foreach (Utils::getCartesianProduct($datas) as $meta => $property) {
-                $states = [];
-                foreach ($property as $i => $data)
-                    $states[$listBlockPropertyName[$i]] = $data;
-                yield new BlockStateDictionaryEntry($this->getNamespaceId(), $states, $meta);
-            }
-        }
+		{
+			yield from parent::toBlockStateDictionaryEntry();
+		}else {
+			$listBlockPropertyName = array_keys($properties);
+			$datas = array_map(fn(BlockProperty $property) => $property->getValueInRaw(), array_values($properties));
+			foreach ($this->traits as $_ => $trait)
+				$trait->injectData($listBlockPropertyName, $datas);
+			foreach (Utils::getCartesianProduct($datas) as $meta => $property) {
+				$states = [];
+				foreach ($property as $i => $data)
+					$states[$listBlockPropertyName[$i]] = $data;
+				yield new BlockStateDictionaryEntry($this->getNamespaceId(), $states, $meta);
+			}
+		}
 	}
 }

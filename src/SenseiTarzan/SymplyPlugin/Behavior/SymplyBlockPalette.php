@@ -149,7 +149,7 @@ final class SymplyBlockPalette
 		$stateDataToStateIdLookup = [];
 		foreach($names as $_ => $name){
 			// With the sorted list of names, we can now go back and add all the states for each block in the correct order.
-			foreach($states[$name] as $__ =>$state){
+			foreach($states[$name] as $__ => $state){
 				$sortedStates[$stateId] = $state;
 				if(count($states[$name]) === 1) {
 					$stateDataToStateIdLookup[$name] = $stateId;

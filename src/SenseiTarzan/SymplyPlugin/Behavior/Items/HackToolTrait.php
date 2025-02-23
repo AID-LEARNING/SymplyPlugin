@@ -28,7 +28,6 @@ use pocketmine\item\Item as PMItem;
 use pocketmine\item\TieredTool;
 use pocketmine\item\ToolTier as PMToolTier;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\CategoryCreativeEnum;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\GroupCreativeEnum;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\VanillaGroupMinecraft;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Builder\ItemBuilder;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\DurabilityComponent;

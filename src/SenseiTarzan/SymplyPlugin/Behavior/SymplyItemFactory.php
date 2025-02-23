@@ -36,7 +36,6 @@ use pocketmine\item\VanillaItems;
 use pocketmine\network\mcpe\cache\CreativeInventoryCache;
 use pocketmine\network\mcpe\convert\TypeConverter;
 use pocketmine\network\mcpe\protocol\types\CacheableNbt;
-use pocketmine\network\mcpe\protocol\types\ItemComponentPacketEntry;
 use pocketmine\network\mcpe\protocol\types\ItemTypeEntry;
 use pocketmine\utils\SingletonTrait;
 use pocketmine\world\format\io\GlobalItemDataHandlers;
@@ -45,6 +44,7 @@ use ReflectionProperty;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Builder\ItemBuilder;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\ICustomItem;
 use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
+use function array_merge;
 use function is_string;
 use function mb_strtoupper;
 use function serialize;
@@ -91,8 +91,8 @@ final class SymplyItemFactory
 		StringToItemParser::getInstance()->register($identifier, static fn() => clone $itemCustom);
 		LegacyItemIdToStringIdMap::getInstance()->add($identifier, $itemId);
 		$itemBuilder = $itemCustom->getItemBuilder();
-        $creative = $itemBuilder->getCreativeInfo();
-        CreativeInventory::getInstance()->add($itemCustom, $creative->getCategory()->toInternalCategory(), $creative->getGroup());
+		$creative = $itemBuilder->getCreativeInfo();
+		CreativeInventory::getInstance()->add($itemCustom, $creative->getCategory()->toInternalCategory(), $creative->getGroup());
 		$this->addItemBuilder($itemCustom, $itemBuilder);
 		if (!$this->asyncMode) {
 			SymplyCache::getInstance()->addTransmitterItemCustom(ThreadSafeArray::fromArray([$itemClosure, $serializer, $deserializer, serialize($argv)]));
@@ -115,10 +115,10 @@ final class SymplyItemFactory
 		/** @var int[] $value */
 		$value = $stringToInt->getValue($dictionary);
 		$stringToInt->setValue($dictionary, $value + [$itemTypeEntry->getStringId() => $itemTypeEntry->getNumericId()]);
-        if (!$this->asyncMode){
-            $itemTypesProperty = $reflection->getProperty('itemTypes');
-            $itemTypesProperty->setValue($dictionary, array_merge($itemTypesProperty->getValue($dictionary), [$itemTypeEntry]));
-        }
+		if (!$this->asyncMode){
+			$itemTypesProperty = $reflection->getProperty('itemTypes');
+			$itemTypesProperty->setValue($dictionary, array_merge($itemTypesProperty->getValue($dictionary), [$itemTypeEntry]));
+		}
 	}
 
 	/**

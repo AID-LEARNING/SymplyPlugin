@@ -43,7 +43,6 @@ use SenseiTarzan\ExtraEvent\Class\EventAttribute;
 use SenseiTarzan\SymplyPlugin\Player\BlockBreakRequest;
 use SenseiTarzan\SymplyPlugin\Utils\BlockUtils;
 use WeakMap;
-use function array_filter;
 use function array_push;
 use function count;
 use function floor;
@@ -96,7 +95,7 @@ class ClientBreakListener
 							}else {
 								$player->getWorld()->broadcastPacketToViewers(
 									$vector3,
-									LevelEventPacket::create(LevelEvent::BLOCK_START_BREAK, (int)floor($speed * 65535.0), $vector3)
+									LevelEventPacket::create(LevelEvent::BLOCK_START_BREAK, (int) floor($speed * 65535.0), $vector3)
 								);
 							}
 							unset($blockActions[$index]);

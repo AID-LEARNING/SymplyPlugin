@@ -47,7 +47,6 @@ use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Info\BlockCreativeInfo;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Permutation\Permutations;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property\CropsProperty;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\CategoryCreativeEnum;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\GroupCreativeEnum;
 use function assert;
 use function explode;
 use function mt_rand;

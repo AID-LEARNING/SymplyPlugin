@@ -117,9 +117,9 @@ class SymplyCraftingManagerFromDataHelper
 			if($meta !== 0){
 				throw new SavedDataLoadingException("Meta should not be specified for blockitems");
 			}
-            $item = StringToItemParser::getInstance()->parse($name);
+			$item = StringToItemParser::getInstance()->parse($name);
 			$blockStatesTag = $blockStatesRaw === null ?
-                ($item ? GlobalBlockStateHandlers::getSerializer()->serializeBlock($item->getBlock())->getStates() : []) :
+				($item ? GlobalBlockStateHandlers::getSerializer()->serializeBlock($item->getBlock())->getStates() : []) :
 				(new LittleEndianNbtSerializer())
 					->read(ErrorToExceptionHandler::trapAndRemoveFalse(fn() => base64_decode($blockStatesRaw, true)))
 					->mustGetCompoundTag()

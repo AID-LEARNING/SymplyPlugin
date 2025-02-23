@@ -23,8 +23,6 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Behavior\Common\Enum;
 
-use pocketmine\inventory\ArmorInventory;
-
 enum GroupCreativeEnum : string
 {
 
@@ -103,6 +101,5 @@ enum GroupCreativeEnum : string
 	case WOOL_CARPET = "itemGroup.name.woolCarpet";
 	case CANDLES = "itemGroup.name.candles";
 	case GOAT_HORN = "itemGroup.name.goatHorn";
-
 
 }

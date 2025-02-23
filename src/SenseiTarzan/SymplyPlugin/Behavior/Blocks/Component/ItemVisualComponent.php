@@ -24,13 +24,13 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component;
 
 use BackedEnum;
-use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\Tag;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub\MaterialMappingSubComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub\MaterialSubComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
+use function array_filter;
 
 /**
  * minecraft:item_visual
@@ -39,49 +39,45 @@ use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 final class ItemVisualComponent extends AbstractComponent
 {
 
-    private GeometryComponent $geometryComponent;
+	private GeometryComponent $geometryComponent;
 
-    private MaterialInstancesComponent $materialInstancesComponent;
+	private MaterialInstancesComponent $materialInstancesComponent;
 	public function __construct()
 	{
 	}
 
+	public function setGeometry(string $identifier, ?array $boneVisibilities = null) : ItemVisualComponent
+	{
+		$this->geometryComponent = new GeometryComponent($identifier, $boneVisibilities);
+		return $this;
+	}
 
-    public function setGeometry(string $identifier, ?array $boneVisibilities = null) : ItemVisualComponent
-    {
-        $this->geometryComponent = new GeometryComponent($identifier, $boneVisibilities);
-        return $this;
-    }
+	public function setMaterialInstance(array $mappings = [], array $materials = []) : ItemVisualComponent
+	{
+		$fixed = [
+			[...array_filter(
+				$mappings,
+				fn($object) => $object instanceof MaterialMappingSubComponent
+			), ...array_filter(
+				$materials,
+				fn($object) => $object instanceof MaterialMappingSubComponent
+			)],
+			[...array_filter(
+				$mappings,
+				fn($object) => $object instanceof MaterialSubComponent
+			), ...array_filter(
+				$materials,
+				fn($object) => $object instanceof MaterialSubComponent
+			)]
+		];
+		$this->materialInstancesComponent = new MaterialInstancesComponent($fixed[0], $fixed[1]);
+		return $this;
+	}
 
-
-
-    public function setMaterialInstance(array $mappings = [], array $materials = []) : ItemVisualComponent
-    {
-        $fixed = [
-            array(...array_filter(
-                $mappings,
-                fn($object) => $object instanceof MaterialMappingSubComponent
-            ), ...array_filter(
-                $materials,
-                fn($object) => $object instanceof MaterialMappingSubComponent
-            )),
-            array(...array_filter(
-                $mappings,
-                fn($object) => $object instanceof MaterialSubComponent
-            ), ...array_filter(
-                $materials,
-                fn($object) => $object instanceof MaterialSubComponent
-            ))
-        ];
-        $this->materialInstancesComponent = new MaterialInstancesComponent($fixed[0], $fixed[1]);
-        return $this;
-    }
-
-
-    static public function create(): self
-    {
-        return new self();
-    }
+	static public function create() : self
+	{
+		return new self();
+	}
 
 	public function getName() : string|BackedEnum
 	{
@@ -90,13 +86,13 @@ final class ItemVisualComponent extends AbstractComponent
 
 	protected function value() : Tag
 	{
-        $nbt = CompoundTag::create();
-        if (isset($this->geometryComponent)) {
-            $nbt->setTag("geometryDescription", $this->geometryComponent->toNbt()->getTag(ComponentName::GEOMETRY->value));
-        }
-        if (isset($this->materialInstancesComponent)) {
-            $nbt->setTag("materialInstancesDescription", $this->materialInstancesComponent->toNbt()->getTag(ComponentName::MATERIAL_INSTANCES->value));
-        }
+		$nbt = CompoundTag::create();
+		if (isset($this->geometryComponent)) {
+			$nbt->setTag("geometryDescription", $this->geometryComponent->toNbt()->getTag(ComponentName::GEOMETRY->value));
+		}
+		if (isset($this->materialInstancesComponent)) {
+			$nbt->setTag("materialInstancesDescription", $this->materialInstancesComponent->toNbt()->getTag(ComponentName::MATERIAL_INSTANCES->value));
+		}
 		return $nbt;
 	}
 }

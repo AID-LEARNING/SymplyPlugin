@@ -48,16 +48,16 @@ class AsyncRegisterBehaviorsTask extends AsyncTask
 	 */
 	public function onRun() : void
 	{
-        try {
-            foreach ($this->blockFuncs as [$blockClosure, $serialize, $deserialize, $argv]) {
-                SymplyBlockFactory::getInstance(true)->register($blockClosure, $serialize, $deserialize, unserialize($argv, ['allowed_classes' => true]));
-            }
-            SymplyBlockFactory::getInstance()->initBlockBuilders();
-            foreach ($this->itemFuncs as [$itemClosure, $serialize, $deserialize, $argv]) {
-                SymplyItemFactory::getInstance(true)->register($itemClosure, $serialize, $deserialize, unserialize($argv, ['allowed_classes' => true]));
-            }
-        }catch (Throwable){
+		try {
+			foreach ($this->blockFuncs as [$blockClosure, $serialize, $deserialize, $argv]) {
+				SymplyBlockFactory::getInstance(true)->register($blockClosure, $serialize, $deserialize, unserialize($argv, ['allowed_classes' => true]));
+			}
+			SymplyBlockFactory::getInstance()->initBlockBuilders();
+			foreach ($this->itemFuncs as [$itemClosure, $serialize, $deserialize, $argv]) {
+				SymplyItemFactory::getInstance(true)->register($itemClosure, $serialize, $deserialize, unserialize($argv, ['allowed_classes' => true]));
+			}
+		}catch (Throwable){
 
-        }
+		}
 	}
 }

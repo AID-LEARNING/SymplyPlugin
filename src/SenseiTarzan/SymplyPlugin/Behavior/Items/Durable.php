@@ -26,7 +26,6 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Items;
 use pocketmine\item\Durable as PMDurable;
 use pocketmine\item\Item as PMItem;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\CategoryCreativeEnum;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\GroupCreativeEnum;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Builder\ItemBuilder;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\DurabilityComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Info\ItemCreativeInfo;
@@ -40,11 +39,11 @@ abstract class Durable extends PMDurable implements ICustomItem
 		parent::__construct($identifier, $name, $enchantmentTags);
 	}
 
-    public function getCooldownTag(): ?string
-    {
-        $itemBuilder = SymplyItemFactory::getInstance()->getItemBuilder($this);
-        return $itemBuilder->getCooldownComponent()?->getCategory() ?? null;
-    }
+	public function getCooldownTag() : ?string
+	{
+		$itemBuilder = SymplyItemFactory::getInstance()->getItemBuilder($this);
+		return $itemBuilder->getCooldownComponent()?->getCategory() ?? null;
+	}
 
 	public function getIdentifier() : ItemIdentifier
 	{

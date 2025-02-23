@@ -25,8 +25,8 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum;
 
 enum ComponentName : string
 {
-    case BREATHABILITY = "minecraft:breathability";
-    case ITEM_VISUAL = "minecraft:item_visual";
+	case BREATHABILITY = "minecraft:breathability";
+	case ITEM_VISUAL = "minecraft:item_visual";
 	case COLLISION_BOX = "minecraft:collision_box";
 	case CRAFTING_TABLE = "minecraft:crafting_table";
 	case DESTRUCTIBLE_BY_MINING = "minecraft:destructible_by_mining";
