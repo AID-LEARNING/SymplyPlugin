@@ -41,6 +41,7 @@ use pocketmine\utils\SingletonTrait;
 use pocketmine\world\format\io\GlobalItemDataHandlers;
 use ReflectionClass;
 use ReflectionProperty;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\VanillaGroupMinecraft;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Builder\ItemBuilder;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\ICustomItem;
 use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
@@ -124,18 +125,18 @@ final class SymplyItemFactory
 	/**
 	 * @param Closure(): Item $itemClosure
 	 */
-	public function registerVanilla(Closure $itemClosure, string $identifier, ?Closure $serializer = null, ?Closure $deserializer = null) : void
+	public function registerVanilla(Closure $itemClosure, string $identifier, ?Closure $serializer = null, ?Closure $deserializer = null, ?array $argv = null) : void
 	{
 		/**
 		 * @var Item $itemVanilla
 		 */
-		$itemVanilla = $itemClosure();
+		$itemVanilla = $itemClosure($argv);
 		if (isset($this->vanilla[$identifier])){
 			throw new InvalidArgumentException("Item ID {$identifier} is already used by another item");
 		}
 		$this->vanilla[$identifier] = $itemVanilla;
 		if (!$this->asyncMode)
-			SymplyCache::getInstance()->addTransmitterItemVanilla(ThreadSafeArray::fromArray([$itemClosure, $identifier, $serializer, $deserializer]));
+			SymplyCache::getInstance()->addTransmitterItemVanilla(ThreadSafeArray::fromArray([$itemClosure, $identifier, $serializer, $deserializer, serialize($argv)]));
 		GlobalItemDataHandlers::getDeserializer()->map($identifier, $deserializer ?? static fn() => clone $itemVanilla);
 		GlobalItemDataHandlers::getSerializer()->map($itemVanilla, $serializer ?? static fn() => new SavedItemData($identifier));
 		StringToItemParser::getInstance()->register($identifier, static fn() => clone $itemVanilla);
@@ -146,12 +147,12 @@ final class SymplyItemFactory
 	 * @param Closure(): Item $itemClosure
 	 * @throws \ReflectionException
 	 */
-	public function overwrite(Closure $itemClosure, null|Closure|false $serializer = null, null|Closure|false $deserializer = null) : void
+	public function overwrite(Closure $itemClosure, null|Closure|false $serializer = null, null|Closure|false $deserializer = null, ?array $argv = null) : void
 	{
 		/**
 		 * @var Item $item
 		 */
-		$item = $itemClosure();
+		$item = $itemClosure($argv);
 		try {
 			$vanillaItemsNoConstructor = (new ReflectionClass(VanillaItems::class))->newInstanceWithoutConstructor();
 			$name = null;
@@ -172,11 +173,15 @@ final class SymplyItemFactory
 
 		}
 		$namespaceId = GlobalItemDataHandlers::getSerializer()->serializeType($item)->getName();
-		CreativeInventory::getInstance()->remove($item);
+        $creativeIventoryEntry = VanillaGroupMinecraft::getCreativeInventoryEntry($item);
 		$this->overwrite[$namespaceId] = $item;
-		CreativeInventory::getInstance()->add($item);
+        if ($creativeIventoryEntry) {
+            var_dump($item->getVanillaName());
+            CreativeInventory::getInstance()->remove($item);
+            CreativeInventory::getInstance()->add($item, $creativeIventoryEntry->getCategory(), $creativeIventoryEntry->getGroup());
+        }
 		if (!$this->asyncMode)
-			SymplyCache::getInstance()->addTransmitterItemOverwrite(ThreadSafeArray::fromArray([$itemClosure, $serializer, $deserializer]));
+			SymplyCache::getInstance()->addTransmitterItemOverwrite(ThreadSafeArray::fromArray([$itemClosure, $serializer, $deserializer, serialize($argv)]));
 		$serializer ??= static fn() => new SavedItemData($namespaceId);
 		$deserializer ??= static function () use ($namespaceId) {
 			return (clone SymplyItemFactory::getInstance()->getOverwrite($namespaceId));

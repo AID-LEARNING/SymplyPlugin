@@ -47,6 +47,7 @@ use ReflectionProperty;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BlockBuilder;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\IBlockCustom;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\IPermutationBlock;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\VanillaGroupMinecraft;
 use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
 use function hash;
 use function is_string;
@@ -211,9 +212,12 @@ final class SymplyBlockFactory
 
 		}
 		$namespaceId = GlobalBlockStateHandlers::getSerializer()->serializeBlock($block)->getName();
-		CreativeInventory::getInstance()->remove($block->asItem());
-		$this->overwrite[$namespaceId] = $block;
-		CreativeInventory::getInstance()->add($block->asItem());
+        $item = $block->asItem();
+        $creativeIventoryEntry = VanillaGroupMinecraft::getCreativeInventoryEntry($item);
+        CreativeInventory::getInstance()->remove($item);
+        $this->overwrite[$namespaceId] = $block;
+        if ($creativeIventoryEntry)
+            CreativeInventory::getInstance()->add($item, $creativeIventoryEntry->getCategory(), $creativeIventoryEntry->getGroup());
 		if (!$this->asyncMode)
 			SymplyCache::getInstance()->addTransmitterBlockOverwrite(ThreadSafeArray::fromArray([$blockClosure, $serializer, $deserializer]));
 		$serializer ??= static fn() => BlockStateWriter::create($namespaceId);

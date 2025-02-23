@@ -27,6 +27,8 @@ use pocketmine\block\BlockToolType;
 use pocketmine\inventory\ArmorInventory;
 use pocketmine\inventory\CreativeGroup;
 use pocketmine\inventory\CreativeInventory;
+use pocketmine\inventory\CreativeInventoryEntry;
+use pocketmine\item\Item;
 use pocketmine\utils\RegistryTrait;
 use function is_string;
 use function strlen;
@@ -227,6 +229,12 @@ class VanillaGroupMinecraft
 			}
 		}
 	}
+
+    public static function getCreativeInventoryEntry(Item $item): ?CreativeInventoryEntry
+    {
+        $index = CreativeInventory::getInstance()->getItemIndex($item);
+        return $index == -1 ? CreativeInventory::getInstance()->getAllEntries()[$index] : null;
+    }
 
 	public static function fromArmorTypeInfo(int $slotArmor) : ?CreativeGroup{
 		return match ($slotArmor){

@@ -51,8 +51,8 @@ class AsyncRegisterVanillaTask extends AsyncTask
 			foreach ($this->blockFuncs as [$blockClosure, $identifier, $serialize, $deserialize]) {
 				SymplyBlockFactory::getInstance(true)->registerVanilla($blockClosure, $identifier, $serialize, $deserialize);
 			}
-			foreach ($this->itemFuncs as [$itemClosure, $identifier, $serialize, $deserialize]) {
-				SymplyItemFactory::getInstance(true)->registerVanilla($itemClosure, $identifier, $serialize, $deserialize);
+			foreach ($this->itemFuncs as [$itemClosure, $identifier, $serialize, $deserialize, $argv]) {
+				SymplyItemFactory::getInstance(true)->registerVanilla($itemClosure, $identifier, $serialize, $deserialize, unserialize($argv));
 			}
 		}catch (Throwable) {
 

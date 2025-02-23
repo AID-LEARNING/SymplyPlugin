@@ -54,8 +54,8 @@ class AsyncOverwriteTask extends AsyncTask
 				SymplyBlockFactory::getInstance(true)->overwrite($blockClosure, $serialize, $deserialize);
 			}
 
-			foreach ($this->itemFuncs as [$itemClosure, $serialize, $deserialize]) {
-				SymplyItemFactory::getInstance(true)->overwrite($itemClosure, $serialize, $deserialize);
+			foreach ($this->itemFuncs as [$itemClosure, $serialize, $deserialize, $argv]) {
+				SymplyItemFactory::getInstance(true)->overwrite($itemClosure, $serialize, $deserialize, unserialize($argv));
 			}
 		}catch (Throwable){
 
