@@ -24,6 +24,8 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Utils;
 
 use pmmp\thread\ThreadSafeArray;
+use pocketmine\inventory\CreativeCategory;
+use pocketmine\inventory\CreativeGroup;
 use pocketmine\network\mcpe\protocol\ItemComponentPacket;
 use pocketmine\network\mcpe\protocol\types\BlockPaletteEntry;
 use pocketmine\network\mcpe\protocol\types\CacheableNbt;
@@ -56,12 +58,18 @@ final class SymplyCache
 	private ThreadSafeArray $transmitterBlockVanilla;
 	private ThreadSafeArray $transmitterItemVanilla;
 
+    /**
+     * @var array<string, array<string, CreativeGroup>>
+     */
+    private array $creativeGroupsUnique = [];
+
 	public bool	$blockNetworkIdsAreHashes = false;
 
 	public function __construct(private bool $asyncMode = false)
 	{
 		$this->blockPaletteEntries = [];
 		$this->itemsComponentPacketEntries = [];
+        $this->creativeGroupsUnique = [];
 		if (!$this->asyncMode){
 			$this->transmitterBlockCustom = new ThreadSafeArray();
 			$this->transmitterItemCustom = new ThreadSafeArray();
@@ -180,6 +188,26 @@ final class SymplyCache
 	{
 		$this->blockNetworkIdsAreHashes = $blockNetworkIdsAreHashes;
 	}
+
+    public function addCreativeGroup(CreativeCategory $category, ?CreativeGroup $creativeGroup) : ?CreativeGroup
+    {
+        $name = '';
+        if ($creativeGroup) {
+            $name = $creativeGroup->getName();
+            $name = is_string($name) ? $name : $name->getText();
+        }
+        if(strlen($name) === 0)
+            return $creativeGroup;
+        if(isset($this->creativeGroupsUnique[$category->name][$name])){
+            return $this->creativeGroupsUnique[$category->name][$name];
+        }
+        return ($this->creativeGroupsUnique[$category->name][$name] = $creativeGroup);
+    }
+
+    public function clearCreativeGroup() : void
+    {
+        unset($this->creativeGroupsUnique);
+    }
 
 	/**
 	 * @return BlockPaletteEntry[]

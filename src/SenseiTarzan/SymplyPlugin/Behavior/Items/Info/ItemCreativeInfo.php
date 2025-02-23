@@ -54,14 +54,15 @@ class ItemCreativeInfo
     public function getIternalGroup(): ?CreativeGroup
     {
         $group = $this->getGroup();
-        return $this->item ? new CreativeGroup(is_string($group) ? $group : $group->value, $this->item): null;
+        return $this->item ? new CreativeGroup(is_string($group) ? $group : $group->value, $this->item) : null;
     }
 
 	public function toNbt() : CompoundTag
 	{
         $group = $this->getGroup();
+        $name = (is_string($group) ? $group : $group->value);
 		return CompoundTag::create()
 			->setInt("creative_category", $this->getCategory()->toItemCategory() ?? 0)
-			->setString("creative_group", (is_string($group) ? $group : $group->value));
+			->setString("creative_group", (str_starts_with($name, "minecraft:") ? $name : ("minecraft:" . $name)));
 	}
 }

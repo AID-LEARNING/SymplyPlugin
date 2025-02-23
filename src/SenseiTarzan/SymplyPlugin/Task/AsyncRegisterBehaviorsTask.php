@@ -56,6 +56,7 @@ class AsyncRegisterBehaviorsTask extends AsyncTask
             foreach ($this->itemFuncs as [$itemClosure, $serialize, $deserialize, $argv]) {
                 SymplyItemFactory::getInstance(true)->register($itemClosure, $serialize, $deserialize, unserialize($argv, ['allowed_classes' => true]));
             }
+            SymplyCache::getInstance(true)->clearCreativeGroup();
         }catch (Throwable){
 
         }

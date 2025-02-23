@@ -25,6 +25,7 @@ namespace SenseiTarzan\SymplyPlugin;
 
 use Exception;
 use pocketmine\inventory\CreativeInventory;
+use pocketmine\nbt\LittleEndianNbtSerializer;
 use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\ClosureTask;
 use pocketmine\Server;
@@ -62,28 +63,33 @@ class Main extends PluginBase
         SymplyBlockFactory::getInstance()->initBlockBuilders();
         SymplyBlockPalette::getInstance()->sort(SymplyCache::getInstance()->isBlockNetworkIdsAreHashes());
 		$this->getScheduler()->scheduleDelayedTask(new ClosureTask(static function () {
+            foreach (SymplyItemFactory::getInstance()->getCustomAll() as $item){
+                if(!CreativeInventory::getInstance()->contains($item)) {
+                    $builder = SymplyItemFactory::getInstance()->getItemBuilder($item);
+                    $creative = $builder->getCreativeInfo();
+                    $category = $creative->getCategory()->toInternalCategory();
+                    $group = SymplyCache::getInstance()->addCreativeGroup($category, $creative->getIternalGroup());
+                    CreativeInventory::getInstance()->add($item, $category, $group);
+                }
+            }
+            foreach (SymplyItemFactory::getInstance()->getVanillaAll() as $item){
+                if(!CreativeInventory::getInstance()->contains($item))
+                    CreativeInventory::getInstance()->add($item);
+            }
             foreach (SymplyBlockFactory::getInstance()->getCustomAll() as $block){
                 if(!CreativeInventory::getInstance()->contains($block->asItem())) {
                     $builder = SymplyBlockFactory::getInstance()->getBlockBuilder($block);
                     $creative = $builder->getCreativeInfo();
-                    CreativeInventory::getInstance()->add($block->asItem(), $creative->getCategory()->toInternalCategory(), $creative->getIternalGroup());
+                    $category = $creative->getCategory()->toInternalCategory();
+                    $group = SymplyCache::getInstance()->addCreativeGroup($category, $creative->getIternalGroup());
+                    CreativeInventory::getInstance()->add($block->asItem(), $category, $group);
                 }
             }
             foreach (SymplyBlockFactory::getInstance()->getVanillaAll() as $block){
                 if(!CreativeInventory::getInstance()->contains($block->asItem()))
                     CreativeInventory::getInstance()->add($block->asItem());
             }
-			foreach (SymplyItemFactory::getInstance()->getCustomAll() as $item){
-				if(!CreativeInventory::getInstance()->contains($item)) {
-                    $builder = SymplyItemFactory::getInstance()->getItemBuilder($item);
-                    $creative = $builder->getCreativeInfo();
-                    CreativeInventory::getInstance()->add($item, $creative->getCategory()->toInternalCategory(), $creative->getIternalGroup());
-                }
-			}
-			foreach (SymplyItemFactory::getInstance()->getVanillaAll() as $item){
-				if(!CreativeInventory::getInstance()->contains($item))
-					CreativeInventory::getInstance()->add($item);
-			}
+            SymplyCache::getInstance()->clearCreativeGroup();
             $server = Server::getInstance();
             $asyncPool = $server->getAsyncPool();
             $asyncPool->addWorkerStartHook(static function(int $workerId) use($asyncPool) : void{

@@ -25,11 +25,17 @@ namespace SenseiTarzan\SymplyPlugin\Listener;
 
 use pocketmine\event\EventPriority;
 use pocketmine\event\server\DataPacketSendEvent;
+use pocketmine\inventory\CreativeInventory;
+use pocketmine\network\mcpe\cache\CreativeInventoryCacheEntry;
+use pocketmine\network\mcpe\convert\TypeConverter;
 use pocketmine\network\mcpe\protocol\BiomeDefinitionListPacket;
 use pocketmine\network\mcpe\protocol\CraftingDataPacket;
+use pocketmine\network\mcpe\protocol\CreativeContentPacket;
 use pocketmine\network\mcpe\protocol\ResourcePackStackPacket;
 use pocketmine\network\mcpe\protocol\StartGamePacket;
 use pocketmine\network\mcpe\protocol\types\Experiments;
+use pocketmine\network\mcpe\protocol\types\inventory\CreativeGroupEntry;
+use pocketmine\network\mcpe\protocol\types\inventory\CreativeItemEntry;
 use pocketmine\network\mcpe\protocol\types\PlayerMovementSettings;
 use SenseiTarzan\ExtraEvent\Class\EventAttribute;
 use SenseiTarzan\SymplyPlugin\Main;
@@ -63,9 +69,35 @@ readonly class BehaviorListener
 				], true);
 			} elseif ($packet instanceof  CraftingDataPacket){
 				$packets[$index] = SymplyDataCraftingDataCache::getInstance()->getCache(Main::getInstance()->getSymplyCraftManager());
-			}
+			}/* elseif ($packet instanceof CreativeContentPacket){
+                $uniqueGroup = [];
+                $groups = $packet->getGroups();
+                $indexGroups = [];
+                $index = 0;
+                foreach ($groups as $_ => $group){
+                    if (strlen($group->getCategoryName()) != 0 && isset($indexGroups[$group->getCategoryId()][$group->getCategoryName()])){
+                        continue;
+                    }
+                    if(!isset($indexGroups[$group->getCategoryId()])) {
+                        $indexGroups[$group->getCategoryId()] = [];
+                    }
+                    if (strlen($group->getCategoryName()) != 0) {
+                        $indexGroups[$group->getCategoryId()][$group->getCategoryName()] = $index++;
+                    }
+                    $uniqueGroup[] = $group;
+                }
+                $items = $packet->getItems();
+                $refacto = [];
+                foreach ($items as $_ => $item){
+                    $data = $groups[$item->getGroupId()];
+                    $refacto[] = new CreativeItemEntry($item->getEntryId(), $item->getItem(), $indexGroups[$data->getCategoryId()][$data->getCategoryName()]);
+                }
+                $packets[$index] = CreativeContentPacket::create($uniqueGroup, $refacto);
+            }*/
 		}
 		$event->setPackets($packets);
 	}
+
+
 
 }

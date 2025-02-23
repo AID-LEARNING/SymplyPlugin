@@ -61,8 +61,9 @@ class BlockCreativeInfo
 	public function toNbt() : CompoundTag
 	{
         $group = $this->getGroup();
+        $name = (is_string($group) ? $group : $group->value);
 		return CompoundTag::create()
 			->setString("category", $this->getCategory()->value ?? "")
-			->setString("group", (is_string($group) ? $group : $group->value));
+			->setString("group", (str_starts_with($name, "minecraft:") ? $name : ("minecraft:" . $name)));
 	}
 }

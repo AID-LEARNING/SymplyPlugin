@@ -125,7 +125,9 @@ final class SymplyBlockFactory
 		StringToItemParser::getInstance()->registerBlock($identifier, fn() => $blockCustom);
 		$item = $blockCustom->asItem();
         $creative = $blockBuilder->getCreativeInfo();
-        CreativeInventory::getInstance()->add($item, $creative->getCategory()->toInternalCategory(), $creative->getIternalGroup());
+        $category = $creative->getCategory()->toInternalCategory();
+        $group = SymplyCache::getInstance()->addCreativeGroup($category, $creative->getIternalGroup());
+        CreativeInventory::getInstance()->add($item, $category, $group);
 		$this->addBlockBuilder($blockCustom, $blockBuilder);
 
 	}
