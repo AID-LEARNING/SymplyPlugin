@@ -49,6 +49,7 @@ use function array_merge;
 use function is_string;
 use function mb_strtoupper;
 use function serialize;
+use function var_dump;
 
 final class SymplyItemFactory
 {
@@ -173,13 +174,13 @@ final class SymplyItemFactory
 
 		}
 		$namespaceId = GlobalItemDataHandlers::getSerializer()->serializeType($item)->getName();
-        $creativeIventoryEntry = VanillaGroupMinecraft::getCreativeInventoryEntry($item);
+		$creativeIventoryEntry = VanillaGroupMinecraft::getCreativeInventoryEntry($item);
 		$this->overwrite[$namespaceId] = $item;
-        if ($creativeIventoryEntry) {
-            var_dump($item->getVanillaName());
-            CreativeInventory::getInstance()->remove($item);
-            CreativeInventory::getInstance()->add($item, $creativeIventoryEntry->getCategory(), $creativeIventoryEntry->getGroup());
-        }
+		if ($creativeIventoryEntry) {
+			var_dump($item->getVanillaName());
+			CreativeInventory::getInstance()->remove($item);
+			CreativeInventory::getInstance()->add($item, $creativeIventoryEntry->getCategory(), $creativeIventoryEntry->getGroup());
+		}
 		if (!$this->asyncMode)
 			SymplyCache::getInstance()->addTransmitterItemOverwrite(ThreadSafeArray::fromArray([$itemClosure, $serializer, $deserializer, serialize($argv)]));
 		$serializer ??= static fn() => new SavedItemData($namespaceId);

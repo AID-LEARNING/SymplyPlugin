@@ -212,12 +212,12 @@ final class SymplyBlockFactory
 
 		}
 		$namespaceId = GlobalBlockStateHandlers::getSerializer()->serializeBlock($block)->getName();
-        $item = $block->asItem();
-        $creativeIventoryEntry = VanillaGroupMinecraft::getCreativeInventoryEntry($item);
-        CreativeInventory::getInstance()->remove($item);
-        $this->overwrite[$namespaceId] = $block;
-        if ($creativeIventoryEntry)
-            CreativeInventory::getInstance()->add($item, $creativeIventoryEntry->getCategory(), $creativeIventoryEntry->getGroup());
+		$item = $block->asItem();
+		$creativeIventoryEntry = VanillaGroupMinecraft::getCreativeInventoryEntry($item);
+		CreativeInventory::getInstance()->remove($item);
+		$this->overwrite[$namespaceId] = $block;
+		if ($creativeIventoryEntry)
+			CreativeInventory::getInstance()->add($item, $creativeIventoryEntry->getCategory(), $creativeIventoryEntry->getGroup());
 		if (!$this->asyncMode)
 			SymplyCache::getInstance()->addTransmitterBlockOverwrite(ThreadSafeArray::fromArray([$blockClosure, $serializer, $deserializer]));
 		$serializer ??= static fn() => BlockStateWriter::create($namespaceId);

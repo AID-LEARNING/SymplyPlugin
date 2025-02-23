@@ -29,6 +29,7 @@ use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockFactory;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
 use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
 use Throwable;
+use function unserialize;
 
 class AsyncRegisterVanillaTask extends AsyncTask
 {
