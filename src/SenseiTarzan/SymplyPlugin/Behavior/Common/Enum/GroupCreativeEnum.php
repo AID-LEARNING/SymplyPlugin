@@ -104,14 +104,5 @@ enum GroupCreativeEnum : string
 	case CANDLES = "itemGroup.name.candles";
 	case GOAT_HORN = "itemGroup.name.goatHorn";
 
-	public static function fromArmorTypeInfo(int $slotArmor) : GroupCreativeEnum{
-		return match ($slotArmor){
-			ArmorInventory::SLOT_HEAD => self::HELMET,
-			ArmorInventory::SLOT_CHEST => self::CHESTPLATE,
-			ArmorInventory::SLOT_LEGS => self::LEGGINGS,
-			ArmorInventory::SLOT_FEET => self::BOOTS,
-			default => self::NONE
-		};
-	}
 
 }

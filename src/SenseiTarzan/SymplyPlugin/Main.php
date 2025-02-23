@@ -30,6 +30,7 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\ClosureTask;
 use pocketmine\Server;
 use SenseiTarzan\ExtraEvent\Component\EventLoader;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\VanillaGroupMinecraft;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockFactory;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockPalette;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
@@ -58,10 +59,23 @@ class Main extends PluginBase
 		$this->symplyCraftManager = new SymplyCraftManager($this);
 	}
 
+    private function camelToSnakeCase(string $string): string
+    {
+        $word = "";
+        for ($i = 0; $i < strlen($string); $i++) {
+            $char = $string[$i];
+            if (strtolower($char) !== $char) {
+                $word .= "_";
+            }
+            $word .= $char;
+        }
+        return strtoupper($word);
+    }
 	protected function onEnable() : void
 	{
         SymplyBlockFactory::getInstance()->initBlockBuilders();
         SymplyBlockPalette::getInstance()->sort(SymplyCache::getInstance()->isBlockNetworkIdsAreHashes());
+        var_dump(VanillaGroupMinecraft::CHESTPLATE());
 		$this->getScheduler()->scheduleDelayedTask(new ClosureTask(static function () {
             foreach (SymplyItemFactory::getInstance()->getCustomAll() as $item){
                 if(!CreativeInventory::getInstance()->contains($item)) {

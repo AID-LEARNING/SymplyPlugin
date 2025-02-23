@@ -26,6 +26,7 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Items;
 use pocketmine\item\Item as PMItem;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\CategoryCreativeEnum;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\GroupCreativeEnum;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\VanillaGroupMinecraft;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Builder\ItemBuilder;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\DurabilityComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\WearableComponent;
@@ -56,6 +57,6 @@ trait HackArmorTrait
 			->addComponent(new DurabilityComponent($this->getMaxDurability()))
 			->addComponent(new WearableComponent(SlotEnum::fromArmorTypeInfo($this->getArmorSlot()), $this->getDefensePoints()))
 			->addProperty(new EnchantableSlotProperty(EnchantSlotEnum::fromArmorTypeInfo($this->getArmorSlot())))
-			->setCreativeInfo(new ItemCreativeInfo(CategoryCreativeEnum::EQUIPMENT));
+			->setCreativeInfo(new ItemCreativeInfo(CategoryCreativeEnum::EQUIPMENT, VanillaGroupMinecraft::fromArmorTypeInfo($this->getArmorSlot())));
 	}
 }

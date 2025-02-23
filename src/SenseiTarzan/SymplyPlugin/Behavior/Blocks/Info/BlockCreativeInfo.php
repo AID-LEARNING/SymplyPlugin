@@ -26,6 +26,7 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Info;
 use pocketmine\inventory\CreativeGroup;
 use pocketmine\nbt\tag\CompoundTag;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\CategoryCreativeEnum;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\VanillaGroupMinecraft;
 
 class BlockCreativeInfo
 {
@@ -47,12 +48,18 @@ class BlockCreativeInfo
         return $this->group;
     }
 
+
+    private function getGroupName() : string
+    {
+        $name = $this->group?->getName() ?? "";
+        return is_string($name) ? $name : $name->getText();
+    }
+
 	public function toNbt() : CompoundTag
 	{
-        $group = $this->getGroup();
-        $name = $group?->getName() ?? "";
+        $name = $this->getGroupName();
 		return CompoundTag::create()
 			->setString("category", $this->getCategory()->value ?? "")
-			->setString("group", ((str_starts_with($name, "minecraft:") || empty($name)) ? $name : ("minecraft:" . $name)));
+			->setString("group", ((empty($name) || isset(VanillaGroupMinecraft::ITEM_GROUP_VANILLA[$name]) || str_starts_with($name, "minecraft:")) ? $name : ("minecraft:" . $name)));
 	}
 }

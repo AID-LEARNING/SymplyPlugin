@@ -29,6 +29,7 @@ use pocketmine\item\TieredTool;
 use pocketmine\item\ToolTier as PMToolTier;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\CategoryCreativeEnum;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\GroupCreativeEnum;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\VanillaGroupMinecraft;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Builder\ItemBuilder;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\DurabilityComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\EnchantSlotEnum;
@@ -88,14 +89,13 @@ trait HackToolTrait
 			->addProperty(new DamageProperty($this->getAttackPoints()))
 			->setHandEquipped(true)
 			->addProperty(new EnchantableSlotProperty(match ($this->getBlockToolType()) {
-				BlockToolType::AXE => EnchantSlotEnum::SWORD,
+				BlockToolType::AXE, BlockToolType::SWORD => EnchantSlotEnum::SWORD,
 				BlockToolType::HOE => EnchantSlotEnum::HOE,
-				BlockToolType::SWORD => EnchantSlotEnum::SWORD,
 				BlockToolType::PICKAXE => EnchantSlotEnum::PICKAXE,
 				BlockToolType::SHOVEL => EnchantSlotEnum::SHOVEL,
-				default => EnchantSlotEnum::SWORD
+				default => EnchantSlotEnum::ALL
 			}))
-			->setCreativeInfo(new ItemCreativeInfo(CategoryCreativeEnum::EQUIPMENT))
+			->setCreativeInfo(new ItemCreativeInfo(CategoryCreativeEnum::EQUIPMENT, VanillaGroupMinecraft::fromToolType($this->getBlockToolType())))
 			->addTag(match ($this->getBlockToolType()){
 				BlockToolType::AXE => "minecraft:is_axe",
 				BlockToolType::HOE => "minecraft:is_hoe",
