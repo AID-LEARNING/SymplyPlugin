@@ -123,9 +123,6 @@ final class SymplyBlockFactory
 		GlobalBlockStateHandlers::getSerializer()->map($blockCustom, $serializer);
 		GlobalBlockStateHandlers::getDeserializer()->map($identifier, $deserializer);
 		StringToItemParser::getInstance()->registerBlock($identifier, fn() => $blockCustom);
-		$item = $blockCustom->asItem();
-		$creative = $blockBuilder->getCreativeInfo();
-		CreativeInventory::getInstance()->add($item, $creative->getCategory()->toInternalCategory(), $creative->getGroup());
 		$this->addBlockBuilder($blockCustom, $blockBuilder);
 
 	}
