@@ -100,14 +100,16 @@ final class ItemBuilder
 			->setCanDestroyInCreativeProperty();
 	}
 
-	public function setItem(PMItem&ICustomItem $itemCustom) : self{
+	public function setItem(PMItem&ICustomItem $itemCustom) : self
+	{
 		$this->item = $itemCustom;
 		return $this
 			->setDefaultName()
 			->setFrameCountProperty(1);
 	}
+
 	/**
-	 * Permet de mettre dans dans l'inventaire creative
+	 * Allows placing the item in the creative inventory.
 	 * @return $this
 	 */
 	public function setCreativeInfo(ItemCreativeInfo $creativeInfo) : self
@@ -154,7 +156,8 @@ final class ItemBuilder
 	/**
 	 * @return $this
 	 */
-	public function addComponent(IComponent $component) : self{
+	public function addComponent(IComponent $component) : self
+	{
 		$name = $component->getName();
 		$this->components[(is_string($name) ? $name : $name->value)] = $component;
 		return $this;
@@ -167,6 +170,7 @@ final class ItemBuilder
 	{
 		return $this->components;
 	}
+
 	public function getComponent(string|BackedEnum $name) : ?IComponent
 	{
 		return $this->components[(is_string($name) ? $name : $name->value)] ?? null;
@@ -205,15 +209,16 @@ final class ItemBuilder
 	}
 
 	/**
-	 * Donne le noms par defaut pour mettre dans language de minecraft
+	 * Sets the default name for the item in Minecraft's language files.
 	 * @return $this
 	 */
-	public function setDefaultName() : self{
+	public function setDefaultName() : self
+	{
 		return $this->addComponent(new DisplayNameComponent("item.{$this->item->getIdentifier()->getNamespaceId()}.name"));
 	}
 
-	/**R
-	 * Permet d'active la deuxieme mains pour l'item
+	/**
+	 * Enables the off-hand functionality for the item.
 	 * @return $this
 	 */
 	public function setAllowOffHand(bool $value = false) : self
@@ -222,23 +227,25 @@ final class ItemBuilder
 	}
 
 	/**
-	 * Permet de set la stack par rapport a la methode getMaxStackSize de Item.class
+	 * Sets the maximum stack size based on the item's default stack size.
 	 * @return $this
 	 */
-	public function setDefaultMaxStack() : self{
+	public function setDefaultMaxStack() : self
+	{
 		return $this->setMaxStackSize($this->item->getMaxStackSize());
 	}
 
 	/**
-	 * Permet de mettre la MaxStack et il est obligatoir sinon le client n'autorise pas l'interaction a vec l'item
+	 * Sets the maximum stack size for the item.
 	 * @return $this
 	 */
-	public function setMaxStackSize(int $max) : self{
+	public function setMaxStackSize(int $max) : self
+	{
 		return $this->addProperty(new MaxStackSizeProperty($max));
 	}
 
 	/**
-	 * Permet de dire que l'item est un equipement
+	 * Marks the item as an equipment item.
 	 * @return $this
 	 */
 	public function setHandEquipped(bool $value = false) : self
@@ -247,7 +254,7 @@ final class ItemBuilder
 	}
 
 	/**
-	 * ??
+	 * Sets the armor component for the item.
 	 * @return $this
 	 */
 	public function setArmorComponent(TextureTypeEnum $textureType = TextureTypeEnum::NONE) : static
@@ -256,7 +263,7 @@ final class ItemBuilder
 	}
 
 	/**
-	 * Permet de faire le fonctionement de l'armure
+	 * Sets the wearable component for the item.
 	 * @return $this
 	 */
 	public function setWearableComponent(SlotEnum $slot, int $protection) : static
@@ -265,7 +272,7 @@ final class ItemBuilder
 	}
 
 	/**
-	 * Permet de change la vitesse de movement a l'item
+	 * Sets the chargeable component for the item.
 	 * @return $this
 	 */
 	public function setChargeableComponent(float $value) : static
@@ -274,9 +281,9 @@ final class ItemBuilder
 	}
 
 	/**
-	 * Permet de set un cooldown a l'item mais il ya un packet a utiliser
-	 * @param string $category nom du cooldown
-	 * @param float  $duration la duree est en seconde et non pas des tick !!Attention!!
+	 * Sets a cooldown component for the item.
+	 * @param string $category The name of the cooldown category.
+	 * @param float  $duration The duration in seconds.
 	 * @return $this
 	 */
 	public function setCooldownComponent(string $category, float $duration) : static
@@ -292,7 +299,7 @@ final class ItemBuilder
 	}
 
 	/**
-	 * Permet de mettre faire l'action d'un arc
+	 * Sets the throwable component for the item.
 	 * @return $this
 	 */
 	public function setThrowableComponent(bool $doSwingAnimation = true, float $launchPowerScale = 1.0, float $maxDrawDuration = 0.0, float $maxLaunchPower = 1.0, float $minDrawDuration = 0.0, bool $scalePowerByDrawDuration = false) : static
@@ -301,7 +308,7 @@ final class ItemBuilder
 	}
 
 	/**
-	 * Permet de definir le projectile que tu jette avec cet item
+	 * Sets the projectile component for the item.
 	 * @return $this
 	 */
 	public function setProjectileComponent(float $minimumCriticalPower, string $projectileEntity) : static
@@ -310,7 +317,7 @@ final class ItemBuilder
 	}
 
 	/**
-	 * Permet de mettre une vitesse par rapport un block ou tag pour chacun
+	 * Sets the digging component for the item.
 	 * @param array<string, int> $blocks
 	 * @param array<string, int> $tags
 	 * @return $this
@@ -318,19 +325,17 @@ final class ItemBuilder
 	public function setDiggerComponent(array $blocks = [], array $tags = []) : static
 	{
 		$digger = new DiggerComponent();
-		foreach ($blocks as $block => $speed)
-		{
+		foreach ($blocks as $block => $speed) {
 			$digger->addBlock($block, $speed);
 		}
-		foreach ($tags as $tag => $speed)
-		{
+		foreach ($tags as $tag => $speed) {
 			$digger->addTag($tag, $speed);
 		}
 		return $this->addComponent($digger);
 	}
 
 	/**
-	 * Permet de mettre un Icon a l'item
+	 * Sets an icon for the item.
 	 * @return $this
 	 */
 	public function setIcon(string $texture) : self
@@ -339,7 +344,7 @@ final class ItemBuilder
 	}
 
 	/**
-	 * Permet de jouer l'animation de manger ou de potion
+	 * Sets the use animation for the item.
 	 * @return $this
 	 */
 	public function setUseAnimationProperty(AnimationEnum $animation) : self
@@ -348,7 +353,7 @@ final class ItemBuilder
 	}
 
 	/**
-	 * la dure de l'animation
+	 * Sets the use duration for the item.
 	 * @return $this
 	 */
 	public function setUseDurationProperty(int $value) : self
@@ -357,28 +362,29 @@ final class ItemBuilder
 	}
 
 	/**
-	 * Donne l'effect fiol
+	 * Sets the foil effect for the item.
 	 * @return $this
 	 */
-	public function setEffectFoilProperty(bool $value = true) : self{
+	public function setEffectFoilProperty(bool $value = true) : self
+	{
 		return $this->addProperty(new FoilProperty($value));
 	}
 
 	/**
-	 * Permet de pouvoir le mettre dans la table d'enchant
+	 * Allows the item to be enchanted.
 	 * @return $this
 	 */
 	public function setTypeEnchantProperty(EnchantSlotEnum $slot, ?int $value = null) : static
 	{
 		$property = $this->addProperty(new EnchantableSlotProperty($slot));
-		if ($value !== null){
+		if ($value !== null) {
 			$property->addProperty(new EnchantableValueProperty($value));
 		}
 		return $property;
 	}
 
 	/**
-	 * je ne sais pas a quoi il sert mais minecraft l'envoie
+	 * Sets the mining speed for the item.
 	 * @return $this
 	 */
 	public function setMiningSpeedProperty(float $value) : static
@@ -387,7 +393,7 @@ final class ItemBuilder
 	}
 
 	/**
-	 * ??
+	 * Sets the frame count for the item.
 	 * @return $this
 	 */
 	public function setFrameCountProperty(int $value) : static
@@ -396,7 +402,7 @@ final class ItemBuilder
 	}
 
 	/**
-	 * Permet de faire le comportement du seau
+	 * Sets the liquid clipped property for the item.
 	 * @return $this
 	 */
 	public function setLiquidClippedProperty(bool $value = true) : static
@@ -405,7 +411,7 @@ final class ItemBuilder
 	}
 
 	/**
-	 * Permet de case des block en creative
+	 * Allows the item to destroy blocks in creative mode.
 	 * @return $this
 	 */
 	public function setCanDestroyInCreativeProperty(bool $value = true) : static
@@ -414,7 +420,7 @@ final class ItemBuilder
 	}
 
 	/**
-	 * permet de dire si il stack par rapport a la Data
+	 * Sets whether the item stacks by data.
 	 * @return $this
 	 */
 	public function setStackedByDataProperty(bool $value = true) : static
@@ -423,8 +429,7 @@ final class ItemBuilder
 	}
 
 	/**
-	 * Change la taille de la texture
-	 * @param string|null $mode je ne sais pas quoi il sert mais il existe
+	 * Sets the render offsets for the item.
 	 * @return $this
 	 */
 	public function setRenderOffsets(?array $mainHand = null, ?array $offHand = null, ?string $mode = null) : static
@@ -433,7 +438,7 @@ final class ItemBuilder
 	}
 
 	/**
-	 * Detect si le HandEquippedProperty est active
+	 * Detects if the HandEquippedProperty is active.
 	 * @return false|mixed
 	 */
 	private function issHandEquipped() : mixed
@@ -442,8 +447,7 @@ final class ItemBuilder
 	}
 
 	/**
-	 * Change la taille de la texture par rapport la size
-	 * @param string|null $mode je ne sais pas quoi il sert mais il existe
+	 * Sets the texture size for the item.
 	 * @return $this
 	 */
 	public function setTextureWithSize(int $size, ?string $mode = null) : static
@@ -452,8 +456,7 @@ final class ItemBuilder
 	}
 
 	/**
-	 * Change la taille de la texture par rapport la width et la height
-	 * @param string|null $mode je ne sais pas quoi il sert mais il existe
+	 * Sets the texture size for the item with specific width and height.
 	 * @return $this
 	 */
 	public function setTextureWithWidthAndHeight(int $width, int $height, ?string $mode = null) : static
@@ -475,7 +478,7 @@ final class ItemBuilder
 					scale: new Vector3($horizontal_mainHand = round(0.1 * $newWidth, 8), round(0.1 * $newHeight, 8), $horizontal_mainHand)
 				)
 			],
-			offHand:  [
+			offHand: [
 				new RenderOffsetSubComponent(
 					RenderSubOffsetsTypeEnum::FIRST_PERSON,
 					scale: new Vector3($horizontal_offHand, $vertical_offHand, $horizontal_offHand)
@@ -499,8 +502,7 @@ final class ItemBuilder
 		int $onUseAction = -1,
 		array $onUseRange = [],
 		string $usingConvertsTo = ""
-	) : static
-	{
+	) : static {
 		return $this->addComponent(new FoodComponent(
 			$nutrition,
 			$saturationModifier,

@@ -187,7 +187,7 @@ final class SymplyItemFactory
 		};
 		$instanceDeserializer = GlobalItemDataHandlers::getDeserializer();
 		$instanceSerializer = GlobalItemDataHandlers::getSerializer();
-		if ($deserializer !== false) {
+		if ($deserializer) {
 			try {
 				$instanceDeserializer->map($namespaceId, $deserializer);
 			} catch (InvalidArgumentException) {
@@ -197,7 +197,7 @@ final class SymplyItemFactory
 				$deserializerProperty->setValue($instanceDeserializer, $value);
 			}
 		}
-		if ($serializer !== false) {
+		if ($serializer) {
 			try {
 				if ($item instanceof ItemBlock){
 					$instanceSerializer->mapBlock($item->getBlock(), $serializer);

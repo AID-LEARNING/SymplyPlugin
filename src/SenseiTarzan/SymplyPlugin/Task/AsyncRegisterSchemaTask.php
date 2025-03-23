@@ -24,9 +24,9 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Task;
 
 use pocketmine\scheduler\AsyncTask;
-use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockPalette;
 use SenseiTarzan\SymplyPlugin\Manager\SymplySchemaManager;
-use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
+use function serialize;
+use function unserialize;
 
 class AsyncRegisterSchemaTask extends AsyncTask
 {
@@ -43,9 +43,9 @@ class AsyncRegisterSchemaTask extends AsyncTask
 	 */
 	public function onRun() : void
 	{
-        $schemas = unserialize($this->listSchema);
+		$schemas = unserialize($this->listSchema);
 		foreach ($schemas as $schema) {
-            SymplySchemaManager::getInstance()->addSchema($schema);
-        }
+			SymplySchemaManager::getInstance()->addSchema($schema);
+		}
 	}
 }

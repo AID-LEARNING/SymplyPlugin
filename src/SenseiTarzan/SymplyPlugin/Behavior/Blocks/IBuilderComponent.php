@@ -24,9 +24,9 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks;
 
 use pocketmine\math\Vector3;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BlockBuilder;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub\MaterialMappingSubComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub\MaterialSubComponent;
+use SenseiTarzan\SymplyPlugin\Utils\Vector3WithOffset;
 
 /**
  * @internal
@@ -35,44 +35,61 @@ interface IBuilderComponent
 {
 
 	/**
-	 * Permet de mettre un geometry custom sur le block
-	 * @return $this
+	 * Sets a custom geometry for the block.
+	 *
+	 * @param string     $identifier       The geometry identifier.
+	 * @param array|null $boneVisibilities Optional array of bone visibilities.
 	 */
 	public function setGeometry(string $identifier, ?array $boneVisibilities = null) : static;
 
 	/**
-	 * Permet de dire que le bloc kest un cube complet
-	 * @return $this
+	 * @deprecated Use setGeometry("minecraft:geometry.full_block") instead.
+	 * By default, this is already applied.
+	 *
+	 * Defines the block as a full cube.
 	 */
 	public function setUnitCube() : static;
-	/**
-	 * Permet de devenir la texture cote server et oublige d'etre fait pour les block avec des permutation
-	 * @param MaterialMappingSubComponent[] $mappings
-	 * @param MaterialSubComponent[]        $materials
-	 * @return BlockBuilder
-	 */
-	public function setMaterialInstance(array $mappings = [], array $materials = []) : static;
-	/**
-	 * Permet de change le sens des block de doit utilise avec le etMaterialInstance
-	 * @return $this
-	 */
-	public function setTransformationComponent(?Vector3 $rotation = null, ?Vector3 $scale = null, ?Vector3 $translation = null) : static;
 
 	/**
-	 * Permet de change la hitbox de colision du block
-	 * @return $this
+	 * Sets the material instance, which is required for blocks with permutations.
+	 *
+	 * @param MaterialMappingSubComponent[] $mappings  Array of material mappings.
+	 * @param MaterialSubComponent[]        $materials Array of materials.
+	 */
+	public function setMaterialInstance(array $mappings = [], array $materials = []) : static;
+
+	/**
+	 * Adjusts the block's orientation and transformation.
+	 * Should be used together with `setMaterialInstance`.
+	 *
+	 * @param Vector3|Vector3WithOffset|null $rotation    Rotation vector.
+	 * @param Vector3|Vector3WithOffset|null $scale       Scale vector.
+	 * @param Vector3|Vector3WithOffset|null $translation Translation vector.
+	 */
+	public function setTransformationComponent(Vector3|Vector3WithOffset|null $rotation = null, Vector3|Vector3WithOffset|null $scale = null, Vector3|Vector3WithOffset|null $translation = null) : static;
+
+	/**
+	 * Sets the collision hitbox for the block.
+	 *
+	 * @param Vector3 $origin The hitbox origin.
+	 * @param Vector3 $size   The hitbox size.
+	 * @param bool    $enable Whether the hitbox is enabled.
 	 */
 	public function setCollisionBox(Vector3 $origin, Vector3 $size, bool $enable = true) : static;
 
 	/**
-	 * Permet de change la hitbox de selection du block
-	 * @return $this
+	 * Sets the selection hitbox for the block.
+	 *
+	 * @param Vector3 $origin The hitbox origin.
+	 * @param Vector3 $size   The hitbox size.
+	 * @param bool    $enable Whether the selection hitbox is enabled.
 	 */
 	public function setSelectionBox(Vector3 $origin, Vector3 $size, bool $enable = true) : static;
 
 	/**
-	 * Permet de dire que interagir
-	 * @return $this
+	 * Sets an interaction trigger for the block.
+	 *
+	 * @param string|null $triggerType The type of interaction trigger.
 	 */
 	public function setOnInteract(?string $triggerType = null) : static;
 }
