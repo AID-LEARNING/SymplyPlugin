@@ -461,31 +461,38 @@ final class ItemBuilder
 	 */
 	public function setTextureWithWidthAndHeight(int $width, int $height, ?string $mode = null) : static
 	{
-		$handEquipped = $this->issHandEquipped();
+		//$handEquipped = $this->issHandEquipped();
 		$newWidth = 16 / $width;
 		$newHeight = 16 / $height;
-		$horizontal_mainHand = round(($handEquipped ? 0.039 : 0.1) * $newWidth, 8);
-		$horizontal_offHand = round(0.075 * $newWidth, 8);
-		$vertical_offHand = round(0.25 * $newHeight, 8);
+		$horizontalMainHand = [
+            RenderSubOffsetsTypeEnum::FIRST_PERSON->value => round(0.039 * $newWidth, 8),
+            RenderSubOffsetsTypeEnum::THIRD_PERSON->value => round(0.1 * $newWidth, 8),
+        ];
+        $verticalMainHand = [
+            RenderSubOffsetsTypeEnum::FIRST_PERSON->value => round(0.039 * $newHeight, 8),
+            RenderSubOffsetsTypeEnum::THIRD_PERSON->value => round(0.1 * $newHeight, 8),
+        ];
+        $horizontalOffHand = round(0.065  * $newWidth, 8);
+		$verticalOffHand = round(0.25 * $newHeight, 8);
 		return $this->setRenderOffsets(
 			mainHand: [
 				new RenderOffsetSubComponent(
 					RenderSubOffsetsTypeEnum::FIRST_PERSON,
-					scale: new Vector3($horizontal_mainHand, round(($handEquipped ? 0.065 : 0.1) * $newHeight, 8), $horizontal_mainHand)
+					scale: new Vector3($horizontalMainHand[RenderSubOffsetsTypeEnum::FIRST_PERSON->value], $verticalMainHand[RenderSubOffsetsTypeEnum::FIRST_PERSON->value], $horizontalMainHand[RenderSubOffsetsTypeEnum::FIRST_PERSON->value])
 				),
 				new RenderOffsetSubComponent(
 					RenderSubOffsetsTypeEnum::THIRD_PERSON,
-					scale: new Vector3($horizontal_mainHand = round(0.1 * $newWidth, 8), round(0.1 * $newHeight, 8), $horizontal_mainHand)
+					scale: new Vector3($horizontalMainHand[RenderSubOffsetsTypeEnum::THIRD_PERSON->value], $verticalMainHand[RenderSubOffsetsTypeEnum::THIRD_PERSON->value], $horizontalMainHand[RenderSubOffsetsTypeEnum::THIRD_PERSON->value])
 				)
 			],
 			offHand: [
 				new RenderOffsetSubComponent(
 					RenderSubOffsetsTypeEnum::FIRST_PERSON,
-					scale: new Vector3($horizontal_offHand, $vertical_offHand, $horizontal_offHand)
+					scale: new Vector3($horizontalOffHand, $verticalOffHand, $horizontalOffHand)
 				),
 				new RenderOffsetSubComponent(
 					RenderSubOffsetsTypeEnum::THIRD_PERSON,
-					scale: new Vector3($horizontal_offHand, $vertical_offHand, $horizontal_offHand)
+					scale: new Vector3($horizontalOffHand, $verticalOffHand, $horizontalOffHand)
 				)
 			],
 			mode: $mode
