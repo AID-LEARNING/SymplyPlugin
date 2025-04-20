@@ -48,23 +48,9 @@ final class SymplyBlockPalette
 	use SingletonTrait;
 
 	/** @var BlockStateDictionaryEntry[] */
-	private array $states;
-	/** @var BlockStateDictionaryEntry[] */
 	private array $customStates;
-	private BlockTranslator $translator;
-	private ReflectionProperty $bedrockKnownStates;
-	private ReflectionProperty $stateDataToStateIdLookup;
-	private ReflectionProperty $idMetaToStateIdLookupCache;
-	private ReflectionProperty $fallbackStateId;
-	private ReflectionProperty $networkIdCache;
 
 	public function __construct() {
-	}
-	/**
-	 * @return BlockStateDictionaryEntry[]
-	 */
-	public function getStates() : array {
-		return $this->states;
 	}
 
 	/**
@@ -178,13 +164,13 @@ final class SymplyBlockPalette
 
         $translator = $instance = TypeConverter::getInstance()->getBlockTranslator();
         $dictionary = $instance->getBlockStateDictionary();
-        $states = [];
 
-        $this->bedrockKnownStates = new ReflectionProperty($dictionary, "states");
-        $this->stateDataToStateIdLookup = new ReflectionProperty($dictionary, "stateDataToStateIdLookup");
-        $this->idMetaToStateIdLookupCache = new ReflectionProperty($dictionary, "idMetaToStateIdLookupCache");
-        $this->fallbackStateId = new ReflectionProperty($instance, "fallbackStateId");
-        $this->networkIdCache = new ReflectionProperty($instance, "networkIdCache");
+        $bedrockKnownStates = new ReflectionProperty($dictionary, "states");
+        $stateDataToStateIdLookup = new ReflectionProperty($dictionary, "stateDataToStateIdLookup");
+        $idMetaToStateIdLookupCache = new ReflectionProperty($dictionary, "idMetaToStateIdLookupCache");
+        $fallbackStateId = new ReflectionProperty($instance, "fallbackStateId");
+        $networkIdCache = new ReflectionProperty($instance, "networkIdCache");
+        $states = [];
 
         foreach ($dictionary->getStates() as $state) {
             $states[$state->getStateName()][] = $state;
@@ -195,14 +181,14 @@ final class SymplyBlockPalette
 			$states[$state->getStateName()][] = $state;
 		}
 		$sortedStates = [];
-		$stateDataToStateIdLookup = [];
-		$this->selectModeSort($blockNetworkIdsAreHashes, $states, $sortedStates, $stateDataToStateIdLookup);
+		$stateDataToStateIdLookupValue = [];
+		$this->selectModeSort($blockNetworkIdsAreHashes, $states, $sortedStates, $stateDataToStateIdLookupValue);
 		$dictionary = $translator->getBlockStateDictionary();
-		$this->bedrockKnownStates->setValue($dictionary, $sortedStates);
-		$this->stateDataToStateIdLookup->setValue($dictionary, $stateDataToStateIdLookup);
-		$this->idMetaToStateIdLookupCache->setValue($dictionary, null); //set this to null so pm can create a new cache
-		$this->networkIdCache->setValue($translator, []); //set this to empty-array so pm can create a new cache
-		$this->fallbackStateId->setValue($translator, $stateDataToStateIdLookup[BlockTypeNames::INFO_UPDATE] ??
+		$bedrockKnownStates->setValue($dictionary, $sortedStates);
+		$stateDataToStateIdLookup->setValue($dictionary, $stateDataToStateIdLookupValue);
+		$idMetaToStateIdLookupCache->setValue($dictionary, null); //set this to null so pm can create a new cache
+		$networkIdCache->setValue($translator, []); //set this to empty-array so pm can create a new cache
+		$fallbackStateId->setValue($translator, $stateDataToStateIdLookupValue[BlockTypeNames::INFO_UPDATE] ??
 			throw new AssumptionFailedError(BlockTypeNames::INFO_UPDATE . " should always exist")
 		);
 	}
