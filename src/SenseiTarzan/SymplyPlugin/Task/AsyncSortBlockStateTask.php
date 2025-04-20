@@ -24,6 +24,8 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Task;
 
 use pocketmine\scheduler\AsyncTask;
+use pocketmine\Server;
+use pocketmine\thread\log\AttachableThreadSafeLogger;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockPalette;
 use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
 
@@ -32,8 +34,11 @@ class AsyncSortBlockStateTask extends AsyncTask
 
 	private bool $blockNetworkIdsAreHashes;
 
-	public function __construct()
+    private AttachableThreadSafeLogger $logger;
+
+    public function __construct(private int $workerId)
 	{
+        $this->logger = Server::getInstance()->getLogger();
 		$this->blockNetworkIdsAreHashes = SymplyCache::getInstance()->isBlockNetworkIdsAreHashes();
 	}
 
@@ -43,5 +48,6 @@ class AsyncSortBlockStateTask extends AsyncTask
 	public function onRun() : void
 	{
 		SymplyBlockPalette::getInstance()->sort($this->blockNetworkIdsAreHashes);
+        $this->logger->debug("[SymplyPlugin] WorkerId "  . $this->workerId .  ": finish sort block state task");
 	}
 }

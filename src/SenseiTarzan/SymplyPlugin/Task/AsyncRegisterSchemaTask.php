@@ -24,6 +24,8 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Task;
 
 use pocketmine\scheduler\AsyncTask;
+use pocketmine\Server;
+use pocketmine\thread\log\AttachableThreadSafeLogger;
 use SenseiTarzan\SymplyPlugin\Manager\SymplySchemaManager;
 use function serialize;
 use function unserialize;
@@ -32,9 +34,11 @@ class AsyncRegisterSchemaTask extends AsyncTask
 {
 
 	private string $listSchema;
+    private AttachableThreadSafeLogger $logger;
 
-	public function __construct()
+    public function __construct(private int $workerId)
 	{
+        $this->logger = Server::getInstance()->getLogger();
 		$this->listSchema = serialize(SymplySchemaManager::getInstance()->getListSchema());
 	}
 
@@ -47,5 +51,7 @@ class AsyncRegisterSchemaTask extends AsyncTask
 		foreach ($schemas as $schema) {
 			SymplySchemaManager::getInstance()->addSchema($schema);
 		}
+
+        $this->logger->debug("[SymplyPlugin] WorkerId "  . $this->workerId .  ": finish registering schema");
 	}
 }

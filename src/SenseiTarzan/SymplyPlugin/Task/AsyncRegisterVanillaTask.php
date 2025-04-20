@@ -25,6 +25,8 @@ namespace SenseiTarzan\SymplyPlugin\Task;
 
 use pmmp\thread\ThreadSafeArray;
 use pocketmine\scheduler\AsyncTask;
+use pocketmine\Server;
+use pocketmine\thread\log\AttachableThreadSafeLogger;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockFactory;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
 use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
@@ -37,10 +39,20 @@ class AsyncRegisterVanillaTask extends AsyncTask
 	private ThreadSafeArray $blockFuncs;
 	private ThreadSafeArray $itemFuncs;
 
-	public function __construct()
+    private AttachableThreadSafeLogger $logger;
+
+    public function __construct(private int $workerId)
 	{
-		$this->blockFuncs = SymplyCache::getInstance()->getTransmitterBlockVanilla();
-		$this->itemFuncs = SymplyCache::getInstance()->getTransmitterItemVanilla();
+        $this->logger = Server::getInstance()->getLogger();
+
+        $this->blockFuncs = new ThreadSafeArray();
+        foreach (SymplyCache::getInstance()->getTransmitterBlockVanilla() as $array) {
+            $this->blockFuncs[] = $array;
+        }
+        $this->itemFuncs = new ThreadSafeArray();
+        foreach (SymplyCache::getInstance()->getTransmitterItemVanilla() as $array) {
+            $this->itemFuncs[] = $array;
+        }
 	}
 
 	/**
@@ -48,15 +60,20 @@ class AsyncRegisterVanillaTask extends AsyncTask
 	 */
 	public function onRun() : void
 	{
-		try {
-			foreach ($this->blockFuncs as [$blockClosure, $identifier, $serialize, $deserialize]) {
-				SymplyBlockFactory::getInstance(true)->registerVanilla($blockClosure, $identifier, $serialize, $deserialize);
-			}
-			foreach ($this->itemFuncs as [$itemClosure, $identifier, $serialize, $deserialize, $argv]) {
-				SymplyItemFactory::getInstance(true)->registerVanilla($itemClosure, $identifier, $serialize, $deserialize, unserialize($argv));
-			}
-		}catch (Throwable) {
-
-		}
+        foreach ($this->blockFuncs as [$blockClosure, $identifier, $serialize, $deserialize]) {
+            try {
+                SymplyBlockFactory::getInstance(true)->registerVanilla($blockClosure, $identifier, $serialize, $deserialize);
+            }catch (Throwable $throwable) {
+                $this->logger->warning("[SymplyPlugin] WorkerId "  . $this->workerId .  ": " . $throwable->getMessage());
+            }
+        }
+        foreach ($this->itemFuncs as [$itemClosure, $identifier, $serialize, $deserialize, $argv]) {
+            try {
+                SymplyItemFactory::getInstance(true)->registerVanilla($itemClosure, $identifier, $serialize, $deserialize, unserialize($argv));
+            }catch (Throwable $throwable) {
+                $this->logger->warning("[SymplyPlugin] WorkerId "  . $this->workerId .  ": " . $throwable->getMessage());
+            }
+        }
+        $this->logger->debug("[SymplyPlugin] WorkerId "  . $this->workerId .  ": finish registering vanilla items and blocks");
 	}
 }

@@ -25,6 +25,8 @@ namespace SenseiTarzan\SymplyPlugin\Task;
 
 use pmmp\thread\ThreadSafeArray;
 use pocketmine\scheduler\AsyncTask;
+use pocketmine\Server;
+use pocketmine\thread\log\AttachableThreadSafeLogger;
 use ReflectionException;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockFactory;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
@@ -35,31 +37,45 @@ use function unserialize;
 class AsyncOverwriteTask extends AsyncTask
 {
 
-	private ThreadSafeArray $blockFuncs;
-	private ThreadSafeArray $itemFuncs;
+    private ThreadSafeArray $blockFuncs;
+    private ThreadSafeArray $itemFuncs;
 
-	public function __construct()
-	{
-		$this->blockFuncs = SymplyCache::getInstance()->getTransmitterBlockOverwrite();
-		$this->itemFuncs = SymplyCache::getInstance()->getTransmitterItemOverwrite();
-	}
+    private AttachableThreadSafeLogger $logger;
 
-	/**
-	 * @inheritDoc
-	 * @throws ReflectionException
-	 */
-	public function onRun() : void
-	{
-		try {
-			foreach ($this->blockFuncs as [$blockClosure, $serialize, $deserialize]) {
-				SymplyBlockFactory::getInstance(true)->overwrite($blockClosure, $serialize, $deserialize);
-			}
+    public function __construct(private int $workerId)
+    {
+        $this->logger = Server::getInstance()->getLogger();
+        $this->blockFuncs = new ThreadSafeArray();
+        foreach (SymplyCache::getInstance()->getTransmitterBlockOverwrite() as $array) {
+            $this->blockFuncs[] = $array;
+        }
+        $this->itemFuncs = new ThreadSafeArray();
+        foreach (SymplyCache::getInstance()->getTransmitterItemOverwrite() as $array) {
+            $this->itemFuncs[] = $array;
+        }
+    }
 
-			foreach ($this->itemFuncs as [$itemClosure, $serialize, $deserialize, $argv]) {
-				SymplyItemFactory::getInstance(true)->overwrite($itemClosure, $serialize, $deserialize, unserialize($argv));
-			}
-		}catch (Throwable){
+    /**
+     * @inheritDoc
+     * @throws ReflectionException
+     */
+    public function onRun(): void
+    {
+        foreach ($this->blockFuncs as [$blockClosure, $serialize, $deserialize]) {
+            try {
+                SymplyBlockFactory::getInstance(true)->overwrite($blockClosure, $serialize, $deserialize);
+            } catch (Throwable $throwable) {
+                $this->logger->warning("[SymplyPlugin] WorkerId " . $this->workerId . ": " . $throwable->getMessage());
+            }
+        }
 
-		}
-	}
+        foreach ($this->itemFuncs as [$itemClosure, $serialize, $deserialize, $argv]) {
+            try {
+                SymplyItemFactory::getInstance(true)->overwrite($itemClosure, $serialize, $deserialize, unserialize($argv));
+            } catch (Throwable $throwable) {
+                $this->logger->warning("[SymplyPlugin] WorkerId " . $this->workerId . ": " . $throwable->getMessage());
+            }
+        }
+        $this->logger->debug("[SymplyPlugin] WorkerId " . $this->workerId . ": finish overwrite items and blocks");
+    }
 }

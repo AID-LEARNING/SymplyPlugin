@@ -156,7 +156,7 @@ final class SymplyBlockPalette
 				}else{
 					$stateDataToStateIdLookup[$name][$state->getRawStateProperties()] = $stateId;
 				}
-				$stateId++;
+                ++$stateId;
 			}
 		}
 	}

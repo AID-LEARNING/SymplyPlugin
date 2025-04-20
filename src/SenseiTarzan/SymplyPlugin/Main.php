@@ -88,11 +88,11 @@ class Main extends PluginBase
 			$server = Server::getInstance();
 			$asyncPool = $server->getAsyncPool();
 			$asyncPool->addWorkerStartHook(static function(int $workerId) use($asyncPool) : void{
-				$asyncPool->submitTaskToWorker(new AsyncRegisterVanillaTask(), $workerId);
-				$asyncPool->submitTaskToWorker(new AsyncRegisterBehaviorsTask(), $workerId);
-				$asyncPool->submitTaskToWorker(new AsyncOverwriteTask(), $workerId);
-				$asyncPool->submitTaskToWorker(new AsyncSortBlockStateTask(), $workerId);
-				$asyncPool->submitTaskToWorker(new AsyncRegisterSchemaTask(), $workerId);
+				$asyncPool->submitTaskToWorker(new AsyncRegisterVanillaTask($workerId), $workerId);
+				$asyncPool->submitTaskToWorker(new AsyncRegisterBehaviorsTask($workerId), $workerId);
+				$asyncPool->submitTaskToWorker(new AsyncOverwriteTask($workerId), $workerId);
+				$asyncPool->submitTaskToWorker(new AsyncSortBlockStateTask($workerId), $workerId);
+				$asyncPool->submitTaskToWorker(new AsyncRegisterSchemaTask($workerId), $workerId);
 			});
 			Main::getInstance()->getSymplyCraftManager()->onLoad();
 		}),0);

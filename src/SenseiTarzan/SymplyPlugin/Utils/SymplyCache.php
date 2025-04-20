@@ -123,7 +123,7 @@ final class SymplyCache
 	}
 
 	/**
-	 * Donne les blocks custom a charger dans les threads
+	 * Gives custom blocks to load into threads
 	 */
 	public function getTransmitterBlockCustom() : ThreadSafeArray
 	{
@@ -131,7 +131,7 @@ final class SymplyCache
 	}
 
 	/**
-	 * Donne les items custom a charger dans les threads
+	 * Gives custom items to load into threads
 	 */
 	public function getTransmitterItemCustom() : ThreadSafeArray
 	{
@@ -139,7 +139,7 @@ final class SymplyCache
 	}
 
 	/**
-	 * Donne les blocks vanilla a surcharge dans les threads
+	 * Overload vanilla blocks in threads
 	 */
 	public function getTransmitterBlockOverwrite() : ThreadSafeArray
 	{
@@ -147,7 +147,7 @@ final class SymplyCache
 	}
 
 	/**
-	 * Donne les items vanilla a surcharge dans les threads
+	 * Give vanilla items to overload in threads
 	 */
 	public function getTransmitterItemOverwrite() : ThreadSafeArray
 	{
@@ -155,7 +155,7 @@ final class SymplyCache
 	}
 
 	/**
-	 * Donne les blocks vanilla a charger dans les threads
+	 * Gives vanilla blocks to load into threads
 	 */
 	public function getTransmitterBlockVanilla() : ThreadSafeArray
 	{
@@ -163,7 +163,7 @@ final class SymplyCache
 	}
 
 	/**
-	 * Donne les item vanilla a charger dans les threads
+	 * Gives vanilla items to load into threads
 	 */
 	public function getTransmitterItemVanilla() : ThreadSafeArray
 	{

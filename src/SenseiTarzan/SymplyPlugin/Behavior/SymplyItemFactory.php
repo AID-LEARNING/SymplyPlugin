@@ -175,7 +175,6 @@ final class SymplyItemFactory
 		$creativeIventoryEntry = VanillaGroupMinecraft::getCreativeInventoryEntry($item);
 		$this->overwrite[$namespaceId] = $item;
 		if ($creativeIventoryEntry) {
-			var_dump($item->getVanillaName());
 			CreativeInventory::getInstance()->remove($item);
 			CreativeInventory::getInstance()->add($item, $creativeIventoryEntry->getCategory(), $creativeIventoryEntry->getGroup());
 		}
