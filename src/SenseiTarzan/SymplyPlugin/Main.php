@@ -36,7 +36,7 @@ use SenseiTarzan\SymplyPlugin\Listener\BehaviorListener;
 use SenseiTarzan\SymplyPlugin\Listener\ClientBreakListener;
 use SenseiTarzan\SymplyPlugin\Listener\ItemListener;
 use SenseiTarzan\SymplyPlugin\Manager\SymplyCraftManager;
-use SenseiTarzan\SymplyPlugin\Task\AsyncOverwriteTask;
+use SenseiTarzan\SymplyPlugin\Task\RegisterSymplyAsyncTask;
 use SenseiTarzan\SymplyPlugin\Task\AsyncRegisterBehaviorsTask;
 use SenseiTarzan\SymplyPlugin\Task\AsyncRegisterSchemaTask;
 use SenseiTarzan\SymplyPlugin\Task\AsyncRegisterVanillaTask;
@@ -62,6 +62,12 @@ class Main extends PluginBase
 	{
 		SymplyBlockFactory::getInstance()->initBlockBuilders();
 		SymplyBlockPalette::getInstance()->sort(SymplyCache::getInstance()->isBlockNetworkIdsAreHashes());
+
+        $server = Server::getInstance();
+        $asyncPool = $server->getAsyncPool();
+        $asyncPool->addWorkerStartHook(static function(int $workerId) use($asyncPool) : void{
+            $asyncPool->submitTaskToWorker(new RegisterSymplyAsyncTask($workerId), $workerId);
+        });
 		$this->getScheduler()->scheduleDelayedTask(new ClosureTask(static function () {
 			foreach (SymplyItemFactory::getInstance()->getCustomAll() as $item){
 				if(!CreativeInventory::getInstance()->contains($item)) {
@@ -85,15 +91,6 @@ class Main extends PluginBase
 				if(!CreativeInventory::getInstance()->contains($block->asItem()))
 					CreativeInventory::getInstance()->add($block->asItem());
 			}
-			$server = Server::getInstance();
-			$asyncPool = $server->getAsyncPool();
-			$asyncPool->addWorkerStartHook(static function(int $workerId) use($asyncPool) : void{
-				$asyncPool->submitTaskToWorker(new AsyncRegisterVanillaTask($workerId), $workerId);
-				$asyncPool->submitTaskToWorker(new AsyncRegisterBehaviorsTask($workerId), $workerId);
-				$asyncPool->submitTaskToWorker(new AsyncOverwriteTask($workerId), $workerId);
-				$asyncPool->submitTaskToWorker(new AsyncSortBlockStateTask($workerId), $workerId);
-				$asyncPool->submitTaskToWorker(new AsyncRegisterSchemaTask($workerId), $workerId);
-			});
 			Main::getInstance()->getSymplyCraftManager()->onLoad();
 		}),0);
 		EventLoader::loadEventWithClass($this, new BehaviorListener(false));

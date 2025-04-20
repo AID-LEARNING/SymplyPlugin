@@ -59,16 +59,6 @@ final class SymplyBlockPalette
 	private ReflectionProperty $networkIdCache;
 
 	public function __construct() {
-		$this->translator = $instance = TypeConverter::getInstance()->getBlockTranslator();
-		$dictionary = $instance->getBlockStateDictionary();
-		$this->states = $dictionary->getStates();
-
-		$this->bedrockKnownStates = new ReflectionProperty($dictionary, "states");
-		$this->stateDataToStateIdLookup = new ReflectionProperty($dictionary, "stateDataToStateIdLookup");
-		$this->idMetaToStateIdLookupCache = new ReflectionProperty($dictionary, "idMetaToStateIdLookupCache");
-		$this->fallbackStateId = new ReflectionProperty($instance, "fallbackStateId");
-		$this->networkIdCache = new ReflectionProperty($instance, "networkIdCache");
-		$this->customStates = [];
 	}
 	/**
 	 * @return BlockStateDictionaryEntry[]
@@ -92,7 +82,6 @@ final class SymplyBlockPalette
 			throw new \RuntimeException("Block state must contain a StringTag called 'name'");
 		}
 		$this->customStates[] = $entry;
-		$this->states[] = $entry;
 	}
 	/**
 	 * Inserts the provided state in to the correct position of the palette.
@@ -105,7 +94,6 @@ final class SymplyBlockPalette
 		}
 		foreach ($entries as $entry){
 			$this->customStates[] = $entry;
-			$this->states[] = $entry;
 		}
 	}
 
@@ -156,7 +144,7 @@ final class SymplyBlockPalette
 				}else{
 					$stateDataToStateIdLookup[$name][$state->getRawStateProperties()] = $stateId;
 				}
-                ++$stateId;
+				$stateId++;
 			}
 		}
 	}
@@ -188,21 +176,33 @@ final class SymplyBlockPalette
 
 	public function sort(bool $blockNetworkIdsAreHashes = false) : void {
 
+        $translator = $instance = TypeConverter::getInstance()->getBlockTranslator();
+        $dictionary = $instance->getBlockStateDictionary();
+        $states = [];
+
+        $this->bedrockKnownStates = new ReflectionProperty($dictionary, "states");
+        $this->stateDataToStateIdLookup = new ReflectionProperty($dictionary, "stateDataToStateIdLookup");
+        $this->idMetaToStateIdLookupCache = new ReflectionProperty($dictionary, "idMetaToStateIdLookupCache");
+        $this->fallbackStateId = new ReflectionProperty($instance, "fallbackStateId");
+        $this->networkIdCache = new ReflectionProperty($instance, "networkIdCache");
+
+        foreach ($dictionary->getStates() as $state) {
+            $states[$state->getStateName()][] = $state;
+        }
 		// To sort the block palette we first have to split the palette up in to groups of states. We only want to sort
 		// using the name of the block, and keeping the order of the existing states.
-		$states = [];
-		foreach($this->getStates() as $state){
+		foreach($this->getCustomStates() as $state){
 			$states[$state->getStateName()][] = $state;
 		}
 		$sortedStates = [];
 		$stateDataToStateIdLookup = [];
 		$this->selectModeSort($blockNetworkIdsAreHashes, $states, $sortedStates, $stateDataToStateIdLookup);
-		$dictionary = $this->translator->getBlockStateDictionary();
+		$dictionary = $translator->getBlockStateDictionary();
 		$this->bedrockKnownStates->setValue($dictionary, $sortedStates);
 		$this->stateDataToStateIdLookup->setValue($dictionary, $stateDataToStateIdLookup);
 		$this->idMetaToStateIdLookupCache->setValue($dictionary, null); //set this to null so pm can create a new cache
-		$this->networkIdCache->setValue($this->translator, []); //set this to empty-array so pm can create a new cache
-		$this->fallbackStateId->setValue($this->translator, $stateDataToStateIdLookup[BlockTypeNames::INFO_UPDATE] ??
+		$this->networkIdCache->setValue($translator, []); //set this to empty-array so pm can create a new cache
+		$this->fallbackStateId->setValue($translator, $stateDataToStateIdLookup[BlockTypeNames::INFO_UPDATE] ??
 			throw new AssumptionFailedError(BlockTypeNames::INFO_UPDATE . " should always exist")
 		);
 	}
