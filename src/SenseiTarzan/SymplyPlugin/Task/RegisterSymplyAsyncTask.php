@@ -56,29 +56,29 @@ class RegisterSymplyAsyncTask extends AsyncTask
         $this->logger = Server::getInstance()->getLogger();
         $this->blockOverwrite = new ThreadSafeArray();
         foreach (SymplyCache::getInstance()->getTransmitterBlockOverwrite() as $array) {
-            $this->blockOverwrite[] = $array;
+            $this->blockOverwrite[] = ThreadSafeArray::fromArray($array);
         }
         $this->itemOverwrite = new ThreadSafeArray();
         foreach (SymplyCache::getInstance()->getTransmitterItemOverwrite() as $array) {
-            $this->itemOverwrite[] = $array;
+            $this->itemOverwrite[] = ThreadSafeArray::fromArray($array);
         }
 
         $this->blockVanilla = new ThreadSafeArray();
         foreach (SymplyCache::getInstance()->getTransmitterBlockVanilla() as $array) {
-            $this->blockVanilla[] = $array;
+            $this->blockVanilla[] = ThreadSafeArray::fromArray($array);
         }
         $this->itemVanilla = new ThreadSafeArray();
         foreach (SymplyCache::getInstance()->getTransmitterItemVanilla() as $array) {
-            $this->itemVanilla[] = $array;
+            $this->itemVanilla[] = ThreadSafeArray::fromArray($array);
         }
 
         $this->blockCustom = new ThreadSafeArray();
         foreach (SymplyCache::getInstance()->getTransmitterBlockCustom() as $array) {
-            $this->blockCustom[] = $array;
+            $this->blockCustom[] = ThreadSafeArray::fromArray($array);
         }
         $this->itemCustom = new ThreadSafeArray();
         foreach (SymplyCache::getInstance()->getTransmitterItemCustom() as $array) {
-            $this->itemCustom[] = $array;
+            $this->itemCustom[] = ThreadSafeArray::fromArray($array);
         }
         $this->blockNetworkIdsAreHashes = SymplyCache::getInstance()->isBlockNetworkIdsAreHashes();
         $this->listSchema = serialize(SymplySchemaManager::getInstance()->getListSchema());

@@ -23,12 +23,9 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Utils;
 
-use pmmp\thread\ThreadSafeArray;
-use pocketmine\inventory\CreativeGroup;
 use pocketmine\network\mcpe\protocol\types\BlockPaletteEntry;
 use pocketmine\network\mcpe\protocol\types\ItemComponentPacketEntry;
 use pocketmine\utils\SingletonTrait;
-use SenseiTarzan\SymplyPlugin\Behavior\Items\Item;
 
 final class SymplyCache
 {
@@ -44,15 +41,12 @@ final class SymplyCache
 	/** @var ItemComponentPacketEntry[] */
 	private array $itemsComponentPacketEntries;
 
-	private ThreadSafeArray $transmitterBlockCustom;
-	private ThreadSafeArray $transmitterItemCustom;
-	private ThreadSafeArray $transmitterBlockOverwrite;
-	private ThreadSafeArray $transmitterItemOverwrite;
-	private ThreadSafeArray $transmitterBlockVanilla;
-	private ThreadSafeArray $transmitterItemVanilla;
-
-	/** @var array<string, array<string, CreativeGroup>> */
-	private array $creativeGroupsUnique = [];
+	private array $transmitterBlockCustom;
+	private array $transmitterItemCustom;
+	private array $transmitterBlockOverwrite;
+	private array $transmitterItemOverwrite;
+	private array $transmitterBlockVanilla;
+	private array $transmitterItemVanilla;
 
 	public bool	$blockNetworkIdsAreHashes = false;
 
@@ -60,14 +54,13 @@ final class SymplyCache
 	{
 		$this->blockPaletteEntries = [];
 		$this->itemsComponentPacketEntries = [];
-		$this->creativeGroupsUnique = [];
 		if (!$this->asyncMode){
-			$this->transmitterBlockCustom = new ThreadSafeArray();
-			$this->transmitterItemCustom = new ThreadSafeArray();
-			$this->transmitterBlockOverwrite = new ThreadSafeArray();
-			$this->transmitterItemOverwrite = new ThreadSafeArray();
-			$this->transmitterBlockVanilla = new ThreadSafeArray();
-			$this->transmitterItemVanilla = new ThreadSafeArray();
+			$this->transmitterBlockCustom = [];
+			$this->transmitterItemCustom = [];
+			$this->transmitterBlockOverwrite = [];
+			$this->transmitterItemOverwrite = [];
+			$this->transmitterBlockVanilla = [];
+			$this->transmitterItemVanilla = [];
 		}
 	}
 
@@ -92,32 +85,32 @@ final class SymplyCache
 		$this->blockPaletteEntries[] = $blockPaletteEntry;
 	}
 
-	public function addTransmitterBlockCustom(ThreadSafeArray $arrayClosure) : void
+	public function addTransmitterBlockCustom(array $arrayClosure) : void
 	{
 		$this->transmitterBlockCustom[] = $arrayClosure;
 	}
 
-	public function addTransmitterItemCustom(ThreadSafeArray $arrayClosure) : void
+	public function addTransmitterItemCustom(array $arrayClosure) : void
 	{
 		$this->transmitterItemCustom[] = $arrayClosure;
 	}
 
-	public function addTransmitterBlockOverwrite(ThreadSafeArray $arrayClosure) : void
+	public function addTransmitterBlockOverwrite(array $arrayClosure) : void
 	{
 		$this->transmitterBlockOverwrite[] = $arrayClosure;
 	}
 
-	public function addTransmitterItemOverwrite(ThreadSafeArray $arrayClosure) : void
+	public function addTransmitterItemOverwrite(array $arrayClosure) : void
 	{
 		$this->transmitterItemOverwrite[] = $arrayClosure;
 	}
 
-	public function addTransmitterBlockVanilla(ThreadSafeArray $arrayClosure) : void
+	public function addTransmitterBlockVanilla(array $arrayClosure) : void
 	{
 		$this->transmitterBlockVanilla[] = $arrayClosure;
 	}
 
-	public function addTransmitterItemVanilla(ThreadSafeArray $arrayClosure) : void
+	public function addTransmitterItemVanilla(array $arrayClosure) : void
 	{
 		$this->transmitterItemVanilla[] = $arrayClosure;
 	}
@@ -125,7 +118,7 @@ final class SymplyCache
 	/**
 	 * Gives custom blocks to load into threads
 	 */
-	public function getTransmitterBlockCustom() : ThreadSafeArray
+	public function getTransmitterBlockCustom() : array
 	{
 		return $this->transmitterBlockCustom;
 	}
@@ -133,7 +126,7 @@ final class SymplyCache
 	/**
 	 * Gives custom items to load into threads
 	 */
-	public function getTransmitterItemCustom() : ThreadSafeArray
+	public function getTransmitterItemCustom() : array
 	{
 		return $this->transmitterItemCustom;
 	}
@@ -141,7 +134,7 @@ final class SymplyCache
 	/**
 	 * Overload vanilla blocks in threads
 	 */
-	public function getTransmitterBlockOverwrite() : ThreadSafeArray
+	public function getTransmitterBlockOverwrite() : array
 	{
 		return $this->transmitterBlockOverwrite;
 	}
@@ -149,7 +142,7 @@ final class SymplyCache
 	/**
 	 * Give vanilla items to overload in threads
 	 */
-	public function getTransmitterItemOverwrite() : ThreadSafeArray
+	public function getTransmitterItemOverwrite() : array
 	{
 		return $this->transmitterItemOverwrite;
 	}
@@ -157,7 +150,7 @@ final class SymplyCache
 	/**
 	 * Gives vanilla blocks to load into threads
 	 */
-	public function getTransmitterBlockVanilla() : ThreadSafeArray
+	public function getTransmitterBlockVanilla() : array
 	{
 		return $this->transmitterBlockVanilla;
 	}
@@ -165,7 +158,7 @@ final class SymplyCache
 	/**
 	 * Gives vanilla items to load into threads
 	 */
-	public function getTransmitterItemVanilla() : ThreadSafeArray
+	public function getTransmitterItemVanilla() : array
 	{
 		return $this->transmitterItemVanilla;
 	}

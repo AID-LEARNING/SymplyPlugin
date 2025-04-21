@@ -93,7 +93,7 @@ final class SymplyBlockFactory
 		$this->custom[$identifier] = $blockCustom;
 		RuntimeBlockStateRegistry::getInstance()->register($blockCustom);
 		if (!$this->asyncMode) {
-			SymplyCache::getInstance()->addTransmitterBlockCustom(ThreadSafeArray::fromArray([$blockClosure, $serializer, $deserializer, serialize($argv)]));
+			SymplyCache::getInstance()->addTransmitterBlockCustom([$blockClosure, $serializer, $deserializer, serialize($argv)]);
 		}
 		if ($blockCustom instanceof IPermutationBlock) {
 			$serializer ??= static function (Block&IPermutationBlock $block) use ($identifier) : BlockStateWriter {
@@ -146,7 +146,7 @@ final class SymplyBlockFactory
 	/**
 	 * @param Closure(): Block $blockClosure
 	 */
-	public function registerVanilla(Closure $blockClosure, string $identifier, ?Closure $serializer = null, ?Closure $deserializer = null) : void
+	public function registerVanilla(Closure $blockClosure, string $identifier, ?Closure $serializer = null, ?Closure $deserializer = null, ?array $argv = null) : void
 	{
 		/** @var Block $blockVanilla */
 		$blockVanilla = $blockClosure();
@@ -156,7 +156,7 @@ final class SymplyBlockFactory
 		$this->vanilla[$identifier] = $blockVanilla;
 		RuntimeBlockStateRegistry::getInstance()->register($blockVanilla);
 		if (!$this->asyncMode)
-			SymplyCache::getInstance()->addTransmitterBlockVanilla(ThreadSafeArray::fromArray([$blockClosure, $identifier, $serializer, $deserializer]));
+			SymplyCache::getInstance()->addTransmitterBlockVanilla([$blockClosure, $identifier, $serializer, $deserializer, serialize($argv)]);
 		$serializer ??= static fn() => BlockStateWriter::create($identifier);
 		$deserializer ??= static fn(BlockStateReader $reader) => clone $blockVanilla;
 		GlobalBlockStateHandlers::getSerializer()->map($blockVanilla, $serializer);
@@ -168,12 +168,12 @@ final class SymplyBlockFactory
 	/**
 	 * @throws ReflectionException
 	 */
-	public function overwrite(Closure $blockClosure, null|Closure|false $serializer = null, null|Closure|false $deserializer = null) : void
+	public function overwrite(Closure $blockClosure, null|Closure|false $serializer = null, null|Closure|false $deserializer = null, ?array $argv = null) : void
 	{
 		/**
 		 * @var Block $block
 		 */
-		$block = $blockClosure();
+		$block = $blockClosure($argv);
 		$runtimeBlockStateRegistry = RuntimeBlockStateRegistry::getInstance();
 		try {
 			$runtimeBlockStateRegistry->register($block);
@@ -216,7 +216,7 @@ final class SymplyBlockFactory
 		if ($creativeIventoryEntry)
 			CreativeInventory::getInstance()->add($item, $creativeIventoryEntry->getCategory(), $creativeIventoryEntry->getGroup());
 		if (!$this->asyncMode)
-			SymplyCache::getInstance()->addTransmitterBlockOverwrite(ThreadSafeArray::fromArray([$blockClosure, $serializer, $deserializer]));
+			SymplyCache::getInstance()->addTransmitterBlockOverwrite([$blockClosure, $serializer, $deserializer, serialize($argv)]);
 		$serializer ??= static fn() => BlockStateWriter::create($namespaceId);
 		$deserializer ??= static function () use ($block) {
 			return (clone $block);

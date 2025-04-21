@@ -95,7 +95,7 @@ final class SymplyItemFactory
 		$itemBuilder = $itemCustom->getItemBuilder();
 		$this->addItemBuilder($itemCustom, $itemBuilder);
 		if (!$this->asyncMode) {
-			SymplyCache::getInstance()->addTransmitterItemCustom(ThreadSafeArray::fromArray([$itemClosure, $serializer, $deserializer, serialize($argv)]));
+			SymplyCache::getInstance()->addTransmitterItemCustom([$itemClosure, $serializer, $deserializer, serialize($argv)]);
 		}
 	}
 
@@ -135,7 +135,7 @@ final class SymplyItemFactory
 		}
 		$this->vanilla[$identifier] = $itemVanilla;
 		if (!$this->asyncMode)
-			SymplyCache::getInstance()->addTransmitterItemVanilla(ThreadSafeArray::fromArray([$itemClosure, $identifier, $serializer, $deserializer, serialize($argv)]));
+			SymplyCache::getInstance()->addTransmitterItemVanilla([$itemClosure, $identifier, $serializer, $deserializer, serialize($argv)]);
 		GlobalItemDataHandlers::getDeserializer()->map($identifier, $deserializer ?? static fn() => clone $itemVanilla);
 		GlobalItemDataHandlers::getSerializer()->map($itemVanilla, $serializer ?? static fn() => new SavedItemData($identifier));
 		StringToItemParser::getInstance()->register($identifier, static fn() => clone $itemVanilla);
@@ -179,7 +179,7 @@ final class SymplyItemFactory
 			CreativeInventory::getInstance()->add($item, $creativeIventoryEntry->getCategory(), $creativeIventoryEntry->getGroup());
 		}
 		if (!$this->asyncMode)
-			SymplyCache::getInstance()->addTransmitterItemOverwrite(ThreadSafeArray::fromArray([$itemClosure, $serializer, $deserializer, serialize($argv)]));
+			SymplyCache::getInstance()->addTransmitterItemOverwrite([$itemClosure, $serializer, $deserializer, serialize($argv)]);
 		$serializer ??= static fn() => new SavedItemData($namespaceId);
 		$deserializer ??= static function () use ($namespaceId) {
 			return (clone SymplyItemFactory::getInstance()->getOverwrite($namespaceId));
