@@ -27,6 +27,7 @@ use pocketmine\inventory\CreativeCategory;
 
 enum CategoryCreativeEnum : string
 {
+	case NONE = "none";
 	case ALL = "all";
 	case COMMANDS = "commands";
 	case CONSTRUCTION = "construction";
