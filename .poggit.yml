@@ -2,6 +2,7 @@
 branches:
   - master
   - experimental
+  - refacto
 projects:
   SymplyPlugin:
     path: ""
