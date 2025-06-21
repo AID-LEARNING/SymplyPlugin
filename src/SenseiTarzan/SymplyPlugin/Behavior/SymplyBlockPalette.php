@@ -48,7 +48,7 @@ final class SymplyBlockPalette
 	use SingletonTrait;
 
 	/** @var BlockStateDictionaryEntry[] */
-	private array $customStates;
+	private array $customStates = [];
 
 	public function __construct() {
 	}
