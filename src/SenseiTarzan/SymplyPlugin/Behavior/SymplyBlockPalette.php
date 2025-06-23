@@ -50,7 +50,7 @@ final class SymplyBlockPalette
 	/** @var BlockStateDictionaryEntry[] */
 	private array $states;
 	/** @var BlockStateDictionaryEntry[] */
-	private array $customStates;
+	private array $customStates = [];
 	private BlockTranslator $translator;
 	private ReflectionProperty $bedrockKnownStates;
 	private ReflectionProperty $stateDataToStateIdLookup;
