@@ -23,6 +23,10 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Listener;
 
+use pocketmine\block\Air;
+use pocketmine\world\sound\BlockBreakSound;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\IBlockCustom;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\ICustomItem;
 use pocketmine\block\Block;
 use pocketmine\event\EventPriority;
 use pocketmine\event\server\DataPacketReceiveEvent;
@@ -121,7 +125,7 @@ class ClientBreakListener
 								unset($this->breaks[$session]);
 							}
 							unset($blockActions[$index]);
-						}
+						} elseif($blockAction->getActionType() === PlayerAction::STOP_BREAK) $event->cancel();
 					} elseif ($blockAction instanceof PlayerBlockActionStopBreak) {
 						if ($this->breaks->offsetExists($session)) {
 							unset($this->breaks[$session]);
