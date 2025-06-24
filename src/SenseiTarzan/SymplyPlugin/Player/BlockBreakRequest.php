@@ -30,7 +30,7 @@ use pocketmine\world\World;
 
 class BlockBreakRequest
 {
-	public function __construct(private readonly World $world, private readonly Vector3 $origin, private float $start)
+	public function __construct(private readonly World $world, private Vector3 $origin, private float $start)
 	{
 	}
 
@@ -39,10 +39,16 @@ class BlockBreakRequest
 		return $this->origin;
 	}
 
+    public function setOrigin(Vector3 $origin) : void {
+        $this->origin = $origin;
+        $this->start = 0;
+    }
+
 	public function getStart() : float
 	{
 		return $this->start;
 	}
+
 
 	public function addTick(float $tick = 1.0) : float
 	{

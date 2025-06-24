@@ -16,6 +16,6 @@
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^v3.59.3",
-    "pocketmine/pocketmine-mp": "5.27.0"
+    "pocketmine/pocketmine-mp": "5.30.1"
   }
 }

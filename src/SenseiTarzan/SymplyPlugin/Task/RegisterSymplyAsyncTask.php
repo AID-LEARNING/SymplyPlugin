@@ -28,6 +28,7 @@ use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use pocketmine\thread\log\AttachableThreadSafeLogger;
 use ReflectionException;
+use SenseiTarzan\SymplyPlugin\Behavior\BlockRegisterEnum;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockFactory;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockPalette;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
@@ -106,9 +107,20 @@ class RegisterSymplyAsyncTask extends AsyncTask
         }
         $this->logger->debug("[SymplyPlugin] WorkerId "  . $this->workerId .  ": finish registering vanilla items and blocks");
 
-        foreach ($this->blockCustom as [$blockClosure, $serialize, $deserialize, $argv]) {
+        foreach ($this->blockCustom as $data) {
+            $type = $data[0];
             try {
-                SymplyBlockFactory::getInstance(true)->register($blockClosure, $serialize, $deserialize, unserialize($argv, ['allowed_classes' => true]));
+                if($type === BlockRegisterEnum::SINGLE_BLOCK_REGISTER) {
+                    $blockClosure = $data[1];
+                    $serialize = $data[2];
+                    $deserialize = $data[3];
+                    $argv = $data[4];
+                    SymplyBlockFactory::getInstance(true)->register($blockClosure, $serialize, $deserialize, unserialize($argv, ['allowed_classes' => true]));
+                } else if($type === BlockRegisterEnum::MULTI_BLOCK_REGISTER) {
+                    $blockClosure = $data[1];
+                    $argv = $data[2];
+                    SymplyBlockFactory::getInstance(true)->registerAll($blockClosure, $argv);
+                }
             }catch (Throwable $throwable){
                 $this->logger->warning("[SymplyPlugin] WorkerId "  . $this->workerId .  ": " . $throwable->getMessage());
             }
@@ -146,7 +158,12 @@ class RegisterSymplyAsyncTask extends AsyncTask
 
         $schemas = unserialize($this->listSchema);
         foreach ($schemas as $schema) {
-            SymplySchemaManager::getInstance()->addSchema($schema);
+            try {
+                SymplySchemaManager::getInstance()->addSchema($schema);
+            } catch (Throwable $throwable) {
+                $this->logger->warning("[SymplyPlugin] WorkerId " . $this->workerId . ": " . $throwable->getMessage());
+
+            }
         }
 
         $this->logger->debug("[SymplyPlugin] WorkerId "  . $this->workerId .  ": finish registering schema");

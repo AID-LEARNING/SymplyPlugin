@@ -60,14 +60,10 @@ class Main extends PluginBase
 
 	protected function onEnable() : void
 	{
+        SymplyBlockFactory::getInstance()->setServerRun();
 		SymplyBlockFactory::getInstance()->initBlockBuilders();
 		SymplyBlockPalette::getInstance()->sort(SymplyCache::getInstance()->isBlockNetworkIdsAreHashes());
 
-        $server = Server::getInstance();
-        $asyncPool = $server->getAsyncPool();
-        $asyncPool->addWorkerStartHook(static function(int $workerId) use($asyncPool) : void{
-            $asyncPool->submitTaskToWorker(new RegisterSymplyAsyncTask($workerId), $workerId);
-        });
 		$this->getScheduler()->scheduleDelayedTask(new ClosureTask(static function () {
 			foreach (SymplyItemFactory::getInstance()->getCustomAll() as $item){
 				if(!CreativeInventory::getInstance()->contains($item)) {
@@ -93,7 +89,12 @@ class Main extends PluginBase
 			}
 			Main::getInstance()->getSymplyCraftManager()->onLoad();
 		}),0);
-		EventLoader::loadEventWithClass($this, new BehaviorListener(false));
+        $server = Server::getInstance();
+        $asyncPool = $server->getAsyncPool();
+        $asyncPool->addWorkerStartHook(static function(int $workerId) use($asyncPool) : void{
+            $asyncPool->submitTaskToWorker(new RegisterSymplyAsyncTask($workerId), $workerId);
+        });
+		EventLoader::loadEventWithClass($this, new BehaviorListener());
 		EventLoader::loadEventWithClass($this, new ClientBreakListener());
 		//EventLoader::loadEventWithClass($this, new ItemListener());
 	}

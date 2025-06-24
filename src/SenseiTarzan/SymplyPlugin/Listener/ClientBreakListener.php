@@ -41,6 +41,7 @@ use pocketmine\player\Player;
 use ReflectionProperty;
 use SenseiTarzan\ExtraEvent\Class\EventAttribute;
 use SenseiTarzan\SymplyPlugin\Player\BlockBreakRequest;
+use SenseiTarzan\SymplyPlugin\Task\BlockBreakingTask;
 use SenseiTarzan\SymplyPlugin\Utils\BlockUtils;
 use WeakMap;
 use function array_push;
@@ -49,7 +50,7 @@ use function floor;
 
 class ClientBreakListener
 {
-	/** @phpstan-var WeakMap<NetworkSession, BlockBreakRequest> */
+	/** @phpstan-var WeakMap<NetworkSession, BlockBreakingTask> */
 	private WeakMap $breaks;
 
 	const MAX_DISTANCE_BREAK = 16 ** 2;
@@ -78,57 +79,37 @@ class ClientBreakListener
 				 * @var int $k
 				 * @var PlayerBlockAction $blockAction
 				 */
-				foreach ($blockActions as $index => $blockAction) {
+				foreach ($blockActions as $_ => $blockAction) {
 					$action = $blockAction->getActionType();
 					if ($blockAction instanceof PlayerBlockActionWithBlockInfo) {
-						if ($action === PlayerAction::START_BREAK) {
-							$vector3 = new Vector3($blockAction->getBlockPosition()->getX(), $blockAction->getBlockPosition()->getY(), $blockAction->getBlockPosition()->getZ());
-							$block = $player->getWorld()->getBlock($vector3);
-							if ($block->getBreakInfo()->breaksInstantly())
-								continue;
-							$speed = BlockUtils::getDestroyRate($player, $block);
-							$this->breaks->offsetSet($session, new BlockBreakRequest($player->getWorld(), $vector3, $speed));
-
-							if(!$player->attackBlock($vector3, $blockAction->getFace()))
-							{
-								$this->onFailedBlockAction($session, $player, $vector3, $blockAction->getFace());
-							}else {
-								$player->getWorld()->broadcastPacketToViewers(
-									$vector3,
-									LevelEventPacket::create(LevelEvent::BLOCK_START_BREAK, (int) floor($speed * 65535.0), $vector3)
-								);
-							}
-							unset($blockActions[$index]);
-						} elseif ($action === PlayerAction::CRACK_BREAK) {
-							if ($this->breaks->offsetExists($session)) {
-								$vector3 = new Vector3($blockAction->getBlockPosition()->getX(), $blockAction->getBlockPosition()->getY(), $blockAction->getBlockPosition()->getZ());
-								$block = $player->getWorld()->getBlock($vector3);
-								$breakRequest = $this->breaks->offsetGet($session);
-								if ($vector3->distanceSquared($breakRequest->getOrigin()) > self::MAX_DISTANCE_BREAK) {
-									unset($this->breaks[$session]);
-									continue;
-								}
-								if ($breakRequest->addTick(BlockUtils::getDestroyRate($player, $block)) >= 1) {
-									$player->breakBlock($vector3);
-									unset($this->breaks[$session]);
-								}
-							}
-							unset($blockActions[$index]);
-						} elseif ($blockAction->getActionType() === PlayerAction::ABORT_BREAK) {
-							$vector3 = new Vector3($blockAction->getBlockPosition()->getX(), $blockAction->getBlockPosition()->getY(), $blockAction->getBlockPosition()->getZ());
-							if ($this->breaks->offsetExists($session)) {
-								$player->stopBreakBlock($vector3);
-								unset($this->breaks[$session]);
-							}
-							unset($blockActions[$index]);
+						if ($action === PlayerAction::START_BREAK || $action === PlayerAction::CONTINUE_DESTROY_BLOCK) {
+                            $vector3 = new Vector3(
+                                $blockAction->getBlockPosition()->getX(),
+                                $blockAction->getBlockPosition()->getY(),
+                                $blockAction->getBlockPosition()->getZ()
+                            );
+                            $block = $player->getWorld()->getBlock($vector3);
+                            if($vector3->distanceSquared($player->getLocation()) > 10000){
+                                continue;
+                            }
+                            if (!isset($this->breaks[$session])){
+                                $this->breaks[$session] = new BlockBreakingTask(\WeakReference::create($session->getPlayer()));
+                            }
+                            $this->breaks[$session]->setBlockBreakRequest(new BlockBreakRequest($player->getWorld(), $vector3, BlockUtils::getDestroyRate($player, $block)));
+                            $this->breaks[$session]->start();
+						} elseif ($blockAction->getActionType() === PlayerAction::PREDICT_DESTROY_BLOCK || $action == PlayerAction::STOP_BREAK) {
+                            if (isset($this->breaks[$session])){
+                                $this->breaks[$session]->setBlockBreakRequest(null);
+                                $this->breaks[$session]->stop();
+                            }
 						}
 					} elseif ($blockAction instanceof PlayerBlockActionStopBreak) {
 						if ($this->breaks->offsetExists($session)) {
-							unset($this->breaks[$session]);
+                            $this->breaks[$session]->setBlockBreakRequest(null);
+                            $this->breaks[$session]->stop();
 						}
 					}
 				}
-				(new ReflectionProperty($packet, "blockActions"))->setValue($packet, $blockActions);
 			}
 		}/*else if($packet instanceof  InventoryTransactionPacket){
 			$data = $packet->trData;

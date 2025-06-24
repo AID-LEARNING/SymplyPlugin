@@ -41,7 +41,7 @@ use function array_merge;
 readonly class BehaviorListener
 {
 
-	public function __construct(private readonly bool $serverBreakSide)
+	public function __construct()
 	{
 	}
 
@@ -53,7 +53,6 @@ readonly class BehaviorListener
 		foreach ($packets as $index => $packet) {
 			if ($packet instanceof StartGamePacket) {
 				$packet->blockNetworkIdsAreHashes = SymplyCache::getInstance()->isBlockNetworkIdsAreHashes();
-				$packet->playerMovementSettings = new PlayerMovementSettings($packet->playerMovementSettings->getRewindHistorySize() , $this->serverBreakSide);
 				$packet->levelSettings->experiments = new Experiments([
 					"data_driven_items" => true
 				], true);
