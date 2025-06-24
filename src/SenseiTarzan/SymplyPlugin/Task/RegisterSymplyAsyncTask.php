@@ -136,6 +136,10 @@ class RegisterSymplyAsyncTask extends AsyncTask
                     $deserialize = $data[3];
                     $argv = $data[4];
                     SymplyItemFactory::getInstance(true)->register($itemClosure, $serialize, $deserialize, unserialize($argv, ['allowed_classes' => true]));
+                } else if($type === ItemRegisterEnum::MULTI_REGISTER) {
+                    $itemClosure = $data[1];
+                    $argv = $data[2];
+                    SymplyItemFactory::getInstance(true)->registerAll($itemClosure, $argv);
                 }
             }catch (Throwable $throwable){
                 $this->logger->warning("[SymplyPlugin] WorkerId "  . $this->workerId .  ": " . $throwable->getMessage());
