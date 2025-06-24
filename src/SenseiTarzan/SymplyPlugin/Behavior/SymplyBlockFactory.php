@@ -105,7 +105,7 @@ final class SymplyBlockFactory
 		$this->custom[$identifier] = $blockCustom;
 		RuntimeBlockStateRegistry::getInstance()->register($blockCustom);
 		if (!$this->asyncMode) {
-			SymplyCache::getInstance()->addTransmitterBlockCustom([BlockRegisterEnum::SINGLE_BLOCK_REGISTER, $blockClosure, $serializer, $deserializer, serialize($argv)]);
+			SymplyCache::getInstance()->addTransmitterBlockCustom([BlockRegisterEnum::SINGLE_REGISTER, $blockClosure, $serializer, $deserializer, serialize($argv)]);
 		}
 		if ($blockCustom instanceof IPermutationBlock) {
 			$serializer ??= static function (Block&IPermutationBlock $block) use ($identifier) : BlockStateWriter {
@@ -241,7 +241,7 @@ final class SymplyBlockFactory
         }
 
         if (!$this->asyncMode) {
-            SymplyCache::getInstance()->addTransmitterBlockCustom([BlockRegisterEnum::MULTI_BLOCK_REGISTER,  $blocksClosure, serialize($argv)]);
+            SymplyCache::getInstance()->addTransmitterBlockCustom([BlockRegisterEnum::MULTI_REGISTER,  $blocksClosure, serialize($argv)]);
         }
     }
 

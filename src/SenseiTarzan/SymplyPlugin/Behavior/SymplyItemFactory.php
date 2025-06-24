@@ -95,9 +95,63 @@ final class SymplyItemFactory
 		$itemBuilder = $itemCustom->getItemBuilder();
 		$this->addItemBuilder($itemCustom, $itemBuilder);
 		if (!$this->asyncMode) {
-			SymplyCache::getInstance()->addTransmitterItemCustom([$itemClosure, $serializer, $deserializer, serialize($argv)]);
+			SymplyCache::getInstance()->addTransmitterItemCustom([ItemRegisterEnum::SINGLE_REGISTER, $itemClosure, $serializer, $deserializer, serialize($argv)]);
 		}
 	}
+
+    /**
+     * @param Closure $itemsClosure
+     * @phpstan-param Closure(?array $argv): Block[] | array {}
+     * @param array|null $argv
+     * @return void
+     */
+    public function registerAll(Closure $itemsClosure, ?array $argv = null): void
+    {
+        /** @var array|(Item&ICustomItem)[] $itemsCustom */
+        $itemsCustom = $itemsClosure($argv);
+        $serializer = null;
+        $deserializer = null;
+        foreach ($itemsCustom as $itemCustom) {
+            if($itemCustom instanceof Item && $itemCustom instanceof ICustomItem) {
+                $identifier = $itemCustom->getIdentifier()->getNamespaceId();
+                if (isset($this->custom[$identifier])){
+                    throw new InvalidArgumentException("Item ID {$itemCustom->getIdentifier()->getNamespaceId()} is already used by another item");
+                }
+                $itemId = SymplyCache::$itemIdNext++;
+                $this->custom[$identifier] = $itemCustom;
+                $this->registerCustomItemMapping(new ItemTypeEntry($identifier, $itemId , true, 1, new CacheableNbt($itemCustom->getItemBuilder()->toPacket($itemId))));
+                GlobalItemDataHandlers::getDeserializer()->map($identifier, static fn() => clone $itemCustom);
+                GlobalItemDataHandlers::getSerializer()->map($itemCustom, static fn() => new SavedItemData($identifier));
+                StringToItemParser::getInstance()->register($identifier, static fn() => clone $itemCustom);
+                LegacyItemIdToStringIdMap::getInstance()->add($identifier, $itemId);
+                $itemBuilder = $itemCustom->getItemBuilder();
+                $this->addItemBuilder($itemCustom, $itemBuilder);
+            } else if(is_array($itemCustom)){
+                $block = $itemCustom['item'] ?? null;
+                if($block instanceof Item && $block instanceof ICustomItem)
+                    continue ;
+                $serializer = $itemCustom['serializer'] ?? null;
+                $deserializer = $itemCustom['deserializer'] ?? null;
+                $identifier = $itemCustom->getIdentifier()->getNamespaceId();
+                if (isset($this->custom[$identifier])){
+                    throw new InvalidArgumentException("Item ID {$itemCustom->getIdentifier()->getNamespaceId()} is already used by another item");
+                }
+                $itemId = SymplyCache::$itemIdNext++;
+                $this->custom[$identifier] = $itemCustom;
+                $this->registerCustomItemMapping(new ItemTypeEntry($identifier, $itemId , true, 1, new CacheableNbt($itemCustom->getItemBuilder()->toPacket($itemId))));
+                GlobalItemDataHandlers::getDeserializer()->map($identifier, $deserializer ??= static fn() => clone $itemCustom);
+                GlobalItemDataHandlers::getSerializer()->map($itemCustom, $serializer ??= static fn() => new SavedItemData($identifier));
+                StringToItemParser::getInstance()->register($identifier, static fn() => clone $itemCustom);
+                LegacyItemIdToStringIdMap::getInstance()->add($identifier, $itemId);
+                $itemBuilder = $itemCustom->getItemBuilder();
+                $this->addItemBuilder($itemCustom, $itemBuilder);
+            }
+        }
+
+        if (!$this->asyncMode) {
+            SymplyCache::getInstance()->addTransmitterItemCustom([ItemRegisterEnum::MULTI_REGISTER, $itemsClosure, serialize($argv)]);
+        }
+    }
 
 	/**
 	 * Registers a custom item ID to the required mappings in the global ItemTypeDictionary instance.

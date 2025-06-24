@@ -29,6 +29,7 @@ use pocketmine\Server;
 use pocketmine\thread\log\AttachableThreadSafeLogger;
 use ReflectionException;
 use SenseiTarzan\SymplyPlugin\Behavior\BlockRegisterEnum;
+use SenseiTarzan\SymplyPlugin\Behavior\ItemRegisterEnum;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockFactory;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockPalette;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
@@ -110,13 +111,13 @@ class RegisterSymplyAsyncTask extends AsyncTask
         foreach ($this->blockCustom as $data) {
             $type = $data[0];
             try {
-                if($type === BlockRegisterEnum::SINGLE_BLOCK_REGISTER) {
+                if($type === BlockRegisterEnum::SINGLE_REGISTER) {
                     $blockClosure = $data[1];
                     $serialize = $data[2];
                     $deserialize = $data[3];
                     $argv = $data[4];
                     SymplyBlockFactory::getInstance(true)->register($blockClosure, $serialize, $deserialize, unserialize($argv, ['allowed_classes' => true]));
-                } else if($type === BlockRegisterEnum::MULTI_BLOCK_REGISTER) {
+                } else if($type === BlockRegisterEnum::MULTI_REGISTER) {
                     $blockClosure = $data[1];
                     $argv = $data[2];
                     SymplyBlockFactory::getInstance(true)->registerAll($blockClosure, $argv);
@@ -126,9 +127,16 @@ class RegisterSymplyAsyncTask extends AsyncTask
             }
         }
         SymplyBlockFactory::getInstance()->initBlockBuilders();
-        foreach ($this->itemCustom as [$itemClosure, $serialize, $deserialize, $argv]) {
+        foreach ($this->itemCustom as $data) {
+            $type = $data[0];
             try {
-                SymplyItemFactory::getInstance(true)->register($itemClosure, $serialize, $deserialize, unserialize($argv, ['allowed_classes' => true]));
+                if($type === ItemRegisterEnum::SINGLE_REGISTER) {
+                    $itemClosure = $data[1];
+                    $serialize = $data[2];
+                    $deserialize = $data[3];
+                    $argv = $data[4];
+                    SymplyItemFactory::getInstance(true)->register($itemClosure, $serialize, $deserialize, unserialize($argv, ['allowed_classes' => true]));
+                }
             }catch (Throwable $throwable){
                 $this->logger->warning("[SymplyPlugin] WorkerId "  . $this->workerId .  ": " . $throwable->getMessage());
             }
