@@ -8,6 +8,7 @@ use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Block;
 use SenseiTarzan\SymplyPlugin\Main;
 use SenseiTarzan\SymplyPlugin\Player\BlockBreakRequest;
 use SenseiTarzan\SymplyPlugin\Utils\BlockUtils;
+use pocketmine\network\mcpe\NetworkSession;
 use WeakReference;
 
 class BlockBreakingTask extends Task
@@ -35,10 +36,10 @@ class BlockBreakingTask extends Task
         $this->blockBreakRequest = $blockBreakRequest;
     }
 
-    public function start(): void
+    public function start(NetworkSession $session): void
     {
         $this->setHandler(null);
-        Main::getInstance()->getScheduler()->scheduleRepeatingTask($this, 20);
+        Main::getInstance()->getScheduler()->scheduleRepeatingTask($this, intdiv($session->getPing(), 50) + 1);
     }
 
     public function stop(): void

@@ -99,7 +99,7 @@ class ClientBreakListener
 								continue;
 							}
                             $this->breaks[$session]->setBlockBreakRequest(new BlockBreakRequest($player->getWorld(), $vector3, BlockUtils::getDestroyRate($player, $block)));
-                            $this->breaks[$session]->start();
+                            $this->breaks[$session]->start($session);
 						} elseif ($action === PlayerAction::PREDICT_DESTROY_BLOCK || $action == PlayerAction::STOP_BREAK || $action === PlayerAction::ABORT_BREAK) {
                             if (isset($this->breaks[$session])){
                                 $this->breaks[$session]->setBlockBreakRequest(null);
