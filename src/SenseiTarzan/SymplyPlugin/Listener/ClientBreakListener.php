@@ -98,8 +98,8 @@ class ClientBreakListener
 							if($this->breaks[$session]->getBlockBreakRequest() !== null && $this->breaks[$session]->getBlockBreakRequest()->getOrigin()->distanceSquared($vector3) < 1){
 								continue;
 							}
-                            $this->breaks[$session]->setBlockBreakRequest(new BlockBreakRequest($player->getWorld(), $vector3,0));
-                            $this->breaks[$session]->start($session);
+                            $this->breaks[$session]->setBlockBreakRequest(new BlockBreakRequest($player->getWorld(), $vector3, 0));
+                            $this->breaks[$session]->start($session, BlockUtils::getDestroyRate($player, $block));
 						} elseif ($action === PlayerAction::PREDICT_DESTROY_BLOCK || $action == PlayerAction::STOP_BREAK || $action === PlayerAction::ABORT_BREAK) {
                             if (isset($this->breaks[$session])){
                                 $this->breaks[$session]->setBlockBreakRequest(null);

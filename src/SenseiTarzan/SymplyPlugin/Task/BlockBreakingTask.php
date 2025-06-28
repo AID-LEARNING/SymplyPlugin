@@ -19,6 +19,7 @@ class BlockBreakingTask extends Task
      * @param BlockBreakRequest|null $blockBreakRequest
      */
     private ?BlockBreakRequest $blockBreakRequest = null;
+    private int $tickFinish = 1;
     public function __construct(private readonly WeakReference $player )
     {
     }
@@ -36,10 +37,11 @@ class BlockBreakingTask extends Task
         $this->blockBreakRequest = $blockBreakRequest;
     }
 
-    public function start(NetworkSession $session): void
+    public function start(NetworkSession $session, int $tick): void
     {
         $this->setHandler(null);
-        Main::getInstance()->getScheduler()->scheduleRepeatingTask($this, intdiv($session->getPing(), 50) + 1);
+        Main::getInstance()->getScheduler()->scheduleRepeatingTask($this, 1);
+        $this->tickFinish += tick;
     }
 
     public function stop(): void
@@ -61,8 +63,7 @@ class BlockBreakingTask extends Task
         if (!$player->getWorld()->isInLoadedTerrain($origin)){
             return;
         }
-        $block = $player->getWorld()->getBlock($origin);
-        if($this->blockBreakRequest->addTick(BlockUtils::getDestroyRate($player, $block)) >= 1){
+        if($this->blockBreakRequest->addTick(BlockUtils::getDestroyRate($player, $player->getWorld()->getBlock($origin))) >= $this->tickFinish){
             $player->breakBlock($origin);
             $this->blockBreakRequest = null;
         }
