@@ -105,6 +105,8 @@ class ClientBreakListener
                                 $this->breaks[$session]->setBlockBreakRequest(null);
                                 $this->breaks[$session]->stop();
                             }
+						}else {
+							var_dump("Action: " . $blockAction->getActionType());
 						}
 					} else if ($blockAction instanceof PlayerBlockActionStopBreak) {
                         if (isset($this->breaks[$session])){
