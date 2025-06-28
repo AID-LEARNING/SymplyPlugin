@@ -37,11 +37,10 @@ class BlockBreakingTask extends Task
         $this->blockBreakRequest = $blockBreakRequest;
     }
 
-    public function start(NetworkSession $session, float $tick): void
+    public function start(): void
     {
         $this->setHandler(null);
         Main::getInstance()->getScheduler()->scheduleRepeatingTask($this, 1);
-        $this->tickFinish += $tick;
     }
 
     public function stop(): void
