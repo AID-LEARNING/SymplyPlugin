@@ -95,6 +95,9 @@ class ClientBreakListener
                             if (!isset($this->breaks[$session])){
                                 $this->breaks[$session] = new BlockBreakingTask(\WeakReference::create($session->getPlayer()));
                             }
+							if($this->breaks[$session]->getBlockBreakRequest() != null && $this->breaks[$session]->getBlockBreakRequest()->getOrigin()->distanceSquared($vector3) < 1){
+								continue;
+							}
                             $this->breaks[$session]->setBlockBreakRequest(new BlockBreakRequest($player->getWorld(), $vector3, BlockUtils::getDestroyRate($player, $block)));
                             $this->breaks[$session]->start();
 						} elseif ($blockAction->getActionType() === PlayerAction::PREDICT_DESTROY_BLOCK || $action == PlayerAction::STOP_BREAK) {
@@ -103,8 +106,8 @@ class ClientBreakListener
                                 $this->breaks[$session]->stop();
                             }
 						}
-					} elseif ($blockAction instanceof PlayerBlockActionStopBreak) {
-						if ($this->breaks->offsetExists($session)) {
+					} else if ($blockAction instanceof PlayerBlockActionStopBreak) {
+                        if (isset($this->breaks[$session])){
                             $this->breaks[$session]->setBlockBreakRequest(null);
                             $this->breaks[$session]->stop();
 						}
