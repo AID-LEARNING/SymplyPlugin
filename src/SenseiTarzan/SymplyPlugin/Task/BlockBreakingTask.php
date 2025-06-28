@@ -41,7 +41,7 @@ class BlockBreakingTask extends Task
     {
         $this->setHandler(null);
         Main::getInstance()->getScheduler()->scheduleRepeatingTask($this, 1);
-        $this->tickFinish += tick;
+        $this->tickFinish += $tick;
     }
 
     public function stop(): void
