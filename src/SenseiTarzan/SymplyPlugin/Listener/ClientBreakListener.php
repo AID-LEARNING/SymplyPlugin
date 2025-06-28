@@ -100,13 +100,11 @@ class ClientBreakListener
 							}
                             $this->breaks[$session]->setBlockBreakRequest(new BlockBreakRequest($player->getWorld(), $vector3, BlockUtils::getDestroyRate($player, $block)));
                             $this->breaks[$session]->start();
-						} elseif ($blockAction->getActionType() === PlayerAction::PREDICT_DESTROY_BLOCK || $action == PlayerAction::STOP_BREAK) {
+						} elseif ($action === PlayerAction::PREDICT_DESTROY_BLOCK || $action == PlayerAction::STOP_BREAK || $action === PlayerAction::ABORT_BREAK) {
                             if (isset($this->breaks[$session])){
                                 $this->breaks[$session]->setBlockBreakRequest(null);
                                 $this->breaks[$session]->stop();
                             }
-						}else {
-							var_dump("Action: " . $blockAction->getActionType());
 						}
 					} else if ($blockAction instanceof PlayerBlockActionStopBreak) {
                         if (isset($this->breaks[$session])){
