@@ -17,7 +17,7 @@ class BlockBreakingTask extends Task
      * @param WeakReference<Player> $player
      * @param BlockBreakRequest|null $blockBreakRequest
      */
-    private ?BlockBreakRequest $blockBreakRequest;
+    private ?BlockBreakRequest $blockBreakRequest = null;
     public function __construct(private readonly WeakReference $player )
     {
     }
