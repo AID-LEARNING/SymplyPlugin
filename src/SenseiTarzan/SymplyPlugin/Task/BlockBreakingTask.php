@@ -19,7 +19,7 @@ class BlockBreakingTask extends Task
      * @param BlockBreakRequest|null $blockBreakRequest
      */
     private ?BlockBreakRequest $blockBreakRequest = null;
-    private int $tickFinish = 1;
+    private float $tickFinish = 1;
     public function __construct(private readonly WeakReference $player )
     {
     }
@@ -37,7 +37,7 @@ class BlockBreakingTask extends Task
         $this->blockBreakRequest = $blockBreakRequest;
     }
 
-    public function start(NetworkSession $session, int $tick): void
+    public function start(NetworkSession $session, float $tick): void
     {
         $this->setHandler(null);
         Main::getInstance()->getScheduler()->scheduleRepeatingTask($this, 1);
