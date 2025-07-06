@@ -96,7 +96,7 @@ class ClientBreakListener
                             if (!isset($this->breaks[$session])){
                                 $this->breaks[$session] = new BlockBreakingTask(\WeakReference::create($session->getPlayer()));
                             }
-							if($this->breaks[$session]->getBlockBreakRequest() !== null && $this->breaks[$session]->getBlockBreakRequest()->getOrigin()->distanceSquared($vector3) < 1){
+							if($this->breaks[$session]->getBlockBreakRequest() !== null && $this->breaks[$session]->getBlockBreakRequest()->getOrigin()->equals($vector3)){
 								continue;
 							}
                             $this->breaks[$session]->setBlockBreakRequest(new BlockBreakRequest($player->getWorld(), $vector3, 0));
