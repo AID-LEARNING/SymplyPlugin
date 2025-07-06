@@ -39,7 +39,7 @@ class BlockBreakingTask extends Task
 
     public function start(): void
     {
-        $this->setHandler(null);
+        $this->getHandler()?->cancel();
         Main::getInstance()->getScheduler()->scheduleRepeatingTask($this, 1);
     }
 
@@ -54,7 +54,7 @@ class BlockBreakingTask extends Task
          * @var Player|null $player
          */
         $player = $this->player->get();
-        if (!$player || !$this->blockBreakRequest) {
+        if (!$player || !$player->isOnline() || !$this->blockBreakRequest) {
             $this->stop();
             return;
         }

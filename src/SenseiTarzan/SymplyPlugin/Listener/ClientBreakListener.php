@@ -25,6 +25,7 @@ namespace SenseiTarzan\SymplyPlugin\Listener;
 
 use pocketmine\block\Block;
 use pocketmine\event\EventPriority;
+use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\NetworkSession;
@@ -133,6 +134,13 @@ class ClientBreakListener
 			}
 		}*/
 	}
+
+    #[EventAttribute(EventPriority::LOWEST)]
+    public function onQuit(PlayerQuitEvent $event) : void
+    {
+        $session = $event->getPlayer()->getNetworkSession();
+        unset($this->breaks[$session]);
+    }
 
 	/**
 	 * Internal function used to execute rollbacks when an action fails on a block.
