@@ -120,7 +120,7 @@ class RegisterSymplyAsyncTask extends AsyncTask
                 } else if($type === BlockRegisterEnum::MULTI_REGISTER) {
                     $blockClosure = $data[1];
                     $argv = $data[2];
-                    SymplyBlockFactory::getInstance(true)->registerAll($blockClosure, $argv);
+                    SymplyBlockFactory::getInstance(true)->registerAll($blockClosure, unserialize($argv , ['allowed_classes' => true]));
                 }
             }catch (Throwable $throwable){
                 $this->logger->warning("[SymplyPlugin] WorkerId "  . $this->workerId .  ": " . $throwable->getMessage());
@@ -139,7 +139,7 @@ class RegisterSymplyAsyncTask extends AsyncTask
                 } else if($type === ItemRegisterEnum::MULTI_REGISTER) {
                     $itemClosure = $data[1];
                     $argv = $data[2];
-                    SymplyItemFactory::getInstance(true)->registerAll($itemClosure, $argv);
+                    SymplyItemFactory::getInstance(true)->registerAll($itemClosure, unserialize($argv, ['allowed_classes' => true]));
                 }
             }catch (Throwable $throwable){
                 $this->logger->warning("[SymplyPlugin] WorkerId "  . $this->workerId .  ": " . $throwable->getMessage());
