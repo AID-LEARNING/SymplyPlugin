@@ -180,7 +180,7 @@ final class SymplyBlockFactory
                 }
                 else {
                     $serializer ??= static fn() => BlockStateWriter::create($identifier);
-                    $deserializer ??= static fn(BlockStateReader $reader) => $blockCustom;
+                    $deserializer ??= static fn(BlockStateReader $reader) => clone SymplyBlockFactory::getInstance()->getCustom($identifier);
                 }
                 $blockStateDictionaryEntries = [];
                 foreach ($blockBuilder->toBlockStateDictionaryEntry() as $blockStateDictionaryEntry){
@@ -190,7 +190,7 @@ final class SymplyBlockFactory
                 SymplyBlockPalette::getInstance()->insertStates($blockStateDictionaryEntries);
                 GlobalBlockStateHandlers::getSerializer()->map($blockCustom, $serializer);
                 GlobalBlockStateHandlers::getDeserializer()->map($identifier, $deserializer);
-                StringToItemParser::getInstance()->registerBlock($identifier, fn() => $blockCustom);
+                StringToItemParser::getInstance()->registerBlock($identifier, static fn() => clone SymplyBlockFactory::getInstance()->getCustom($identifier));
                 $this->addBlockBuilder($blockCustom, $blockBuilder);
             } else if(is_array($blockCustom)){
                 $block = $blockCustom['block'] ?? null;
