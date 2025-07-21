@@ -111,7 +111,7 @@ class BlockBuilder extends BasicBlockBuilder
 	 */
 	public function toBlockStateDictionaryEntry() : Generator
 	{
-		yield new BlockStateDictionaryEntry($this->getNamespaceId(), [], 0);
+		yield new BlockStateDictionaryEntry($this->getNamespaceId(), [], 0, null);
 	}
 
 	public function toPacket(int $vanillaBlockId) : CompoundTag

@@ -140,7 +140,7 @@ final class BlockPermutationBuilder extends BlockBuilder
 				$states = [];
 				foreach ($property as $i => $data)
 					$states[$listBlockPropertyName[$i]] = $data;
-				yield new BlockStateDictionaryEntry($this->getNamespaceId(), $states, $meta);
+				yield new BlockStateDictionaryEntry($this->getNamespaceId(), $states, $meta, null);
 			}
 		}
 	}
