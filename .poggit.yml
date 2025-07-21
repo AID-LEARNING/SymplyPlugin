@@ -3,6 +3,7 @@ branches:
   - master
   - experimental
   - refacto
+  - "nethergames-support"
 projects:
   SymplyPlugin:
     path: ""
