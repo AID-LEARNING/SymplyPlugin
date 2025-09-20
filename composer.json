@@ -15,7 +15,6 @@
     "ext-pmmpthread": "*"
   },
   "require-dev": {
-    "friendsofphp/php-cs-fixer": "^v3.59.3",
-    "pocketmine/pocketmine-mp": "5.33.2"
+    "friendsofphp/php-cs-fixer": "^v3.59.3"
   }
 }
