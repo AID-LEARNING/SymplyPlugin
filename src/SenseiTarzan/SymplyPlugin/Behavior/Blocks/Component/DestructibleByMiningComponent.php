@@ -33,7 +33,7 @@ class DestructibleByMiningComponent extends AbstractComponent
 {
 
 	public function __construct(
-		private float $value
+		private readonly float $value
 	)
 	{
 	}
