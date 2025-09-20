@@ -1,8 +1,7 @@
 .idea
 out/vendor
 vendor
-.phar
-PocketMine-MP.phar
+*.phar
 .php-cs-fixer.cache
 out
 build.sh
