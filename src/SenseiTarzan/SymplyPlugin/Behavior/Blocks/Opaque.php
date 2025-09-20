@@ -29,9 +29,6 @@ use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BlockBuilder;
 
 class Opaque extends PMOpaque implements IBlockCustom
 {
-
-	private BlockBuilder $blockBuilder;
-
 	public function __construct(
 		BlockIdentifier $idInfo,
 		string          $name,
