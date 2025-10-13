@@ -1,5 +1,5 @@
 # SymplyPlugin
-#DeepWiki
+# DeepWiki
 https://deepwiki.com/AID-LEARNING/SymplyPlugin
 ## Config 
 ### blockNetworkIdsAreHashes is true
