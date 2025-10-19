@@ -4,6 +4,7 @@ https://deepwiki.com/AID-LEARNING/SymplyPlugin
 ## Config 
 ### blockNetworkIdsAreHashes is true
 this is obsolete
+<p/>
 you need to modify in the ChunkSerializer in pmmp
 
 here is the line to modify
