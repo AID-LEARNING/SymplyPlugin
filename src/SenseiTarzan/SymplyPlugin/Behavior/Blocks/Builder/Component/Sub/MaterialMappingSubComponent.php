@@ -21,15 +21,34 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Trait;
+namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\Component\Sub;
 
-use BackedEnum;
-use Generator;
 use pocketmine\nbt\tag\CompoundTag;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\TargetMaterialEnum;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\Sub\ISubComponent;
 
-interface ITrait
+final readonly class MaterialMappingSubComponent implements ISubComponent
 {
-	public function getName() : string|BackedEnum;
-	public function toBlockProperty() : Generator;
-	public function toNbt() : CompoundTag;
+
+	public function __construct(
+		protected TargetMaterialEnum $target,
+		protected string             $mapping
+	)
+	{
+	}
+
+	public function getTarget() : TargetMaterialEnum
+	{
+		return $this->target;
+	}
+
+	public function getMapping() : string
+	{
+		return $this->mapping;
+	}
+
+	public function toNbt() : CompoundTag
+	{
+		return CompoundTag::create()->setString($this->target->value, $this->mapping);
+	}
 }

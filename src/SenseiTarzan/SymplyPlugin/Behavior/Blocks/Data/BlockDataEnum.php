@@ -21,29 +21,14 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component;
+namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Data;
 
-use BackedEnum;
-use pocketmine\nbt\tag\ByteTag;
-use pocketmine\nbt\tag\Tag;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
-
-class BreathabilityComponent extends AbstractComponent
+enum BlockDataEnum
 {
-	public function __construct(
-		private readonly bool $value
-	)
-	{
-	}
-
-	public function getName() : string|BackedEnum
-	{
-		return ComponentName::BREATHABILITY;
-	}
-
-	protected function value() : Tag
-	{
-		return new ByteTag($this->value ? 1 : 0);
-	}
+	case INT;
+	case FLOAT;
+	case STRING;
+	case BOOL;
+	case SHORT;
+	case BYTE;
 }

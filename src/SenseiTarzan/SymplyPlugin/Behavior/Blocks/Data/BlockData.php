@@ -21,15 +21,57 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Trait;
+namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Data;
 
-use BackedEnum;
-use Generator;
-use pocketmine\nbt\tag\CompoundTag;
-
-interface ITrait
+class BlockData
 {
-	public function getName() : string|BackedEnum;
-	public function toBlockProperty() : Generator;
-	public function toNbt() : CompoundTag;
+
+	public function __construct(
+		private readonly string        $saveName,
+		private readonly BlockDataEnum $blockData,
+		private mixed $raw
+	)
+	{
+
+	}
+
+	private function getSaveName() : string
+	{
+		return $this->saveName;
+	}
+
+	private function getBlockData() : BlockDataEnum
+	{
+		return $this->blockData;
+	}
+
+	private function getRaw() : mixed
+	{
+		return $this->raw;
+	}
+
+	public function setRaw(mixed $raw) : void
+	{
+		$this->raw = $raw;
+	}
+
+	public function toInt() : int
+	{
+		return (int) $this->raw;
+	}
+
+	public function toString() : string
+	{
+		return (string) $this->raw;
+	}
+
+	public function toBool() : bool
+	{
+		return (bool) $this->raw;
+	}
+
+	public function toFloat() : float
+	{
+		return (float) $this->raw;
+	}
 }

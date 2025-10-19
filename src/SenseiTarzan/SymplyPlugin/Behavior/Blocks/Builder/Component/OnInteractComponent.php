@@ -21,15 +21,35 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Trait;
+namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\Component;
 
 use BackedEnum;
-use Generator;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\Tag;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 
-interface ITrait
+class OnInteractComponent extends AbstractComponent
 {
-	public function getName() : string|BackedEnum;
-	public function toBlockProperty() : Generator;
-	public function toNbt() : CompoundTag;
+
+	public function __construct
+	(
+		private readonly ?string $triggerType = null
+	)
+	{
+	}
+
+	public function getName() : string|BackedEnum
+	{
+		return ComponentName::ON_INTERACT;
+	}
+
+	protected function value() : Tag
+	{
+		$nbt = CompoundTag::create();
+		if ($this->triggerType !== null){
+			$nbt->setString("triggerType", $this->triggerType);
+		}
+		return $nbt;
+	}
 }

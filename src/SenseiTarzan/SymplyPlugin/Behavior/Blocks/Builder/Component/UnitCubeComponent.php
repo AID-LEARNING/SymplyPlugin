@@ -21,15 +21,27 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Trait;
+namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\Component;
 
 use BackedEnum;
-use Generator;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\Tag;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 
-interface ITrait
+/**
+ * @deprecated
+ */
+class UnitCubeComponent extends AbstractComponent
 {
-	public function getName() : string|BackedEnum;
-	public function toBlockProperty() : Generator;
-	public function toNbt() : CompoundTag;
+
+	public function getName() : string|BackedEnum
+	{
+		return ComponentName::UNIT_CUBE;
+	}
+
+	protected function value() : Tag
+	{
+		return CompoundTag::create();
+	}
 }

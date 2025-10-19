@@ -21,15 +21,13 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Trait;
+namespace SenseiTarzan\SymplyPlugin\Class\Behavior;
 
-use BackedEnum;
-use Generator;
-use pocketmine\nbt\tag\CompoundTag;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
 
-interface ITrait
+interface IBlockBehavior
 {
-	public function getName() : string|BackedEnum;
-	public function toBlockProperty() : Generator;
-	public function toNbt() : CompoundTag;
+	public static function getIdentifier() : string;
+
+	public static function buildComponent(array $component) : IComponent;
 }

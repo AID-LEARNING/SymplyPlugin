@@ -21,15 +21,30 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Trait;
+namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\Component;
 
 use BackedEnum;
-use Generator;
-use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\FloatTag;
+use pocketmine\nbt\tag\Tag;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 
-interface ITrait
+class DestructibleByMiningComponent extends AbstractComponent
 {
-	public function getName() : string|BackedEnum;
-	public function toBlockProperty() : Generator;
-	public function toNbt() : CompoundTag;
+
+	public function __construct(
+		private readonly float $value
+	)
+	{
+	}
+
+	public function getName() : string|BackedEnum
+	{
+		return ComponentName::DESTRUCTIBLE_BY_MINING;
+	}
+
+	protected function value() : Tag
+	{
+		return new FloatTag($this->value);
+	}
 }

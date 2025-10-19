@@ -21,13 +21,13 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component;
+namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\Component;
 
 use BackedEnum;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\Tag;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub\MaterialMappingSubComponent;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub\MaterialSubComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\Component\Sub\MaterialMappingSubComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\Component\Sub\MaterialSubComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\TargetMaterialEnum;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;

@@ -21,7 +21,7 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub;
+namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\Component\Sub;
 
 use pocketmine\nbt\tag\CompoundTag;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\RenderMethodEnum;

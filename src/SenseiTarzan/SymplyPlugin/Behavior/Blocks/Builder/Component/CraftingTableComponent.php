@@ -21,68 +21,54 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component;
+namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\Component;
 
 use BackedEnum;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\ListTag;
+use pocketmine\nbt\tag\StringTag;
 use pocketmine\nbt\tag\Tag;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
-use function is_bool;
+use function array_map;
+use function array_merge;
+use function is_array;
 
-class GeometryComponent extends AbstractComponent
+class CraftingTableComponent extends AbstractComponent
 {
+
 	public function __construct(
-		private readonly string $identifier,
-		private ?array          $boneVisibilities = null
+		private array        $craftingTags,
+		private readonly int $gridSize,
+		private readonly string $tableName
 	)
 	{
 	}
 
-	public static function create(string $identifier) : GeometryComponent
+	public static function create(int $gridSize, string $tableName) : CraftingTableComponent
 	{
-		return new self($identifier);
-	}
-
-	public function getName() : string|BackedEnum
-	{
-		return ComponentName::GEOMETRY;
-	}
-
-	public function setBoneVisibilities(?array $boneVisibilities) : self
-	{
-		$this->boneVisibilities = $boneVisibilities;
-		return $this;
+		return new self([], $gridSize, $tableName);
 	}
 
 	/**
 	 * @return $this
 	 */
-	public function addBoneVisibility(string $identifier, bool|string $value) : self
+	public function addTags(string|array $tags) : self
 	{
-		$this->boneVisibilities[$identifier] = $value;
+		$this->craftingTags = array_merge($this->craftingTags, is_array($tags) ? $tags : [$tags]);
 		return $this;
 	}
 
-	public function getIdentifier() : string
+	public function getName() : string|BackedEnum
 	{
-		return $this->identifier;
+		return ComponentName::CRAFTING_TABLE;
 	}
 
 	protected function value() : Tag
 	{
-		$nbt = CompoundTag::create()
-			->setString("identifier", $this->getIdentifier())
-			->setByte("legacyBlockLightAbsorption", 0)
-			->setByte("legacyTopRotation", 0);
-		if ($this->boneVisibilities !== null) {
-			$bone_visibility = CompoundTag::create();
-			foreach ($this->boneVisibilities as $identifier => $value) {
-				$bone_visibility->setString($identifier, (is_bool($value) ? ($value ? "true" : "false") : $value));
-			}
-			$nbt->setTag("bone_visibility", $bone_visibility);
-		}
-		return  $nbt;
+		return CompoundTag::create()
+			->setTag("crafting_tags", new ListTag(array_map(fn(string $tag) => new StringTag($tag), $this->craftingTags)))
+			->setInt("grid_size", $this->gridSize)
+			->setString("table_name", $this->tableName);
 	}
-
 }

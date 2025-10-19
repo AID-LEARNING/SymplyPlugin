@@ -25,7 +25,6 @@ namespace SenseiTarzan\SymplyPlugin\Behavior;
 
 use Closure;
 use InvalidArgumentException;
-use pmmp\thread\ThreadSafeArray;
 use pocketmine\block\Block;
 use pocketmine\block\RuntimeBlockStateRegistry;
 use pocketmine\block\VanillaBlocks;
@@ -50,6 +49,7 @@ use SenseiTarzan\SymplyPlugin\Behavior\Blocks\IPermutationBlock;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\VanillaGroupMinecraft;
 use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
 use function hash;
+use function is_array;
 use function is_string;
 use function mb_strtoupper;
 use function serialize;
@@ -73,20 +73,17 @@ final class SymplyBlockFactory
 	/** @var array<string, BlockBuilder> */
 	private array $blockToBlockBuilder = [];
 
-    private bool  $serverRun = false;
+	private bool  $serverRun = false;
 	private static CacheableNbt $emptyNBT;
 
 	public function __construct(private readonly bool $asyncMode = false){
 		self::$emptyNBT = new CacheableNbt(new CompoundTag());
 	}
 
-    /**
-     * @param bool $serverRun
-     */
-    public function setServerRun(): void
-    {
-        $this->serverRun = true;
-    }
+	public function setServerRun() : void
+	{
+		$this->serverRun = true;
+	}
 	/**
 	 * @param Closure(): (Block&IBlockCustom) $blockClosure
 	 */
@@ -95,9 +92,9 @@ final class SymplyBlockFactory
 		/** @var (Block&IBlockCustom) $blockCustom */
 		$blockCustom = $blockClosure($argv);
 		$identifier = $blockCustom->getIdInfo()->getNamespaceId();
-        if($this->serverRun) {
-            throw new InvalidArgumentException("Block ID {$blockCustom->getIdInfo()->getNamespaceId()} ne peux être enregistré apres que le serveur a start");
-        }
+		if($this->serverRun) {
+			throw new InvalidArgumentException("Block ID {$blockCustom->getIdInfo()->getNamespaceId()} ne peux être enregistré apres que le serveur a start");
+		}
 		if (isset($this->custom[$identifier])) {
 			throw new InvalidArgumentException("Block ID {$blockCustom->getIdInfo()->getNamespaceId()} is already used by another block");
 		}
@@ -139,111 +136,108 @@ final class SymplyBlockFactory
 
 	}
 
-    /**
-     * @param Closure $blocksClosure
-     * @phpstan-param Closure(?array $argv): Block[] | array {}
-     * @param array|null $argv
-     * @return void
-     */
-    public function registerAll(Closure $blocksClosure, ?array $argv = null): void
-    {
-        /** @var array|(Block&IBlockCustom)[] $blocksCustom */
-        $blocksCustom = $blocksClosure($argv);
-        $serializer = null;
-        $deserializer = null;
-        foreach ($blocksCustom as $blockCustom) {
-            if($blockCustom instanceof Block && $blockCustom instanceof IBlockCustom) {
-                $identifier = $blockCustom->getIdInfo()->getNamespaceId();
-                if($this->serverRun) {
-                    throw new InvalidArgumentException("Block ID {$blockCustom->getIdInfo()->getNamespaceId()} ne peux être enregistré apres que le serveur a start");
-                }
-                if (isset($this->custom[$identifier])) {
-                    throw new InvalidArgumentException("Block ID {$blockCustom->getIdInfo()->getNamespaceId()} is already used by another block");
-                }
-                $blockBuilder = $blockCustom->getBlockBuilder();
-                $this->custom[$identifier] = $blockCustom;
-                RuntimeBlockStateRegistry::getInstance()->register($blockCustom);
-                if ($blockCustom instanceof IPermutationBlock) {
-                    $serializer ??= static function (Block&IPermutationBlock $block) use ($identifier) : BlockStateWriter {
-                        $writer = BlockStateWriter::create($identifier);
-                        $block->serializeState($writer);
-                        return $writer;
-                    };
-                    $deserializer ??= static function (BlockStateReader $reader) use ($identifier) : Block&IPermutationBlock {
-                        /**
-                         * @var (Block&IPermutationBlock) $block
-                         */
-                        $block = clone SymplyBlockFactory::getInstance()->getCustom($identifier);
-                        $block->deserializeState($reader);
-                        return $block;
-                    };
-                }
-                else {
-                    $serializer ??= static fn() => BlockStateWriter::create($identifier);
-                    $deserializer ??= static fn(BlockStateReader $reader) => clone SymplyBlockFactory::getInstance()->getCustom($identifier);
-                }
-                $blockStateDictionaryEntries = [];
-                foreach ($blockBuilder->toBlockStateDictionaryEntry() as $blockStateDictionaryEntry){
-                    $blockStateDictionaryEntries[] = $blockStateDictionaryEntry;
-                    GlobalBlockStateHandlers::getUpgrader()->getBlockIdMetaUpgrader()->addIdMetaToStateMapping($blockStateDictionaryEntry->getStateName(), $blockStateDictionaryEntry->getMeta(), $blockStateDictionaryEntry->generateStateData());
-                }
-                SymplyBlockPalette::getInstance()->insertStates($blockStateDictionaryEntries);
-                GlobalBlockStateHandlers::getSerializer()->map($blockCustom, $serializer);
-                GlobalBlockStateHandlers::getDeserializer()->map($identifier, $deserializer);
-                StringToItemParser::getInstance()->registerBlock($identifier, static fn() => clone SymplyBlockFactory::getInstance()->getCustom($identifier));
-                $this->addBlockBuilder($blockCustom, $blockBuilder);
-            } else if(is_array($blockCustom)){
-                $block = $blockCustom['block'] ?? null;
-                if($block instanceof Block && $block instanceof IBlockCustom)
-                    continue ;
-                $serializer = $blockCustom['serializer'] ?? null;
-                $deserializer = $blockCustom['deserializer'] ?? null;
-                $identifier = $block->getIdInfo()->getNamespaceId();
-                if($this->serverRun) {
-                    throw new InvalidArgumentException("Block ID {$block->getIdInfo()->getNamespaceId()} ne peux être enregistré apres que le serveur a start");
-                }
-                if (isset($this->custom[$identifier])) {
-                    throw new InvalidArgumentException("Block ID {$block->getIdInfo()->getNamespaceId()} is already used by another block");
-                }
-                $blockBuilder = $block->getBlockBuilder();
-                $this->custom[$identifier] = $block;
-                RuntimeBlockStateRegistry::getInstance()->register($block);
-                if ($block instanceof IPermutationBlock) {
-                    $serializer ??= static function (Block&IPermutationBlock $block) use ($identifier) : BlockStateWriter {
-                        $writer = BlockStateWriter::create($identifier);
-                        $block->serializeState($writer);
-                        return $writer;
-                    };
-                    $deserializer ??= static function (BlockStateReader $reader) use ($identifier) : Block&IPermutationBlock {
-                        /**
-                         * @var (Block&IPermutationBlock) $block
-                         */
-                        $block = clone SymplyBlockFactory::getInstance()->getCustom($identifier);
-                        $block->deserializeState($reader);
-                        return $block;
-                    };
-                }
-                else {
-                    $serializer ??= static fn() => BlockStateWriter::create($identifier);
-                    $deserializer ??= static fn(BlockStateReader $reader) => $blockCustom;
-                }
-                $blockStateDictionaryEntries = [];
-                foreach ($blockBuilder->toBlockStateDictionaryEntry() as $blockStateDictionaryEntry){
-                    $blockStateDictionaryEntries[] = $blockStateDictionaryEntry;
-                    GlobalBlockStateHandlers::getUpgrader()->getBlockIdMetaUpgrader()->addIdMetaToStateMapping($blockStateDictionaryEntry->getStateName(), $blockStateDictionaryEntry->getMeta(), $blockStateDictionaryEntry->generateStateData());
-                }
-                SymplyBlockPalette::getInstance()->insertStates($blockStateDictionaryEntries);
-                GlobalBlockStateHandlers::getSerializer()->map($blockCustom, $serializer);
-                GlobalBlockStateHandlers::getDeserializer()->map($identifier, $deserializer);
-                StringToItemParser::getInstance()->registerBlock($identifier, fn() => $blockCustom);
-                $this->addBlockBuilder($block, $blockBuilder);
-            }
-        }
+	/**
+	 * @phpstan-param Closure(?array $argv): Block[] | array {}
+	 */
+	public function registerAll(Closure $blocksClosure, ?array $argv = null) : void
+	{
+		/** @var array|(Block&IBlockCustom)[] $blocksCustom */
+		$blocksCustom = $blocksClosure($argv);
+		$serializer = null;
+		$deserializer = null;
+		foreach ($blocksCustom as $blockCustom) {
+			if($blockCustom instanceof Block && $blockCustom instanceof IBlockCustom) {
+				$identifier = $blockCustom->getIdInfo()->getNamespaceId();
+				if($this->serverRun) {
+					throw new InvalidArgumentException("Block ID {$blockCustom->getIdInfo()->getNamespaceId()} ne peux être enregistré apres que le serveur a start");
+				}
+				if (isset($this->custom[$identifier])) {
+					throw new InvalidArgumentException("Block ID {$blockCustom->getIdInfo()->getNamespaceId()} is already used by another block");
+				}
+				$blockBuilder = $blockCustom->getBlockBuilder();
+				$this->custom[$identifier] = $blockCustom;
+				RuntimeBlockStateRegistry::getInstance()->register($blockCustom);
+				if ($blockCustom instanceof IPermutationBlock) {
+					$serializer ??= static function (Block&IPermutationBlock $block) use ($identifier) : BlockStateWriter {
+						$writer = BlockStateWriter::create($identifier);
+						$block->serializeState($writer);
+						return $writer;
+					};
+					$deserializer ??= static function (BlockStateReader $reader) use ($identifier) : Block&IPermutationBlock {
+						/**
+						 * @var (Block&IPermutationBlock) $block
+						 */
+						$block = clone SymplyBlockFactory::getInstance()->getCustom($identifier);
+						$block->deserializeState($reader);
+						return $block;
+					};
+				}
+				else {
+					$serializer ??= static fn() => BlockStateWriter::create($identifier);
+					$deserializer ??= static fn(BlockStateReader $reader) => clone SymplyBlockFactory::getInstance()->getCustom($identifier);
+				}
+				$blockStateDictionaryEntries = [];
+				foreach ($blockBuilder->toBlockStateDictionaryEntry() as $blockStateDictionaryEntry){
+					$blockStateDictionaryEntries[] = $blockStateDictionaryEntry;
+					GlobalBlockStateHandlers::getUpgrader()->getBlockIdMetaUpgrader()->addIdMetaToStateMapping($blockStateDictionaryEntry->getStateName(), $blockStateDictionaryEntry->getMeta(), $blockStateDictionaryEntry->generateStateData());
+				}
+				SymplyBlockPalette::getInstance()->insertStates($blockStateDictionaryEntries);
+				GlobalBlockStateHandlers::getSerializer()->map($blockCustom, $serializer);
+				GlobalBlockStateHandlers::getDeserializer()->map($identifier, $deserializer);
+				StringToItemParser::getInstance()->registerBlock($identifier, static fn() => clone SymplyBlockFactory::getInstance()->getCustom($identifier));
+				$this->addBlockBuilder($blockCustom, $blockBuilder);
+			} elseif(is_array($blockCustom)){
+				$block = $blockCustom['block'] ?? null;
+				if($block instanceof Block && $block instanceof IBlockCustom)
+					continue ;
+				$serializer = $blockCustom['serializer'] ?? null;
+				$deserializer = $blockCustom['deserializer'] ?? null;
+				$identifier = $block->getIdInfo()->getNamespaceId();
+				if($this->serverRun) {
+					throw new InvalidArgumentException("Block ID {$block->getIdInfo()->getNamespaceId()} ne peux être enregistré apres que le serveur a start");
+				}
+				if (isset($this->custom[$identifier])) {
+					throw new InvalidArgumentException("Block ID {$block->getIdInfo()->getNamespaceId()} is already used by another block");
+				}
+				$blockBuilder = $block->getBlockBuilder();
+				$this->custom[$identifier] = $block;
+				RuntimeBlockStateRegistry::getInstance()->register($block);
+				if ($block instanceof IPermutationBlock) {
+					$serializer ??= static function (Block&IPermutationBlock $block) use ($identifier) : BlockStateWriter {
+						$writer = BlockStateWriter::create($identifier);
+						$block->serializeState($writer);
+						return $writer;
+					};
+					$deserializer ??= static function (BlockStateReader $reader) use ($identifier) : Block&IPermutationBlock {
+						/**
+						 * @var (Block&IPermutationBlock) $block
+						 */
+						$block = clone SymplyBlockFactory::getInstance()->getCustom($identifier);
+						$block->deserializeState($reader);
+						return $block;
+					};
+				}
+				else {
+					$serializer ??= static fn() => BlockStateWriter::create($identifier);
+					$deserializer ??= static fn(BlockStateReader $reader) => $blockCustom;
+				}
+				$blockStateDictionaryEntries = [];
+				foreach ($blockBuilder->toBlockStateDictionaryEntry() as $blockStateDictionaryEntry){
+					$blockStateDictionaryEntries[] = $blockStateDictionaryEntry;
+					GlobalBlockStateHandlers::getUpgrader()->getBlockIdMetaUpgrader()->addIdMetaToStateMapping($blockStateDictionaryEntry->getStateName(), $blockStateDictionaryEntry->getMeta(), $blockStateDictionaryEntry->generateStateData());
+				}
+				SymplyBlockPalette::getInstance()->insertStates($blockStateDictionaryEntries);
+				GlobalBlockStateHandlers::getSerializer()->map($blockCustom, $serializer);
+				GlobalBlockStateHandlers::getDeserializer()->map($identifier, $deserializer);
+				StringToItemParser::getInstance()->registerBlock($identifier, fn() => $blockCustom);
+				$this->addBlockBuilder($block, $blockBuilder);
+			}
+		}
 
-        if (!$this->asyncMode) {
-            SymplyCache::getInstance()->addTransmitterBlockCustom([BlockRegisterEnum::MULTI_REGISTER,  $blocksClosure, serialize($argv)]);
-        }
-    }
+		if (!$this->asyncMode) {
+			SymplyCache::getInstance()->addTransmitterBlockCustom([BlockRegisterEnum::MULTI_REGISTER,  $blocksClosure, serialize($argv)]);
+		}
+	}
 
 	/**
 	 * Registers the required mappings for the block to become an item that can be placed etc. It is assigned an ID that

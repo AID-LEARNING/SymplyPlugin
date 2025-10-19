@@ -24,8 +24,8 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks;
 
 use pocketmine\math\Vector3;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub\MaterialMappingSubComponent;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub\MaterialSubComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\Component\Sub\MaterialMappingSubComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\Component\Sub\MaterialSubComponent;
 use SenseiTarzan\SymplyPlugin\Utils\Vector3WithOffset;
 
 /**

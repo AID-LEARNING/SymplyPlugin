@@ -21,15 +21,25 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Trait;
+namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property;
 
 use BackedEnum;
-use Generator;
-use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\IntTag;
+use pocketmine\nbt\tag\ListTag;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Data\BlockData;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Data\BlockDataEnum;
+use function array_key_first;
+use function array_map;
 
-interface ITrait
+class IntBlockProperty extends BlockProperty
 {
-	public function getName() : string|BackedEnum;
-	public function toBlockProperty() : Generator;
-	public function toNbt() : CompoundTag;
+	public function __construct(string|BackedEnum $name, protected array $numbers) {
+		parent::__construct($name, new ListTag(array_map(fn(int $num) => new IntTag($num), $numbers)));
+	}
+
+	function toBlockDataDefault() : BlockData
+	{
+		$values = $this->getValueInRaw();
+		return new BlockData($this->getName(), BlockDataEnum::INT, $values[array_key_first($values)]);
+	}
 }

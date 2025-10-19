@@ -3,24 +3,15 @@
 namespace SenseiTarzan\CustomCrops\Block;
 
 use pocketmine\block\utils\FortuneDropHelper;
-use pocketmine\block\Wheat;
 use pocketmine\item\Item;
-use pocketmine\item\VanillaItems;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use SenseiTarzan\CustomCrops\Enum\CreativeGroupCustom;
 use SenseiTarzan\CustomCrops\Enum\ExtraItem;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BlockPermutationBuilder;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\OnInteractComponent;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub\MaterialSubComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Crops;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\RenderMethodEnum;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\TargetMaterialEnum;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Info\BlockCreativeInfo;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Permutation\Permutations;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property\CropsProperty;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\CategoryCreativeEnum;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\GroupCreativeEnum;
 
 class CottonCrops extends Crops
 {

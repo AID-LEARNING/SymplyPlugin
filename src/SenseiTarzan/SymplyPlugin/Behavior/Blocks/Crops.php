@@ -38,12 +38,13 @@ use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BlockPermutationBuilder;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\OnInteractComponent;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub\MaterialSubComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\Component\OnInteractComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\Component\Sub\MaterialSubComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\PropertyName;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\RenderMethodEnum;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\TargetMaterialEnum;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Info\BlockCreativeInfo;
+
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Permutation\Permutations;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property\CropsProperty;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\CategoryCreativeEnum;

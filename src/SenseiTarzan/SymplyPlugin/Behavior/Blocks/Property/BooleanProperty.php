@@ -26,6 +26,9 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property;
 use BackedEnum;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\ListTag;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Data\BlockData;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Data\BlockDataEnum;
+use function array_key_first;
 
 class BooleanProperty extends BlockProperty
 {
@@ -35,5 +38,11 @@ class BooleanProperty extends BlockProperty
 			new ByteTag(1),
 			new ByteTag(0),
 		]));
+	}
+
+	function toBlockDataDefault() : BlockData
+	{
+		$values = $this->getValueInRaw();
+		return new BlockData($this->getName(), BlockDataEnum::BOOL, $values[array_key_first($values)]);
 	}
 }

@@ -21,35 +21,13 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component;
+namespace SenseiTarzan\SymplyPlugin\Class\Behavior;
 
-use BackedEnum;
-use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\tag\Tag;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Permutation\Permutations;
 
-class OnInteractComponent extends AbstractComponent
+interface IBlockPermutation
 {
+	public static function getIdentifier() : string;
 
-	public function __construct
-	(
-		private readonly ?string $triggerType = null
-	)
-	{
-	}
-
-	public function getName() : string|BackedEnum
-	{
-		return ComponentName::ON_INTERACT;
-	}
-
-	protected function value() : Tag
-	{
-		$nbt = CompoundTag::create();
-		if ($this->triggerType !== null){
-			$nbt->setString("triggerType", $this->triggerType);
-		}
-		return $nbt;
-	}
+	public static function buildPermutation(string $condition, array $permutations) : Permutations;
 }

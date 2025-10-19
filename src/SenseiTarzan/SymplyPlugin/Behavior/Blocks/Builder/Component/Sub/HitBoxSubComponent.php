@@ -21,34 +21,37 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub;
+namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\Component\Sub;
 
+use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\TargetMaterialEnum;
+use pocketmine\nbt\tag\FloatTag;
+use pocketmine\nbt\tag\ListTag;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\Sub\ISubComponent;
 
-final readonly class MaterialMappingSubComponent implements ISubComponent
+final class HitBoxSubComponent implements ISubComponent
 {
-
 	public function __construct(
-		protected TargetMaterialEnum $target,
-		protected string             $mapping
+		protected readonly bool	$enabled = true,
+		protected readonly Vector3 $origin = new Vector3(-8, 0, -8),
+		protected readonly Vector3 $size = new Vector3(16, 16, 16)
 	)
 	{
 	}
 
-	public function getTarget() : TargetMaterialEnum
-	{
-		return $this->target;
-	}
-
-	public function getMapping() : string
-	{
-		return $this->mapping;
-	}
-
 	public function toNbt() : CompoundTag
 	{
-		return CompoundTag::create()->setString($this->target->value, $this->mapping);
+		return CompoundTag::create()
+			->setByte("enabled", $this->enabled ? 1 : 0)
+			->setTag("origin", new ListTag([
+				new FloatTag($this->origin->getX()),
+				new FloatTag($this->origin->getY()),
+				new FloatTag($this->origin->getZ())
+			]))
+			->setTag("size", new ListTag([
+				new FloatTag($this->size->getX()),
+				new FloatTag($this->size->getY()),
+				new FloatTag($this->size->getZ())
+			]));
 	}
 }

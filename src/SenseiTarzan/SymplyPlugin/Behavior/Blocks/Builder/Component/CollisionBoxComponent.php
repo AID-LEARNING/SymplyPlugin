@@ -21,37 +21,30 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub;
+namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\Component;
 
-use pocketmine\math\Vector3;
-use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\tag\FloatTag;
-use pocketmine\nbt\tag\ListTag;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\Sub\ISubComponent;
+use BackedEnum;
+use pocketmine\nbt\tag\Tag;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\Component\Sub\HitBoxSubComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
+use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 
-final class HitBoxSubComponent implements ISubComponent
+class CollisionBoxComponent extends AbstractComponent
 {
 	public function __construct(
-		protected readonly bool	$enabled = true,
-		protected readonly Vector3 $origin = new Vector3(-8, 0, -8),
-		protected readonly Vector3 $size = new Vector3(16, 16, 16)
+		protected ?HitBoxSubComponent $value = null,
 	)
 	{
+		$this->value ??= new HitBoxSubComponent();
 	}
 
-	public function toNbt() : CompoundTag
+	public function getName() : string|BackedEnum
 	{
-		return CompoundTag::create()
-			->setByte("enabled", $this->enabled ? 1 : 0)
-			->setTag("origin", new ListTag([
-				new FloatTag($this->origin->getX()),
-				new FloatTag($this->origin->getY()),
-				new FloatTag($this->origin->getZ())
-			]))
-			->setTag("size", new ListTag([
-				new FloatTag($this->size->getX()),
-				new FloatTag($this->size->getY()),
-				new FloatTag($this->size->getZ())
-			]));
+		return ComponentName::COLLISION_BOX;
+	}
+
+	protected function value() : Tag
+	{
+		return $this->value->toNbt();
 	}
 }

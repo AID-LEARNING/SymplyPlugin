@@ -21,30 +21,25 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component;
+namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property;
 
 use BackedEnum;
-use pocketmine\nbt\tag\Tag;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub\HitBoxSubComponent;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
+use pocketmine\nbt\tag\ListTag;
+use pocketmine\nbt\tag\StringTag;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Data\BlockData;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Data\BlockDataEnum;
+use function array_key_first;
+use function array_map;
 
-class CollisionBoxComponent extends AbstractComponent
+class StringBlockProperty extends BlockProperty
 {
-	public function __construct(
-		protected ?HitBoxSubComponent $value = null,
-	)
-	{
-		$this->value ??= new HitBoxSubComponent();
+	public function __construct(string|BackedEnum $name, protected array $strings) {
+		parent::__construct($name, new ListTag(array_map(fn(string $string) => new StringTag($string), $strings)));
 	}
 
-	public function getName() : string|BackedEnum
+	function toBlockDataDefault() : BlockData
 	{
-		return ComponentName::COLLISION_BOX;
-	}
-
-	protected function value() : Tag
-	{
-		return $this->value->toNbt();
+		$values = $this->getValueInRaw();
+		return new BlockData($this->getName(), BlockDataEnum::STRING, $values[array_key_first($values)]);
 	}
 }

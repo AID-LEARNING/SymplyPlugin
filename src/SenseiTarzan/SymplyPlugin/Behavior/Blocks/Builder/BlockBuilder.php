@@ -29,7 +29,7 @@ use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\mcpe\convert\BlockStateDictionaryEntry;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\BreathabilityComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\Component\BreathabilityComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\IBlockCustom;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Info\BlockCreativeInfo;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\CategoryCreativeEnum;

@@ -26,18 +26,25 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property;
 use BackedEnum;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Data\BlockData;
+use UnitEnum;
 use function is_string;
+use function strtolower;
 
 abstract class BlockProperty
 {
 
-	public function __construct(private readonly string|BackedEnum $name, protected ListTag $values) { }
+	public function __construct(private readonly string|BackedEnum|UnitEnum $name, protected ListTag $values) { }
 
 	/**
 	 * Returns the name of the block property provided in the constructor.
 	 */
-	public function getName() : string|BackedEnum {
-		return $this->name;
+	public function getName() : string {
+		return strtolower(match (true) {
+			is_string($this->name) => $this->name,
+			$this->name instanceof BackedEnum => $this->name->value,
+			$this->name instanceof UnitEnum => $this->name->name,
+		});
 	}
 
 	public function getValues() : ListTag
@@ -48,13 +55,16 @@ abstract class BlockProperty
 	public function getValueInRaw() : array{
 		return $this->values->getValue();
 	}
+
+	abstract function toBlockDataDefault() : BlockData;
+
 	/*
 	 * Returns the block property in the correct NBT format supported by the client.
 	 */
 	public function toNBT() : CompoundTag {
 		$name = $this->getName();
 		return CompoundTag::create()
-			->setString("name", is_string($name) ? $name : $name->value)
+			->setString("name", $this->getName())
 			->setTag("enum", $this->getValues());
 	}
 }

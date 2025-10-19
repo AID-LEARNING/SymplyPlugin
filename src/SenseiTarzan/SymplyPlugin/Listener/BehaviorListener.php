@@ -31,7 +31,6 @@ use pocketmine\network\mcpe\protocol\ResourcePackStackPacket;
 use pocketmine\network\mcpe\protocol\StartGamePacket;
 use pocketmine\network\mcpe\protocol\types\Experiments;
 use pocketmine\network\mcpe\protocol\types\inventory\CreativeItemEntry;
-use pocketmine\network\mcpe\protocol\types\PlayerMovementSettings;
 use SenseiTarzan\ExtraEvent\Class\EventAttribute;
 use SenseiTarzan\SymplyPlugin\Main;
 use SenseiTarzan\SymplyPlugin\Manager\SymplyDataCraftingDataCache;
@@ -49,7 +48,6 @@ readonly class BehaviorListener
 	public function onSend(DataPacketSendEvent $event) : void
 	{
 		$packets = $event->getPackets();
-		$targets = $event->getTargets();
 		foreach ($packets as $index => $packet) {
 			if ($packet instanceof StartGamePacket) {
 				$packet->blockNetworkIdsAreHashes = SymplyCache::getInstance()->isBlockNetworkIdsAreHashes();

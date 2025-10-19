@@ -465,14 +465,14 @@ final class ItemBuilder
 		$newWidth = 16 / $width;
 		$newHeight = 16 / $height;
 		$horizontalMainHand = [
-            RenderSubOffsetsTypeEnum::FIRST_PERSON->value => round(0.039 * $newWidth, 8),
-            RenderSubOffsetsTypeEnum::THIRD_PERSON->value => round(0.1 * $newWidth, 8),
-        ];
-        $verticalMainHand = [
-            RenderSubOffsetsTypeEnum::FIRST_PERSON->value => round(0.039 * $newHeight, 8),
-            RenderSubOffsetsTypeEnum::THIRD_PERSON->value => round(0.1 * $newHeight, 8),
-        ];
-        $horizontalOffHand = round(0.065  * $newWidth, 8);
+			RenderSubOffsetsTypeEnum::FIRST_PERSON->value => round(0.039 * $newWidth, 8),
+			RenderSubOffsetsTypeEnum::THIRD_PERSON->value => round(0.1 * $newWidth, 8),
+		];
+		$verticalMainHand = [
+			RenderSubOffsetsTypeEnum::FIRST_PERSON->value => round(0.039 * $newHeight, 8),
+			RenderSubOffsetsTypeEnum::THIRD_PERSON->value => round(0.1 * $newHeight, 8),
+		];
+		$horizontalOffHand = round(0.065 * $newWidth, 8);
 		$verticalOffHand = round(0.25 * $newHeight, 8);
 		return $this->setRenderOffsets(
 			mainHand: [

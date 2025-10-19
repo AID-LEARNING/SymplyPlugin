@@ -23,14 +23,11 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property;
 
-use pocketmine\nbt\tag\IntTag;
-use pocketmine\nbt\tag\ListTag;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\PropertyName;
-use function array_map;
 use function sort;
 use const SORT_NUMERIC;
 
-final class RotationProperty extends BlockProperty
+final class RotationProperty extends IntBlockProperty
 {
 	/**
 	 * @param int[] $rotation
@@ -38,6 +35,6 @@ final class RotationProperty extends BlockProperty
 	public function __construct(array $rotation = [])
 	{
 		sort($rotation, SORT_NUMERIC);
-		parent::__construct(PropertyName::ROTATION, new ListTag(array_map(fn(int $number) => new IntTag($number), $rotation)));
+		parent::__construct(PropertyName::ROTATION, $rotation);
 	}
 }

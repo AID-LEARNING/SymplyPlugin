@@ -21,30 +21,24 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component;
+namespace SenseiTarzan\SymplyPlugin\Manager;
 
-use BackedEnum;
-use pocketmine\nbt\tag\FloatTag;
-use pocketmine\nbt\tag\Tag;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
-use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
+use pocketmine\utils\SingletonTrait;
+use SenseiTarzan\SymplyPlugin\Class\Behavior\IBlockBehavior;
 
-class DestructibleByMiningComponent extends AbstractComponent
+class BlockBehaviorManager
 {
+	use SingletonTrait;
 
-	public function __construct(
-		private readonly float $value
-	)
+	/**
+	 * @param class-string<IBlockBehavior> $behavior
+	 */
+	public function registerBehavior(string $id, string $behavior) : void
 	{
+		$this->builders[$id] = $behavior;
 	}
 
-	public function getName() : string|BackedEnum
-	{
-		return ComponentName::DESTRUCTIBLE_BY_MINING;
-	}
+	/** @var array<string, class-string<IBlockBehavior>> */
+	private array $builders = [];
 
-	protected function value() : Tag
-	{
-		return new FloatTag($this->value);
-	}
 }
