@@ -32,22 +32,22 @@ use function is_string;
 abstract class BlockProperty
 {
 
-    public function __construct(private readonly string|BackedEnum|UnitEnum $name, protected ListTag $values)
-    {
-    }
+	public function __construct(private readonly string|BackedEnum|UnitEnum $name, protected ListTag $values)
+	{
+	}
 
 	/**
 	 * Returns the name of the block property provided in the constructor.
 	 */
-    public function getName(): string
-    {
-        if (is_string($this->name)) {
-            return $this->name;
-        }
-        if ($this->name instanceof BackedEnum) {
-            return $this->name->value;
-        }
-        return $this->name->name;
+	public function getName() : string
+	{
+		if (is_string($this->name)) {
+			return $this->name;
+		}
+		if ($this->name instanceof BackedEnum) {
+			return $this->name->value;
+		}
+		return $this->name->name;
 	}
 
 	public function getValues() : ListTag
@@ -63,7 +63,7 @@ abstract class BlockProperty
 	 */
 	public function toNBT() : CompoundTag {
 		return CompoundTag::create()
-            ->setString("name", $this->getName())
+			->setString("name", $this->getName())
 			->setTag("enum", $this->getValues());
 	}
 }

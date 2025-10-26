@@ -32,10 +32,10 @@ interface ITrait
 {
 	public function getName() : string|BackedEnum;
 
-    /**
-     * @return Generator<BlockProperty>
-     */
+	/**
+	 * @return Generator<BlockProperty>
+	 */
 
-    public function toBlockProperties(): Generator;
+	public function toBlockProperties() : Generator;
 	public function toNbt() : CompoundTag;
 }

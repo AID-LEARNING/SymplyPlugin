@@ -39,11 +39,11 @@ class BlockBreakRequest
 		return $this->origin;
 	}
 
-    public function setOrigin(Vector3 $origin): void
-    {
-        $this->origin = $origin;
-        $this->start = 0;
-    }
+	public function setOrigin(Vector3 $origin) : void
+	{
+		$this->origin = $origin;
+		$this->start = 0;
+	}
 
 	public function getStart() : float
 	{

@@ -25,8 +25,8 @@ namespace SenseiTarzan\SymplyPlugin\Behavior;
 
 enum BlockRegisterEnum
 {
-    case SINGLE_REGISTER;
-    case MULTI_REGISTER;
-    case JSON_REGISTER;
+	case SINGLE_REGISTER;
+	case MULTI_REGISTER;
+	case JSON_REGISTER;
 
 }

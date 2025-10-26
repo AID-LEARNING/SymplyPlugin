@@ -38,28 +38,28 @@ use function is_string;
 
 class EnumBlockProperty extends BlockProperty
 {
-    /**
-     * @throws ReflectionException
-     */
-    public function __construct(string|BackedEnum|UnitEnum $name, protected UnitEnum $enum)
-    {
-        if ($this->enum instanceof BackedEnum) {
-            $values = array_map(fn(IntBackedEnum $enum) => (is_string($enum->value) ? new StringTag($enum->value) : new IntTag($enum->value)), $this->enum::cases());
-        } else {
-            $reflection = new ReflectionEnum($this->enum::class);
-            $cases = $reflection->getCases();
-            $values = [];
-            foreach ($cases as $position => $case) {
-                $attributes = $case->getAttributes(EnumNameProperty::class);
-                if (count($attributes) > 0) {
-                    /** @var EnumNameProperty $enumProperty */
-                    $enumProperty = $attributes[0]->newInstance();
-                    $values[] = new StringTag($enumProperty->name);
-                } else {
-                    $values[] = new IntTag($position);
-                }
-            }
-        }
-        parent::__construct($name, new ListTag($values));
-    }
+	/**
+	 * @throws ReflectionException
+	 */
+	public function __construct(string|BackedEnum|UnitEnum $name, protected UnitEnum $enum)
+	{
+		if ($this->enum instanceof BackedEnum) {
+			$values = array_map(fn(IntBackedEnum $enum) => (is_string($enum->value) ? new StringTag($enum->value) : new IntTag($enum->value)), $this->enum::cases());
+		} else {
+			$reflection = new ReflectionEnum($this->enum::class);
+			$cases = $reflection->getCases();
+			$values = [];
+			foreach ($cases as $position => $case) {
+				$attributes = $case->getAttributes(EnumNameProperty::class);
+				if (count($attributes) > 0) {
+					/** @var EnumNameProperty $enumProperty */
+					$enumProperty = $attributes[0]->newInstance();
+					$values[] = new StringTag($enumProperty->name);
+				} else {
+					$values[] = new IntTag($position);
+				}
+			}
+		}
+		parent::__construct($name, new ListTag($values));
+	}
 }

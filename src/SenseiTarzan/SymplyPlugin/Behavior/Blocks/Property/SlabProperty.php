@@ -29,6 +29,6 @@ final class SlabProperty extends IntBlockProperty
 {
 	public function __construct()
 	{
-        parent::__construct(PropertyName::SLAB_STATE, [0, 1, 2]);
+		parent::__construct(PropertyName::SLAB_STATE, [0, 1, 2]);
 	}
 }

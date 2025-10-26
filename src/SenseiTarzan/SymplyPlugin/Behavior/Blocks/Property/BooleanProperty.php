@@ -30,7 +30,7 @@ use UnitEnum;
 
 class BooleanProperty extends BlockProperty
 {
-    public function __construct(string|BackedEnum|UnitEnum $identifier)
+	public function __construct(string|BackedEnum|UnitEnum $identifier)
 	{
 		parent::__construct($identifier, new ListTag([
 			new ByteTag(1),

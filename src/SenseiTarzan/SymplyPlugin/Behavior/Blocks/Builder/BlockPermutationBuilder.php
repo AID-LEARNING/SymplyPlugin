@@ -64,7 +64,7 @@ final class BlockPermutationBuilder extends BlockBuilder
 	 */
 	public function addProperty(BlockProperty $property) : self
 	{
-        if (array_key_exists($name = $property->getName(), $this->properties))
+		if (array_key_exists($name = $property->getName(), $this->properties))
 			return $this;
 		$this->properties[$name] = $property;
 		return $this;
@@ -127,12 +127,12 @@ final class BlockPermutationBuilder extends BlockBuilder
 	public function toBlockStateDictionaryEntry() : Generator
 	{
 		$properties = $this->getProperties();
-        foreach ($this->traits as $trait) {
-            foreach ($trait->toBlockProperties() as $property) {
-                $properties[$property->getName()] = $property;
-            }
-        }
-        if (empty($properties))
+		foreach ($this->traits as $trait) {
+			foreach ($trait->toBlockProperties() as $property) {
+				$properties[$property->getName()] = $property;
+			}
+		}
+		if (empty($properties))
 		{
 			yield from parent::toBlockStateDictionaryEntry();
 		}else {

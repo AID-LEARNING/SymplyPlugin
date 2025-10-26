@@ -76,33 +76,33 @@ class ClientBreakListener
 					$action = $blockAction->getActionType();
 					if ($blockAction instanceof PlayerBlockActionWithBlockInfo) {
 						if ($action === PlayerAction::START_BREAK || $action === PlayerAction::CONTINUE_DESTROY_BLOCK) {
-                            $vector3 = new Vector3(
-                                $blockAction->getBlockPosition()->getX(),
-                                $blockAction->getBlockPosition()->getY(),
-                                $blockAction->getBlockPosition()->getZ()
-                            );
-                            $block = $player->getWorld()->getBlock($vector3);
-                            if ($vector3->distanceSquared($player->getLocation()) > 10000) {
-                                continue;
-                            }
-                            if (!isset($this->breaks[$session])) {
-                                $this->breaks[$session] = new BlockBreakingTask(\WeakReference::create($session->getPlayer()));
-                            }
+							$vector3 = new Vector3(
+								$blockAction->getBlockPosition()->getX(),
+								$blockAction->getBlockPosition()->getY(),
+								$blockAction->getBlockPosition()->getZ()
+							);
+							$block = $player->getWorld()->getBlock($vector3);
+							if ($vector3->distanceSquared($player->getLocation()) > 10000) {
+								continue;
+							}
+							if (!isset($this->breaks[$session])) {
+								$this->breaks[$session] = new BlockBreakingTask(\WeakReference::create($session->getPlayer()));
+							}
 							if($this->breaks[$session]->getBlockBreakRequest() !== null && $this->breaks[$session]->getBlockBreakRequest()->getOrigin()->equals($vector3)){
 								continue;
 							}
-                            $this->breaks[$session]->setBlockBreakRequest(new BlockBreakRequest($player->getWorld(), $vector3, 0));
-                            $this->breaks[$session]->start();
+							$this->breaks[$session]->setBlockBreakRequest(new BlockBreakRequest($player->getWorld(), $vector3, 0));
+							$this->breaks[$session]->start();
 						} elseif ($action === PlayerAction::PREDICT_DESTROY_BLOCK || $action == PlayerAction::STOP_BREAK || $action === PlayerAction::ABORT_BREAK) {
-                            if (isset($this->breaks[$session])) {
-                                $this->breaks[$session]->setBlockBreakRequest(null);
-                                $this->breaks[$session]->stop();
-                            }
+							if (isset($this->breaks[$session])) {
+								$this->breaks[$session]->setBlockBreakRequest(null);
+								$this->breaks[$session]->stop();
+							}
 						}
-                    } elseif ($blockAction instanceof PlayerBlockActionStopBreak) {
-                        if (isset($this->breaks[$session])) {
-                            $this->breaks[$session]->setBlockBreakRequest(null);
-                            $this->breaks[$session]->stop();
+					} elseif ($blockAction instanceof PlayerBlockActionStopBreak) {
+						if (isset($this->breaks[$session])) {
+							$this->breaks[$session]->setBlockBreakRequest(null);
+							$this->breaks[$session]->stop();
 						}
 					}
 				}
@@ -127,12 +127,12 @@ class ClientBreakListener
 		}*/
 	}
 
-    #[EventAttribute(EventPriority::LOWEST)]
-    public function onQuit(PlayerQuitEvent $event): void
-    {
-        $session = $event->getPlayer()->getNetworkSession();
-        unset($this->breaks[$session]);
-    }
+	#[EventAttribute(EventPriority::LOWEST)]
+	public function onQuit(PlayerQuitEvent $event) : void
+	{
+		$session = $event->getPlayer()->getNetworkSession();
+		unset($this->breaks[$session]);
+	}
 
 	/**
 	 * Internal function used to execute rollbacks when an action fails on a block.

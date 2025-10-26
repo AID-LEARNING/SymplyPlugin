@@ -60,7 +60,7 @@ readonly class BehaviorListener
 				], true);
 			} elseif ($packet instanceof  CraftingDataPacket){
 				$packets[$index] = SymplyDataCraftingDataCache::getInstance()->getCache(Main::getInstance()->getSymplyCraftManager());
-            }
+			}
 		}
 		$event->setPackets($packets);
 	}

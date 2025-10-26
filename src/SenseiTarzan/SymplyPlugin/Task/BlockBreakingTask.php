@@ -33,55 +33,55 @@ use WeakReference;
 class BlockBreakingTask extends Task
 {
 
-    /**
-     * @param WeakReference<Player> $player
-     * @param BlockBreakRequest|null $blockBreakRequest
-     */
-    private ?BlockBreakRequest $blockBreakRequest = null;
-    private float $tickFinish = 1;
+	/**
+	 * @param WeakReference<Player>  $player
+	 * @param BlockBreakRequest|null $blockBreakRequest
+	 */
+	private ?BlockBreakRequest $blockBreakRequest = null;
+	private float $tickFinish = 1;
 
-    public function __construct(private readonly WeakReference $player)
-    {
-    }
+	public function __construct(private readonly WeakReference $player)
+	{
+	}
 
-    public function getBlockBreakRequest(): ?BlockBreakRequest
-    {
-        return $this->blockBreakRequest;
-    }
+	public function getBlockBreakRequest() : ?BlockBreakRequest
+	{
+		return $this->blockBreakRequest;
+	}
 
-    public function setBlockBreakRequest(?BlockBreakRequest $blockBreakRequest): void
-    {
-        $this->blockBreakRequest = $blockBreakRequest;
-    }
+	public function setBlockBreakRequest(?BlockBreakRequest $blockBreakRequest) : void
+	{
+		$this->blockBreakRequest = $blockBreakRequest;
+	}
 
-    public function start(): void
-    {
-        $this->getHandler()?->cancel();
-        Main::getInstance()->getScheduler()->scheduleRepeatingTask($this, 1);
-    }
+	public function start() : void
+	{
+		$this->getHandler()?->cancel();
+		Main::getInstance()->getScheduler()->scheduleRepeatingTask($this, 1);
+	}
 
-    public function stop(): void
-    {
-        $this->getHandler()?->cancel();
-    }
+	public function stop() : void
+	{
+		$this->getHandler()?->cancel();
+	}
 
-    public function onRun(): void
-    {
-        /**
-         * @var Player|null $player
-         */
-        $player = $this->player->get();
-        if (!$player || !$player->isOnline() || !$this->blockBreakRequest) {
-            $this->stop();
-            return;
-        }
-        $origin = $this->blockBreakRequest->getOrigin();
-        if (!$player->getWorld()->isInLoadedTerrain($origin)) {
-            return;
-        }
-        if ($this->blockBreakRequest->addTick(BlockUtils::getDestroyRate($player, $player->getWorld()->getBlock($origin))) >= $this->tickFinish) {
-            $player->breakBlock($origin);
-            $this->blockBreakRequest = null;
-        }
-    }
+	public function onRun() : void
+	{
+		/**
+		 * @var Player|null $player
+		 */
+		$player = $this->player->get();
+		if (!$player || !$player->isOnline() || !$this->blockBreakRequest) {
+			$this->stop();
+			return;
+		}
+		$origin = $this->blockBreakRequest->getOrigin();
+		if (!$player->getWorld()->isInLoadedTerrain($origin)) {
+			return;
+		}
+		if ($this->blockBreakRequest->addTick(BlockUtils::getDestroyRate($player, $player->getWorld()->getBlock($origin))) >= $this->tickFinish) {
+			$player->breakBlock($origin);
+			$this->blockBreakRequest = null;
+		}
+	}
 }

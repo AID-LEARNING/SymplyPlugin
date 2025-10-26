@@ -32,6 +32,6 @@ final class RotationProperty extends IntBlockProperty
 	 */
 	public function __construct(array $rotation = [])
 	{
-        parent::__construct(PropertyName::ROTATION, $rotation);
+		parent::__construct(PropertyName::ROTATION, $rotation);
 	}
 }

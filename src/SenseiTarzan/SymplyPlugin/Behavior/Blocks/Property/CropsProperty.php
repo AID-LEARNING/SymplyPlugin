@@ -32,6 +32,6 @@ final class CropsProperty extends IntBlockProperty
 	 */
 	public function __construct(array $crops = [])
 	{
-        parent::__construct(PropertyName::CROPS, $crops);
+		parent::__construct(PropertyName::CROPS, $crops);
 	}
 }

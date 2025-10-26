@@ -55,7 +55,7 @@ class Main extends PluginBase
 
 	protected function onEnable() : void
 	{
-        SymplyBlockFactory::getInstance()->setServerRun();
+		SymplyBlockFactory::getInstance()->setServerRun();
 		SymplyBlockFactory::getInstance()->initBlockBuilders();
 		SymplyBlockPalette::getInstance()->sort(SymplyCache::getInstance()->isBlockNetworkIdsAreHashes());
 
@@ -84,11 +84,11 @@ class Main extends PluginBase
 			}
 			Main::getInstance()->getSymplyCraftManager()->onLoad();
 		}),0);
-        $server = Server::getInstance();
-        $asyncPool = $server->getAsyncPool();
-        $asyncPool->addWorkerStartHook(static function (int $workerId) use ($asyncPool): void {
-            $asyncPool->submitTaskToWorker(new RegisterSymplyAsyncTask($workerId), $workerId);
-        });
+		$server = Server::getInstance();
+		$asyncPool = $server->getAsyncPool();
+		$asyncPool->addWorkerStartHook(static function (int $workerId) use ($asyncPool) : void {
+			$asyncPool->submitTaskToWorker(new RegisterSymplyAsyncTask($workerId), $workerId);
+		});
 		EventLoader::loadEventWithClass($this, new BehaviorListener());
 		EventLoader::loadEventWithClass($this, new ClientBreakListener());
 		//EventLoader::loadEventWithClass($this, new ItemListener());
