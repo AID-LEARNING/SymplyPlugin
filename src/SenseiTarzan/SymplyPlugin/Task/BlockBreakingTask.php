@@ -1,14 +1,33 @@
 <?php
 
+/*
+ *
+ *            _____ _____         _      ______          _____  _   _ _____ _   _  _____
+ *      /\   |_   _|  __ \       | |    |  ____|   /\   |  __ \| \ | |_   _| \ | |/ ____|
+ *     /  \    | | | |  | |______| |    | |__     /  \  | |__) |  \| | | | |  \| | |  __
+ *    / /\ \   | | | |  | |______| |    |  __|   / /\ \ |  _  /| . ` | | | | . ` | | |_ |
+ *   / ____ \ _| |_| |__| |      | |____| |____ / ____ \| | \ \| |\  |_| |_| |\  | |__| |
+ *  /_/    \_\_____|_____/       |______|______/_/    \_\_|  \_\_| \_|_____|_| \_|\_____|
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * @author AID-LEARNING
+ * @link https://github.com/AID-LEARNING
+ *
+ */
+
+declare(strict_types=1);
+
 namespace SenseiTarzan\SymplyPlugin\Task;
 
 use pocketmine\player\Player;
 use pocketmine\scheduler\Task;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Block;
 use SenseiTarzan\SymplyPlugin\Main;
 use SenseiTarzan\SymplyPlugin\Player\BlockBreakRequest;
 use SenseiTarzan\SymplyPlugin\Utils\BlockUtils;
-use pocketmine\network\mcpe\NetworkSession;
 use WeakReference;
 
 class BlockBreakingTask extends Task
@@ -20,20 +39,18 @@ class BlockBreakingTask extends Task
      */
     private ?BlockBreakRequest $blockBreakRequest = null;
     private float $tickFinish = 1;
-    public function __construct(private readonly WeakReference $player )
+
+    public function __construct(private readonly WeakReference $player)
     {
     }
 
-
-    /**
-     * @return BlockBreakRequest|null
-     */
     public function getBlockBreakRequest(): ?BlockBreakRequest
     {
         return $this->blockBreakRequest;
     }
 
-    public function setBlockBreakRequest(?BlockBreakRequest $blockBreakRequest): void {
+    public function setBlockBreakRequest(?BlockBreakRequest $blockBreakRequest): void
+    {
         $this->blockBreakRequest = $blockBreakRequest;
     }
 
@@ -59,10 +76,10 @@ class BlockBreakingTask extends Task
             return;
         }
         $origin = $this->blockBreakRequest->getOrigin();
-        if (!$player->getWorld()->isInLoadedTerrain($origin)){
+        if (!$player->getWorld()->isInLoadedTerrain($origin)) {
             return;
         }
-        if($this->blockBreakRequest->addTick(BlockUtils::getDestroyRate($player, $player->getWorld()->getBlock($origin))) >= $this->tickFinish){
+        if ($this->blockBreakRequest->addTick(BlockUtils::getDestroyRate($player, $player->getWorld()->getBlock($origin))) >= $this->tickFinish) {
             $player->breakBlock($origin);
             $this->blockBreakRequest = null;
         }

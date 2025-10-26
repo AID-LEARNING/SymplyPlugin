@@ -25,7 +25,6 @@ namespace SenseiTarzan\SymplyPlugin\Behavior;
 
 use Closure;
 use InvalidArgumentException;
-use pmmp\thread\ThreadSafeArray;
 use pocketmine\data\bedrock\item\SavedItemData;
 use pocketmine\data\bedrock\item\upgrade\LegacyItemIdToStringIdMap;
 use pocketmine\inventory\CreativeInventory;
@@ -46,10 +45,10 @@ use SenseiTarzan\SymplyPlugin\Behavior\Items\Builder\ItemBuilder;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\ICustomItem;
 use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
 use function array_merge;
+use function is_array;
 use function is_string;
 use function mb_strtoupper;
 use function serialize;
-use function var_dump;
 
 final class SymplyItemFactory
 {
@@ -100,10 +99,7 @@ final class SymplyItemFactory
 	}
 
     /**
-     * @param Closure $itemsClosure
      * @phpstan-param Closure(?array $argv): Block[] | array {}
-     * @param array|null $argv
-     * @return void
      */
     public function registerAll(Closure $itemsClosure, ?array $argv = null): void
     {
@@ -112,33 +108,33 @@ final class SymplyItemFactory
         $serializer = null;
         $deserializer = null;
         foreach ($itemsCustom as $itemCustom) {
-            if($itemCustom instanceof Item && $itemCustom instanceof ICustomItem) {
+            if ($itemCustom instanceof Item && $itemCustom instanceof ICustomItem) {
                 $identifier = $itemCustom->getIdentifier()->getNamespaceId();
-                if (isset($this->custom[$identifier])){
+                if (isset($this->custom[$identifier])) {
                     throw new InvalidArgumentException("Item ID {$itemCustom->getIdentifier()->getNamespaceId()} is already used by another item");
                 }
                 $itemId = SymplyCache::$itemIdNext++;
                 $this->custom[$identifier] = $itemCustom;
-                $this->registerCustomItemMapping(new ItemTypeEntry($identifier, $itemId , true, 1, new CacheableNbt($itemCustom->getItemBuilder()->toPacket($itemId))));
+                $this->registerCustomItemMapping(new ItemTypeEntry($identifier, $itemId, true, 1, new CacheableNbt($itemCustom->getItemBuilder()->toPacket($itemId))));
                 GlobalItemDataHandlers::getDeserializer()->map($identifier, static fn() => clone $itemCustom);
                 GlobalItemDataHandlers::getSerializer()->map($itemCustom, static fn() => new SavedItemData($identifier));
                 StringToItemParser::getInstance()->register($identifier, static fn() => clone $itemCustom);
                 LegacyItemIdToStringIdMap::getInstance()->add($identifier, $itemId);
                 $itemBuilder = $itemCustom->getItemBuilder();
                 $this->addItemBuilder($itemCustom, $itemBuilder);
-            } else if(is_array($itemCustom)){
+            } elseif (is_array($itemCustom)) {
                 $block = $itemCustom['item'] ?? null;
-                if($block instanceof Item && $block instanceof ICustomItem)
-                    continue ;
+                if ($block instanceof Item && $block instanceof ICustomItem)
+                    continue;
                 $serializer = $itemCustom['serializer'] ?? null;
                 $deserializer = $itemCustom['deserializer'] ?? null;
                 $identifier = $itemCustom->getIdentifier()->getNamespaceId();
-                if (isset($this->custom[$identifier])){
+                if (isset($this->custom[$identifier])) {
                     throw new InvalidArgumentException("Item ID {$itemCustom->getIdentifier()->getNamespaceId()} is already used by another item");
                 }
                 $itemId = SymplyCache::$itemIdNext++;
                 $this->custom[$identifier] = $itemCustom;
-                $this->registerCustomItemMapping(new ItemTypeEntry($identifier, $itemId , true, 1, new CacheableNbt($itemCustom->getItemBuilder()->toPacket($itemId))));
+                $this->registerCustomItemMapping(new ItemTypeEntry($identifier, $itemId, true, 1, new CacheableNbt($itemCustom->getItemBuilder()->toPacket($itemId))));
                 GlobalItemDataHandlers::getDeserializer()->map($identifier, $deserializer ??= static fn() => clone $itemCustom);
                 GlobalItemDataHandlers::getSerializer()->map($itemCustom, $serializer ??= static fn() => new SavedItemData($identifier));
                 StringToItemParser::getInstance()->register($identifier, static fn() => clone $itemCustom);

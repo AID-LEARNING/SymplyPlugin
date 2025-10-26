@@ -28,7 +28,6 @@ use pocketmine\nbt\LittleEndianNbtSerializer;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\TreeRoot;
 use pocketmine\network\mcpe\convert\BlockStateDictionaryEntry;
-use pocketmine\network\mcpe\convert\BlockTranslator;
 use pocketmine\network\mcpe\convert\TypeConverter;
 use pocketmine\utils\AssumptionFailedError;
 use pocketmine\utils\SingletonTrait;

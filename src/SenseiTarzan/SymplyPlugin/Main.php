@@ -34,13 +34,8 @@ use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockPalette;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
 use SenseiTarzan\SymplyPlugin\Listener\BehaviorListener;
 use SenseiTarzan\SymplyPlugin\Listener\ClientBreakListener;
-use SenseiTarzan\SymplyPlugin\Listener\ItemListener;
 use SenseiTarzan\SymplyPlugin\Manager\SymplyCraftManager;
 use SenseiTarzan\SymplyPlugin\Task\RegisterSymplyAsyncTask;
-use SenseiTarzan\SymplyPlugin\Task\AsyncRegisterBehaviorsTask;
-use SenseiTarzan\SymplyPlugin\Task\AsyncRegisterSchemaTask;
-use SenseiTarzan\SymplyPlugin\Task\AsyncRegisterVanillaTask;
-use SenseiTarzan\SymplyPlugin\Task\AsyncSortBlockStateTask;
 use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
 use function boolval;
 
@@ -91,7 +86,7 @@ class Main extends PluginBase
 		}),0);
         $server = Server::getInstance();
         $asyncPool = $server->getAsyncPool();
-        $asyncPool->addWorkerStartHook(static function(int $workerId) use($asyncPool) : void{
+        $asyncPool->addWorkerStartHook(static function (int $workerId) use ($asyncPool): void {
             $asyncPool->submitTaskToWorker(new RegisterSymplyAsyncTask($workerId), $workerId);
         });
 		EventLoader::loadEventWithClass($this, new BehaviorListener());

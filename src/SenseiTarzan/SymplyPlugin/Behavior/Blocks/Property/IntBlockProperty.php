@@ -21,28 +21,20 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Manager\Component;
+namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property;
 
-use pocketmine\crafting\RecipeIngredient;
-use pocketmine\crafting\ShapelessRecipe;
-use pocketmine\crafting\ShapelessRecipeType;
-use SenseiTarzan\SymplyPlugin\Behavior\Items\Item;
+use BackedEnum;
+use pocketmine\nbt\tag\IntTag;
+use pocketmine\nbt\tag\ListTag;
+use UnitEnum;
+use function array_map;
+use function sort;
+use const SORT_NUMERIC;
 
-class SymplyShapelessRecipe extends ShapelessRecipe
+class IntBlockProperty extends BlockProperty
 {
-	private string $typeFake;
-
-	/**
-	 * @param RecipeIngredient[] $ingredients No more than 9 total. This applies to sum of item stack counts, not count of array.
-	 * @param Item[]             $results     List of result items created by this recipe.
-	 */
-	public function __construct(array $ingredients, array $results, string $typeFake){
-		$this->typeFake = $typeFake;
-		parent::__construct($ingredients, $results, ShapelessRecipeType::CRAFTING);
-	}
-
-	public function getTypeFake() : string
-	{
-		return $this->typeFake;
+	public function __construct(string|BackedEnum|UnitEnum $name, protected array $numbers) {
+		sort($numbers, SORT_NUMERIC);
+		parent::__construct($name, new ListTag(array_map(fn(int $num) => new IntTag($num), $numbers)));
 	}
 }

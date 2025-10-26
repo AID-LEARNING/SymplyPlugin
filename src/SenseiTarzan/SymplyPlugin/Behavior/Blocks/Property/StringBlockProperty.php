@@ -21,12 +21,17 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior;
+namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property;
 
-enum ItemRegisterEnum
+use BackedEnum;
+use pocketmine\nbt\tag\ListTag;
+use pocketmine\nbt\tag\StringTag;
+use UnitEnum;
+use function array_map;
+
+class StringBlockProperty extends BlockProperty
 {
-    case SINGLE_REGISTER;
-    case MULTI_REGISTER;
-    case JSON_REGISTER;
-
+	public function __construct(string|BackedEnum|UnitEnum $name, protected array $strings) {
+		parent::__construct($name, new ListTag(array_map(fn(string $string) => new StringTag($string), $strings)));
+	}
 }

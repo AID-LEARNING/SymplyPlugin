@@ -12,10 +12,11 @@
     }
   ],
   "require": {
-    "ext-pmmpthread": "*"
+    "ext-pmmpthread": "*",
+    "ext-mbstring": "*"
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^v3.59.3",
-    "pocketmine/pocketmine-mp": "5.33.2"
+    "pocketmine/pocketmine-mp": "5.36.0"
   }
 }

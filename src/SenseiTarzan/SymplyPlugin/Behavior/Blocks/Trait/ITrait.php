@@ -24,12 +24,18 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Trait;
 
 use BackedEnum;
+use Generator;
 use pocketmine\nbt\tag\CompoundTag;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property\BlockProperty;
 
 interface ITrait
 {
 	public function getName() : string|BackedEnum;
 
-	public function injectData(array &$listPropertyName, array &$data) : void;
+    /**
+     * @return Generator<BlockProperty>
+     */
+
+    public function toBlockProperties(): Generator;
 	public function toNbt() : CompoundTag;
 }

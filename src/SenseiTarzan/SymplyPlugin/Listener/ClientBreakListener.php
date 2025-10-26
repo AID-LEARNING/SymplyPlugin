@@ -23,31 +23,23 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Listener;
 
-use pocketmine\block\Block;
 use pocketmine\event\EventPriority;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\NetworkSession;
-use pocketmine\network\mcpe\protocol\InventoryTransactionPacket;
-use pocketmine\network\mcpe\protocol\LevelEventPacket;
 use pocketmine\network\mcpe\protocol\PlayerAuthInputPacket;
-use pocketmine\network\mcpe\protocol\types\inventory\UseItemTransactionData;
-use pocketmine\network\mcpe\protocol\types\LevelEvent;
 use pocketmine\network\mcpe\protocol\types\PlayerAction;
 use pocketmine\network\mcpe\protocol\types\PlayerBlockAction;
 use pocketmine\network\mcpe\protocol\types\PlayerBlockActionStopBreak;
 use pocketmine\network\mcpe\protocol\types\PlayerBlockActionWithBlockInfo;
 use pocketmine\player\Player;
-use ReflectionProperty;
 use SenseiTarzan\ExtraEvent\Class\EventAttribute;
 use SenseiTarzan\SymplyPlugin\Player\BlockBreakRequest;
 use SenseiTarzan\SymplyPlugin\Task\BlockBreakingTask;
-use SenseiTarzan\SymplyPlugin\Utils\BlockUtils;
 use WeakMap;
 use function array_push;
 use function count;
-use function floor;
 
 class ClientBreakListener
 {
@@ -90,10 +82,10 @@ class ClientBreakListener
                                 $blockAction->getBlockPosition()->getZ()
                             );
                             $block = $player->getWorld()->getBlock($vector3);
-                            if($vector3->distanceSquared($player->getLocation()) > 10000){
+                            if ($vector3->distanceSquared($player->getLocation()) > 10000) {
                                 continue;
                             }
-                            if (!isset($this->breaks[$session])){
+                            if (!isset($this->breaks[$session])) {
                                 $this->breaks[$session] = new BlockBreakingTask(\WeakReference::create($session->getPlayer()));
                             }
 							if($this->breaks[$session]->getBlockBreakRequest() !== null && $this->breaks[$session]->getBlockBreakRequest()->getOrigin()->equals($vector3)){
@@ -102,13 +94,13 @@ class ClientBreakListener
                             $this->breaks[$session]->setBlockBreakRequest(new BlockBreakRequest($player->getWorld(), $vector3, 0));
                             $this->breaks[$session]->start();
 						} elseif ($action === PlayerAction::PREDICT_DESTROY_BLOCK || $action == PlayerAction::STOP_BREAK || $action === PlayerAction::ABORT_BREAK) {
-                            if (isset($this->breaks[$session])){
+                            if (isset($this->breaks[$session])) {
                                 $this->breaks[$session]->setBlockBreakRequest(null);
                                 $this->breaks[$session]->stop();
                             }
 						}
-					} else if ($blockAction instanceof PlayerBlockActionStopBreak) {
-                        if (isset($this->breaks[$session])){
+                    } elseif ($blockAction instanceof PlayerBlockActionStopBreak) {
+                        if (isset($this->breaks[$session])) {
                             $this->breaks[$session]->setBlockBreakRequest(null);
                             $this->breaks[$session]->stop();
 						}
@@ -136,7 +128,7 @@ class ClientBreakListener
 	}
 
     #[EventAttribute(EventPriority::LOWEST)]
-    public function onQuit(PlayerQuitEvent $event) : void
+    public function onQuit(PlayerQuitEvent $event): void
     {
         $session = $event->getPlayer()->getNetworkSession();
         unset($this->breaks[$session]);

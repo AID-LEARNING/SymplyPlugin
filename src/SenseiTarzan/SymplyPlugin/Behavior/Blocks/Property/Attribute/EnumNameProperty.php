@@ -21,12 +21,14 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior;
+namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property\Attribute;
 
-enum ItemRegisterEnum
+use Attribute;
+
+#[Attribute]
+readonly class EnumNameProperty
 {
-    case SINGLE_REGISTER;
-    case MULTI_REGISTER;
-    case JSON_REGISTER;
-
+    public function __construct(public string $name)
+    {
+    }
 }
