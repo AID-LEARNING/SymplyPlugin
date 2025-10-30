@@ -1,6 +1,20 @@
 # SymplyPlugin
-# DeepWiki
+
+A PocketMine-MP plugin for creating custom items and blocks easily.
+
+## 📚 Documentation
+
+- **[Documentation en Français](DOCUMENTATION.md)** 🇫🇷
+- **[English Documentation](DOCUMENTATION_EN.md)** 🇬🇧
+
+Complete guides for creating:
+- Custom Items (simple items, food, tools, armor)
+- Custom Blocks (simple blocks, blocks with permutations)
+- Full examples and code snippets
+
+## 🌐 DeepWiki
 https://deepwiki.com/AID-LEARNING/SymplyPlugin
+
 ## Config 
 ### blockNetworkIdsAreHashes is true
 this is obsolete
