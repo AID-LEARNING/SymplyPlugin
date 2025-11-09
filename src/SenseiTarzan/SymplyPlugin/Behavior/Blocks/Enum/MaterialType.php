@@ -39,7 +39,7 @@ enum MaterialType : string
 	case PLANT = "plant";
 	case SOLID_PLANT = "solidPlant"; // Crashes if used
 	case FIRE = "fire";
-	case Glass = "glass";
+	case GLASS = "glass";
 	case EXPLOSIVE = "explosive";
 	case ICE = "ice"; // Not working properly
 	case POWDER_SNOW = "powderSnow"; // Not working properly
