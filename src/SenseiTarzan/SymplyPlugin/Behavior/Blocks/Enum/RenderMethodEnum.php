@@ -26,6 +26,8 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum;
 enum RenderMethodEnum : string
 {
 	case ALPHA_TEST = "alpha_test";
+	case ALPHA_TEST_SINGLE_SIDED = "alpha_test_single_sided";
 	case BLEND = "blend";
+	case DOUBLE_SIDED = "double_sided";
 	case OPAQUE = "opaque";
 }

@@ -21,18 +21,14 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum;
+namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property;
 
-enum PropertyName : string
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\PropertyName;
+
+final class UpperBlockBitProperty extends BooleanProperty
 {
-	case CROPS = "symply:crops";
-	case ROTATION = "symply:rotation";
-	case SLAB_STATE = "symply:slab_state";
-	/**
-	 * @deprecated use OPEN_BIT instead
-	 */
-	case OPEN_STATE = "symply:open";
-	case UPPER_BLOCK_BIT = "symply:upper_block_bit";
-	case DOOR_HINGE_BIT = "symply:door_hinge_bit";
-	case OPEN_BIT = "symply:open_bit";
+	public function __construct()
+	{
+		parent::__construct(PropertyName::UPPER_BLOCK_BIT);
+	}
 }

@@ -25,6 +25,9 @@ namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property;
 
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\PropertyName;
 
+/**
+ * @deprecated Use OpenBitProperty instead
+ */
 final class OpenProperty extends BooleanProperty
 {
 	public function __construct()

@@ -58,6 +58,7 @@ abstract class BlockProperty
 	public function getValueInRaw() : array{
 		return $this->values->getValue();
 	}
+
 	/*
 	 * Returns the block property in the correct NBT format supported by the client.
 	 */

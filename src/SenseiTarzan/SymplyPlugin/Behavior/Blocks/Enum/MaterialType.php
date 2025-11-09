@@ -23,16 +23,35 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum;
 
-enum PropertyName : string
+/**
+ * Thank you for Zwuiix
+ */
+enum MaterialType : string
 {
-	case CROPS = "symply:crops";
-	case ROTATION = "symply:rotation";
-	case SLAB_STATE = "symply:slab_state";
-	/**
-	 * @deprecated use OPEN_BIT instead
-	 */
-	case OPEN_STATE = "symply:open";
-	case UPPER_BLOCK_BIT = "symply:upper_block_bit";
-	case DOOR_HINGE_BIT = "symply:door_hinge_bit";
-	case OPEN_BIT = "symply:open_bit";
+	case AIR = "air";
+	case DIRT = "dirt";
+	case WOOD = "wood";
+	case METAL = "metal";
+	case GRATE = "grate";
+	case WATER = "water";
+	case LAVA = "lava";
+	case LEAVES = "leaves";
+	case PLANT = "plant";
+	case SOLID_PLANT = "solidPlant"; // Crashes if used
+	case FIRE = "fire";
+	case Glass = "glass";
+	case EXPLOSIVE = "explosive";
+	case ICE = "ice"; // Not working properly
+	case POWDER_SNOW = "powderSnow"; // Not working properly
+	case CACTUS = "cactus";
+	case PORTAL = "portal";
+	case STONE_DECORATION = "stoneDecoration";
+	case BUBBLE = "bubble";
+	case BARRIER = "barrier";
+	case DECORATION_SOLID = "decorationSolid";
+	case CLIENT_REQUEST_PLACEHOLDER = "clientRequestPlaceholder";
+	case STRUCTURE_VOID = "structureVoid";
+	case SOLID = "solid";
+	case NON_SOLID = "nonSolid";
+	case Any = "any";
 }

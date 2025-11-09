@@ -24,13 +24,15 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Permutation;
 
 use pocketmine\nbt\tag\CompoundTag;
+use RuntimeException;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BasicBlockBuilder;
 
 final class Permutations extends BasicBlockBuilder
 {
-	private string $condition;
+	private ?string $condition = null;
 
-	public function __construct() {
+	public function __construct()
+	{
 	}
 
 	public static function create() : Permutations
@@ -40,6 +42,9 @@ final class Permutations extends BasicBlockBuilder
 
 	public function getCondition() : string
 	{
+		if ($this->condition === null) {
+			throw new RuntimeException("Condition is not set.");
+		}
 		return $this->condition;
 	}
 
@@ -49,13 +54,35 @@ final class Permutations extends BasicBlockBuilder
 		return $this;
 	}
 
+	public function andCondition(string $condition) : Permutations
+	{
+		if ($this->condition === null) {
+			$this->condition = $condition;
+			return $this;
+		}
+
+		$this->condition .= " && " . $condition;
+		return $this;
+	}
+
+	public function orCondition(string $condition) : Permutations
+	{
+		if ($this->condition === null) {
+			$this->condition = $condition;
+			return $this;
+		}
+		$this->condition .= " || " . $condition;
+		return $this;
+	}
+
 	/**
 	 * Returns the permutation in the correct NBT format supported by the client.
 	 */
-	public function toNBT() : CompoundTag {
+	public function toNBT() : CompoundTag
+	{
 		$componentsTags = CompoundTag::create();
 
-		foreach ($this->getComponents() as $component){
+		foreach ($this->getComponents() as $component) {
 			$componentsTags = $componentsTags->merge($component->toNbt());
 		}
 		return CompoundTag::create()

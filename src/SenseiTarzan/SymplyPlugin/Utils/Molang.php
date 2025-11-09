@@ -21,18 +21,31 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum;
+namespace SenseiTarzan\SymplyPlugin\Utils;
 
-enum PropertyName : string
+use pocketmine\nbt\tag\StringTag;
+use pocketmine\nbt\tag\Tag;
+use function is_string;
+
+class Molang
 {
-	case CROPS = "symply:crops";
-	case ROTATION = "symply:rotation";
-	case SLAB_STATE = "symply:slab_state";
-	/**
-	 * @deprecated use OPEN_BIT instead
-	 */
-	case OPEN_STATE = "symply:open";
-	case UPPER_BLOCK_BIT = "symply:upper_block_bit";
-	case DOOR_HINGE_BIT = "symply:door_hinge_bit";
-	case OPEN_BIT = "symply:open_bit";
+
+	public static function propertyToQuery(string $name, mixed $value) : mixed
+	{
+		if ($value instanceof Tag) {
+			$value = self::tagToValue($value);
+		} elseif (is_string($value)) {
+			$value = "'" . $value . "'";
+		}
+		return "query.block_state('" . $name . "') == " . $value;
+	}
+
+	private static function tagToValue(Tag $tag) : mixed
+	{
+		if ($tag instanceof StringTag) {
+			return "'" . $tag->getValue() . "'";
+		} else {
+			return $tag->getValue();
+		}
+	}
 }

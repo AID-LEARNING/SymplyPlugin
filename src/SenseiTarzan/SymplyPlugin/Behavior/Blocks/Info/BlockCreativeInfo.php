@@ -36,6 +36,7 @@ class BlockCreativeInfo
 	public function __construct(
 		private readonly CategoryCreativeEnum $category,
 		private readonly ?CreativeGroup       $group = null,
+		private readonly bool                 $hiddenInCommands = false
 	)
 	{
 	}
@@ -56,11 +57,17 @@ class BlockCreativeInfo
 		return is_string($name) ? $name : $name->getText();
 	}
 
+	public function isHiddenInCommands() : bool
+	{
+		return $this->hiddenInCommands;
+	}
+
 	public function toNbt() : CompoundTag
 	{
 		$name = $this->getGroupName();
 		return CompoundTag::create()
 			->setString("category", $this->getCategory()->value ?? "")
-			->setString("group", ((empty($name) || isset(VanillaGroupMinecraft::ITEM_GROUP_VANILLA[$name]) || str_starts_with($name, "minecraft:")) ? $name : ("minecraft:" . $name)));
+			->setString("group", ((empty($name) || isset(VanillaGroupMinecraft::ITEM_GROUP_VANILLA[$name]) || str_starts_with($name, "minecraft:")) ? $name : ("minecraft:" . $name)))
+			->setByte("is_hidden_in_commands", $this->IsHiddenInCommands() ? 1 : 0);
 	}
 }

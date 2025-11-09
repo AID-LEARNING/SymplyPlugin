@@ -30,6 +30,7 @@ use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\mcpe\convert\BlockStateDictionaryEntry;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\BreathabilityComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\MaterialType;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\IBlockCustom;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Info\BlockCreativeInfo;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\CategoryCreativeEnum;
@@ -41,6 +42,9 @@ class BlockBuilder extends BasicBlockBuilder
 	protected Block&IBlockCustom $blockCustom;
 
 	private BlockCreativeInfo $creativeInfo;
+
+	private MaterialType $material = MaterialType::DIRT;
+
 	public function __construct()
 	{
 	}
@@ -60,15 +64,34 @@ class BlockBuilder extends BasicBlockBuilder
 		return $this->creativeInfo;
 	}
 
-	public static function create() : static{
+	public static function create() : static
+	{
 		return (new static())
 			->setGeometry("minecraft:geometry.full_block")
 			->setCreativeInfo(new BlockCreativeInfo(CategoryCreativeEnum::CONSTRUCTION));
 	}
 
-	public function setBlock(Block&IBlockCustom $blockCustom) : static{
+	public function setBlock(Block&IBlockCustom $blockCustom) : static
+	{
 		$this->blockCustom = $blockCustom;
 		return $this->addComponent(new BreathabilityComponent(!$blockCustom->isTransparent()));
+	}
+
+	/**
+	 * Set the material type of the block.
+	 */
+	public function setMaterial(MaterialType $type) : static
+	{
+		$this->material = $type;
+		return $this;
+	}
+
+	/**
+	 * Get the material type of the block.
+	 */
+	public function getMaterial() : MaterialType
+	{
+		return $this->material;
 	}
 
 	public function getBlockCustom() : Block&IBlockCustom
@@ -84,7 +107,7 @@ class BlockBuilder extends BasicBlockBuilder
 	public function getPropertiesTag() : CompoundTag
 	{
 		return CompoundTag::create()->
-			setTag("menu_category", $this->creativeInfo->toNbt())
+		setTag("menu_category", $this->creativeInfo->toNbt())
 			->setTag("blockTags", new ListTag(array_map(fn(string $tag) => new StringTag($tag), $this->blockCustom->getTypeTags())));
 	}
 
@@ -119,6 +142,8 @@ class BlockBuilder extends BasicBlockBuilder
 		return $this->getPropertiesTag()->setTag('components', $this->getComponentsTag())
 			->setInt("molangVersion", 12)
 			->setTag("vanilla_block_data", CompoundTag::create()
-				->setInt("block_id", $vanillaBlockId));
+				->setInt("block_id", $vanillaBlockId)
+				->setString("material", $this->material->value)
+			);
 	}
 }
