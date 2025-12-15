@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component;
 
 use BackedEnum;
+use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\Tag;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub\HitBoxSubComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
@@ -31,20 +32,31 @@ use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 
 class CollisionBoxComponent extends AbstractComponent
 {
-	public function __construct(
-		protected ?HitBoxSubComponent $value = null,
-	)
-	{
-		$this->value ??= new HitBoxSubComponent();
-	}
+    /**
+     * @param HitBoxSubComponent[] $value
+     * @param bool $enabled
+     */
+    public function __construct(
+        protected array $value = [],
+        private bool $enabled = true
+    )
+    {
+    }
 
-	public function getName() : string|BackedEnum
-	{
-		return ComponentName::COLLISION_BOX;
-	}
+    public function getName() : string|BackedEnum
+    {
+        return ComponentName::COLLISION_BOX;
+    }
 
-	protected function value() : Tag
-	{
-		return $this->value->toNbt();
-	}
+    protected function value() : Tag
+    {
+        if(empty($this->value)) {
+            return CompoundTag::create()
+                ->setTag("boxes", HitBoxSubComponent::toListTagFromArray([new HitBoxSubComponent()], false))
+                ->setByte("enabled", $this->enabled ? 1 : 0);
+        }
+        return CompoundTag::create()
+            ->setTag("boxes", HitBoxSubComponent::toListTagFromArray($this->value, false))
+            ->setByte("enabled", $this->enabled ? 1 : 0);
+    }
 }
