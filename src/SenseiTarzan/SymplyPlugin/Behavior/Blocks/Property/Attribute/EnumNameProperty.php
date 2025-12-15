@@ -21,21 +21,14 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Trait;
+namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property\Attribute;
 
-use BackedEnum;
-use Generator;
-use pocketmine\nbt\tag\CompoundTag;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property\BlockProperty;
+use Attribute;
 
-interface ITrait
+#[Attribute]
+readonly class EnumNameProperty
 {
-	public function getName() : string|BackedEnum;
-
-	/**
-	 * @return Generator<BlockProperty>
-	 */
-
-	public function toBlockProperties() : Generator;
-	public function toNbt() : CompoundTag;
+	public function __construct(public string $name)
+	{
+	}
 }

@@ -21,21 +21,20 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Trait;
+namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property;
 
 use BackedEnum;
-use Generator;
-use pocketmine\nbt\tag\CompoundTag;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property\BlockProperty;
+use pocketmine\nbt\tag\IntTag;
+use pocketmine\nbt\tag\ListTag;
+use UnitEnum;
+use function array_map;
+use function sort;
+use const SORT_NUMERIC;
 
-interface ITrait
+class IntBlockProperty extends BlockProperty
 {
-	public function getName() : string|BackedEnum;
-
-	/**
-	 * @return Generator<BlockProperty>
-	 */
-
-	public function toBlockProperties() : Generator;
-	public function toNbt() : CompoundTag;
+	public function __construct(string|BackedEnum|UnitEnum $name, protected array $numbers) {
+		sort($numbers, SORT_NUMERIC);
+		parent::__construct($name, new ListTag(array_map(fn(int $num) => new IntTag($num), $numbers)));
+	}
 }

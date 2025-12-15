@@ -28,7 +28,6 @@ use pocketmine\nbt\LittleEndianNbtSerializer;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\TreeRoot;
 use pocketmine\network\mcpe\convert\BlockStateDictionaryEntry;
-use pocketmine\network\mcpe\convert\BlockTranslator;
 use pocketmine\network\mcpe\convert\TypeConverter;
 use pocketmine\utils\AssumptionFailedError;
 use pocketmine\utils\SingletonTrait;
@@ -162,19 +161,19 @@ final class SymplyBlockPalette
 
 	public function sort(bool $blockNetworkIdsAreHashes = false) : void {
 
-        $translator = $instance = TypeConverter::getInstance()->getBlockTranslator();
-        $dictionary = $instance->getBlockStateDictionary();
+		$translator = $instance = TypeConverter::getInstance()->getBlockTranslator();
+		$dictionary = $instance->getBlockStateDictionary();
 
-        $bedrockKnownStates = new ReflectionProperty($dictionary, "states");
-        $stateDataToStateIdLookup = new ReflectionProperty($dictionary, "stateDataToStateIdLookup");
-        $idMetaToStateIdLookupCache = new ReflectionProperty($dictionary, "idMetaToStateIdLookupCache");
-        $fallbackStateId = new ReflectionProperty($instance, "fallbackStateId");
-        $networkIdCache = new ReflectionProperty($instance, "networkIdCache");
-        $states = [];
+		$bedrockKnownStates = new ReflectionProperty($dictionary, "states");
+		$stateDataToStateIdLookup = new ReflectionProperty($dictionary, "stateDataToStateIdLookup");
+		$idMetaToStateIdLookupCache = new ReflectionProperty($dictionary, "idMetaToStateIdLookupCache");
+		$fallbackStateId = new ReflectionProperty($instance, "fallbackStateId");
+		$networkIdCache = new ReflectionProperty($instance, "networkIdCache");
+		$states = [];
 
-        foreach ($dictionary->getStates() as $state) {
-            $states[$state->getStateName()][] = $state;
-        }
+		foreach ($dictionary->getStates() as $state) {
+			$states[$state->getStateName()][] = $state;
+		}
 		// To sort the block palette we first have to split the palette up in to groups of states. We only want to sort
 		// using the name of the block, and keeping the order of the existing states.
 		foreach($this->getCustomStates() as $state){

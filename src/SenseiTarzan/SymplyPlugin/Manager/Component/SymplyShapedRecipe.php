@@ -47,10 +47,12 @@ class SymplyShapedRecipe extends ShapedRecipe
 	 *
 	 * Note: Recipes **do not** need to be square. Do NOT add padding for empty rows/columns.
 	 */
-	public function __construct(array $shape, array $ingredients, array $results, string $type){
+	public function __construct(array $shape, array $ingredients, array $results, string $type)
+	{
 		$this->type = $type;
 		parent::__construct($shape, $ingredients, $results);
 	}
+
 	public function getType() : string
 	{
 		return $this->type;

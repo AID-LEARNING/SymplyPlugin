@@ -21,21 +21,37 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Trait;
+namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum;
 
-use BackedEnum;
-use Generator;
-use pocketmine\nbt\tag\CompoundTag;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property\BlockProperty;
-
-interface ITrait
+/**
+ * Thank you for Zwuiix
+ */
+enum MaterialType : string
 {
-	public function getName() : string|BackedEnum;
-
-	/**
-	 * @return Generator<BlockProperty>
-	 */
-
-	public function toBlockProperties() : Generator;
-	public function toNbt() : CompoundTag;
+	case AIR = "air";
+	case DIRT = "dirt";
+	case WOOD = "wood";
+	case METAL = "metal";
+	case GRATE = "grate";
+	case WATER = "water";
+	case LAVA = "lava";
+	case LEAVES = "leaves";
+	case PLANT = "plant";
+	case SOLID_PLANT = "solidPlant"; // Crashes if used
+	case FIRE = "fire";
+	case GLASS = "glass";
+	case EXPLOSIVE = "explosive";
+	case ICE = "ice"; // Not working properly
+	case POWDER_SNOW = "powderSnow"; // Not working properly
+	case CACTUS = "cactus";
+	case PORTAL = "portal";
+	case STONE_DECORATION = "stoneDecoration";
+	case BUBBLE = "bubble";
+	case BARRIER = "barrier";
+	case DECORATION_SOLID = "decorationSolid";
+	case CLIENT_REQUEST_PLACEHOLDER = "clientRequestPlaceholder";
+	case STRUCTURE_VOID = "structureVoid";
+	case SOLID = "solid";
+	case NON_SOLID = "nonSolid";
+	case Any = "any";
 }

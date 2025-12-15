@@ -21,21 +21,17 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Trait;
+namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property;
 
 use BackedEnum;
-use Generator;
-use pocketmine\nbt\tag\CompoundTag;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property\BlockProperty;
+use pocketmine\nbt\tag\ListTag;
+use pocketmine\nbt\tag\StringTag;
+use UnitEnum;
+use function array_map;
 
-interface ITrait
+class StringBlockProperty extends BlockProperty
 {
-	public function getName() : string|BackedEnum;
-
-	/**
-	 * @return Generator<BlockProperty>
-	 */
-
-	public function toBlockProperties() : Generator;
-	public function toNbt() : CompoundTag;
+	public function __construct(string|BackedEnum|UnitEnum $name, protected array $strings) {
+		parent::__construct($name, new ListTag(array_map(fn(string $string) => new StringTag($string), $strings)));
+	}
 }

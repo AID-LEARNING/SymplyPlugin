@@ -21,21 +21,14 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Trait;
+namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property;
 
-use BackedEnum;
-use Generator;
-use pocketmine\nbt\tag\CompoundTag;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property\BlockProperty;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\PropertyName;
 
-interface ITrait
+final class OpenBitProperty extends BooleanProperty
 {
-	public function getName() : string|BackedEnum;
-
-	/**
-	 * @return Generator<BlockProperty>
-	 */
-
-	public function toBlockProperties() : Generator;
-	public function toNbt() : CompoundTag;
+	public function __construct()
+	{
+		parent::__construct(PropertyName::OPEN_BIT);
+	}
 }

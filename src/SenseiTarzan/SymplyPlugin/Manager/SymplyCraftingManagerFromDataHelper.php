@@ -43,7 +43,9 @@ use pocketmine\world\format\io\GlobalBlockStateHandlers;
 use pocketmine\world\format\io\GlobalItemDataHandlers;
 use SenseiTarzan\Path\PathScanner;
 use SenseiTarzan\SymplyPlugin\Models\ItemModel;
+use function array_key_first;
 use function base64_decode;
+use function count;
 use function is_string;
 use function json_decode;
 use function str_replace;
@@ -114,14 +116,20 @@ class SymplyCraftingManagerFromDataHelper
 
 		$blockName = BlockItemIdMap::getInstance()->lookupBlockId($name);
 		if($blockName !== null){
-			if($meta !== 0){
-				throw new SavedDataLoadingException("Meta should not be specified for blockitems");
-			}
 			$item = StringToItemParser::getInstance()->parse($name);
-			$blockStatesTag = $blockStatesRaw === null ?
-				($item ? GlobalBlockStateHandlers::getSerializer()->serializeBlock($item->getBlock())->getStates() : []) :
+			if($blockStatesRaw === null && $item !== null) {
+				$states = GlobalBlockStateHandlers::getSerializer()->serializeBlock($item->getBlock())->getStates();
+				if (!empty($states)) {
+					$state = $meta >= count($states) ? $states[array_key_first($states)] : $states[$meta];
+				}else{
+					$state = [];
+				}
+			}else{
+				$state = [];
+			}
+			$blockStatesTag = ($blockStatesRaw === null) ? $state :
 				(new LittleEndianNbtSerializer())
-					->read(ErrorToExceptionHandler::trapAndRemoveFalse(fn() => base64_decode($blockStatesRaw, true)))
+					->read((string) ErrorToExceptionHandler::trapAndRemoveFalse(fn() => base64_decode($blockStatesRaw, true)))
 					->mustGetCompoundTag()
 					->getValue();
 			$blockStateData = BlockStateData::current($blockName, $blockStatesTag);
@@ -129,8 +137,8 @@ class SymplyCraftingManagerFromDataHelper
 			$blockStateData = null;
 		}
 
-		$nbt = $nbtRaw === null ? null : (new LittleEndianNbtSerializer())
-			->read(ErrorToExceptionHandler::trapAndRemoveFalse(fn() => base64_decode($nbtRaw, true)))
+		$nbt = ($nbtRaw === null) ? null : (new LittleEndianNbtSerializer())
+			->read((string) ErrorToExceptionHandler::trapAndRemoveFalse(fn() => base64_decode($nbtRaw, true)))
 			->mustGetCompoundTag();
 
 		$itemStackData = new SavedItemStackData(

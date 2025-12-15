@@ -21,21 +21,33 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Trait;
+namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Utils;
 
-use BackedEnum;
-use Generator;
-use pocketmine\nbt\tag\CompoundTag;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property\BlockProperty;
+use pocketmine\block\Block;
+use pocketmine\math\Vector3;
 
-interface ITrait
+trait SymplyStaticSupportTrait
 {
-	public function getName() : string|BackedEnum;
+	/**
+	 * Implement this to define the block's support requirements.
+	 */
+	abstract protected function canBeSupportedAt(Block $block) : bool;
 
 	/**
-	 * @return Generator<BlockProperty>
+	 * @see Block::canBePlacedAt()
 	 */
+	public function canBePlacedAt(Block $blockReplace, Vector3 $clickVector, int $face, bool $isClickedBlock) : bool{
+		return $this->canBeSupportedAt($blockReplace) && parent::canBePlacedAt($blockReplace, $clickVector, $face, $isClickedBlock);
+	}
 
-	public function toBlockProperties() : Generator;
-	public function toNbt() : CompoundTag;
+	/**
+	 * @see Block::onNearbyBlockChange()
+	 */
+	public function onNearbyBlockChange() : void{
+		if(!$this->canBeSupportedAt($this)){
+			$this->position->getWorld()->useBreakOn($this->position);
+		}else{
+			parent::onNearbyBlockChange();
+		}
+	}
 }

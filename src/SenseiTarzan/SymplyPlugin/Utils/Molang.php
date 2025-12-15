@@ -21,21 +21,31 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Trait;
+namespace SenseiTarzan\SymplyPlugin\Utils;
 
-use BackedEnum;
-use Generator;
-use pocketmine\nbt\tag\CompoundTag;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property\BlockProperty;
+use pocketmine\nbt\tag\StringTag;
+use pocketmine\nbt\tag\Tag;
+use function is_string;
 
-interface ITrait
+class Molang
 {
-	public function getName() : string|BackedEnum;
 
-	/**
-	 * @return Generator<BlockProperty>
-	 */
+	public static function propertyToQuery(string $name, mixed $value) : mixed
+	{
+		if ($value instanceof Tag) {
+			$value = self::tagToValue($value);
+		} elseif (is_string($value)) {
+			$value = "'" . $value . "'";
+		}
+		return "query.block_state('" . $name . "') == " . $value;
+	}
 
-	public function toBlockProperties() : Generator;
-	public function toNbt() : CompoundTag;
+	private static function tagToValue(Tag $tag) : mixed
+	{
+		if ($tag instanceof StringTag) {
+			return "'" . $tag->getValue() . "'";
+		} else {
+			return $tag->getValue();
+		}
+	}
 }
