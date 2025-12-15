@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder;
 
+use InvalidArgumentException;
 use pocketmine\math\Vector3;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\Component\CollisionBoxComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\Component\GeometryComponent;
@@ -96,7 +97,17 @@ class BasicBlockBuilder implements IBuilderComponent
 
 	public function setCollisionBox(Vector3 $origin, Vector3 $size, bool $enable = true) : static
 	{
-		return $this->addComponent(new CollisionBoxComponent(new HitBoxSubComponent($enable, $origin, $size)));
+		return $this->addComponent(new CollisionBoxComponent([new HitBoxSubComponent($enable, $origin, $size)], $enable));
+	}
+
+	public function setMultiCollisionBox(array $boxes, bool $enable = true) : static
+	{
+        foreach ($boxes as $box) {
+            if (!$box instanceof HitBoxSubComponent) {
+                throw new InvalidArgumentException("All elements in boxes must be instances of HitBoxSubComponent");
+            }
+        }
+		return $this->addComponent(new CollisionBoxComponent($boxes, $enable));
 	}
 
 	public function setSelectionBox(Vector3 $origin, Vector3 $size, bool $enable = true) : static
