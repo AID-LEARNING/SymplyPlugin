@@ -21,41 +21,30 @@
 
 declare(strict_types=1);
 
-namespace SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component;
+namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Component;
 
 use BackedEnum;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\Tag;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Component\Sub\HitBoxSubComponent;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\ComponentName;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 
-class CollisionBoxComponent extends AbstractComponent
+class PublisherOnUseOn extends AbstractComponent
 {
-	/**
-	 * @param HitBoxSubComponent[] $value
-	 */
 	public function __construct(
-		protected array $value = [],
-		private bool $enabled = true
+		private readonly bool $autoSucceedOnClient = false
 	)
 	{
 	}
 
-	public function getName() : string|BackedEnum
-	{
-		return ComponentName::COLLISION_BOX;
-	}
-
 	protected function value() : Tag
 	{
-		if(empty($this->value)) {
-			return CompoundTag::create()
-				->setTag("boxes", HitBoxSubComponent::toListTagFromArray([new HitBoxSubComponent()], false))
-				->setByte("enabled", $this->enabled ? 1 : 0);
-		}
 		return CompoundTag::create()
-			->setTag("boxes", HitBoxSubComponent::toListTagFromArray($this->value, false))
-			->setByte("enabled", $this->enabled ? 1 : 0);
+			->setByte("autoSucceedOnClient", $this->autoSucceedOnClient ? 1 : 0);
+	}
+
+	public function getName() : string|BackedEnum
+	{
+		return ComponentName::PUBLISHER_ON_USE_ON;
 	}
 }

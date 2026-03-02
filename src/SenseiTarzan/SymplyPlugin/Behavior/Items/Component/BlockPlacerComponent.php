@@ -23,15 +23,22 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Component;
 
+use pocketmine\block\Block;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\Tag;
+use pocketmine\utils\Utils;
+use pocketmine\world\format\io\GlobalBlockStateHandlers;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\AbstractComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Enum\ComponentName;
 
 class BlockPlacerComponent extends AbstractComponent
 {
 
-	public function __construct(private readonly string $blockIdentifier, private readonly bool $useBlockDescription = false)
+	/**
+	 * @param Block[] $useOn
+	 */
+	public function __construct(private readonly string $blockIdentifier, private readonly bool $useIcon = true, private readonly array $useOn = [])
 	{
 	}
 
@@ -40,16 +47,30 @@ class BlockPlacerComponent extends AbstractComponent
 		return $this->blockIdentifier;
 	}
 
-	public function isUseBlockDescription() : bool
+	public function isUseIcon() : bool
 	{
-		return $this->useBlockDescription;
+		return $this->useIcon;
 	}
 
 	protected function value() : Tag
 	{
+		$useOnList = new ListTag();
+		foreach ($this->useOn as $block) {
+			$serialiserBlock = GlobalBlockStateHandlers::getSerializer()->serialize($block->getStateId());
+			$tags = $serialiserBlock->getStates();
+			$nbt = CompoundTag::create();
+			foreach (Utils::stringifyKeys($tags) as $name => $tag) {
+				$nbt->setTag($name, $tag);
+			}
+			$useOnList->push(CompoundTag::create()
+				->setString("block", $serialiserBlock->getName())
+				->setTag("states", $nbt)
+				->setString("tags", ""));
+		}
 		return CompoundTag::create()
 			->setString("block", $this->getBlockIdentifier())
-			->setByte("use_block_description", $this->isUseBlockDescription() ? 1 : 0);
+			->setByte("canUseBlockAsIcon", $this->isUseIcon() ? 1 : 0)
+			->setTag("use_on", $useOnList);
 	}
 
 	public function getName() : string

@@ -32,55 +32,55 @@ use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\Sub\ISubComponent;
 
 final class HitBoxSubComponent implements ISubComponent
 {
-    public function __construct(
-        protected readonly bool	$enabled = true,
-        protected readonly Vector3 $origin = new Vector3(-8, 0, -8),
-        protected readonly Vector3 $size = new Vector3(16, 16, 16)
-    )
-    {
-    }
+	public function __construct(
+		protected readonly bool	$enabled = true,
+		protected readonly Vector3 $origin = new Vector3(-8, 0, -8),
+		protected readonly Vector3 $size = new Vector3(16, 16, 16)
+	)
+	{
+	}
 
-    public function toNbt(bool $legacy = true) : CompoundTag
-    {
-        if($legacy) {
-            return CompoundTag::create()
-                ->setByte("enabled", $this->enabled ? 1 : 0)
-                ->setTag("origin", new ListTag([
-                    new FloatTag($this->origin->getX()),
-                    new FloatTag($this->origin->getY()),
-                    new FloatTag($this->origin->getZ())
-                ]))
-                ->setTag("size", new ListTag([
-                    new FloatTag($this->size->getX()),
-                    new FloatTag($this->size->getY()),
-                    new FloatTag($this->size->getZ())
-                ]));
-        }
-        $minX = 8 + $this->origin->getX();
-        $minY = $this->origin->getY();
-        $minZ = 8 + $this->origin->getZ();
-        $maxX = $minX + $this->size->getX();
-        $maxY = $minY + $this->size->getY();
-        $maxZ = $minZ + $this->size->getZ();
+	public function toNbt(bool $legacy = true) : CompoundTag
+	{
+		if($legacy) {
+			return CompoundTag::create()
+				->setByte("enabled", $this->enabled ? 1 : 0)
+				->setTag("origin", new ListTag([
+					new FloatTag($this->origin->getX()),
+					new FloatTag($this->origin->getY()),
+					new FloatTag($this->origin->getZ())
+				]))
+				->setTag("size", new ListTag([
+					new FloatTag($this->size->getX()),
+					new FloatTag($this->size->getY()),
+					new FloatTag($this->size->getZ())
+				]));
+		}
+		$minX = 8 + $this->origin->getX();
+		$minY = $this->origin->getY();
+		$minZ = 8 + $this->origin->getZ();
+		$maxX = $minX + $this->size->getX();
+		$maxY = $minY + $this->size->getY();
+		$maxZ = $minZ + $this->size->getZ();
 
-        return CompoundTag::create()
-            ->setByte("enabled", $this->enabled ? 1 : 0)
-            ->setFloat("minX", $minX)
-            ->setFloat("minY", $minY)
-            ->setFloat("minZ", $minZ)
-            ->setFloat("maxX", $maxX)
-            ->setFloat("maxY", $maxY)
-            ->setFloat("maxZ", $maxZ);
-    }
+		return CompoundTag::create()
+			->setByte("enabled", $this->enabled ? 1 : 0)
+			->setFloat("minX", $minX)
+			->setFloat("minY", $minY)
+			->setFloat("minZ", $minZ)
+			->setFloat("maxX", $maxX)
+			->setFloat("maxY", $maxY)
+			->setFloat("maxZ", $maxZ);
+	}
 
-    public static function toListTagFromArray(array $array, bool $legacy = true) : ListTag
-    {
-        $listTag = new ListTag(tagType: NBT::TAG_Compound);
-        foreach($array as $hitBox) {
-            if($hitBox instanceof HitBoxSubComponent) {
-                $listTag->push($hitBox->toNbt($legacy));
-            }
-        }
-        return $listTag;
-    }
+	public static function toListTagFromArray(array $array, bool $legacy = true) : ListTag
+	{
+		$listTag = new ListTag(tagType: NBT::TAG_Compound);
+		foreach($array as $hitBox) {
+			if($hitBox instanceof HitBoxSubComponent) {
+				$listTag->push($hitBox->toNbt($legacy));
+			}
+		}
+		return $listTag;
+	}
 }

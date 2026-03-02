@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace SenseiTarzan\SymplyPlugin\Behavior\Items\Builder;
 
 use BackedEnum;
+use pocketmine\block\Block;
 use pocketmine\item\Item as PMItem;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\NBT;
@@ -32,12 +33,14 @@ use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\StringTag;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Component\IComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\ArmorComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\BlockPlacerComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\ChargeableComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\CooldownComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\DiggerComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\DisplayNameComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\FoodComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\ProjectileComponent;
+use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\PublisherOnUseOn;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\RenderOffsetsComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\RepairableComponent;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Component\sub\RenderOffsetSubComponent;
@@ -160,6 +163,12 @@ final class ItemBuilder
 	{
 		$name = $component->getName();
 		$this->components[(is_string($name) ? $name : $name->value)] = $component;
+		if($component instanceof BlockPlacerComponent){
+			$component = new PublisherOnUseOn();
+			$name = $component->getName();
+			$name = is_string($name) ? $name : $name->value;
+			$this->components[$name] = $component;
+		}
 		return $this;
 	}
 
@@ -438,6 +447,15 @@ final class ItemBuilder
 	}
 
 	/**
+	 * @param Block[] $useOn
+	 * @return $this
+	 */
+	public function setBlockPlacer(string $blockIdentifier, bool $useIcon = true, array $useOn = []) : static
+	{
+		return $this->addComponent(new BlockPlacerComponent($blockIdentifier, $useIcon, $useOn));
+	}
+
+	/**
 	 * Detects if the HandEquippedProperty is active.
 	 * @return false|mixed
 	 */
@@ -465,8 +483,8 @@ final class ItemBuilder
 		$newWidth = 16 / $width;
 		$newHeight = 16 / $height;
 		$horizontalMainHand = [
-			RenderSubOffsetsTypeEnum::FIRST_PERSON->value => round(0.039 * $newWidth, 8),
-			RenderSubOffsetsTypeEnum::THIRD_PERSON->value => round(0.1 * $newWidth, 8),
+			(RenderSubOffsetsTypeEnum::FIRST_PERSON->value) => round(0.039 * $newWidth, 8),
+			(RenderSubOffsetsTypeEnum::THIRD_PERSON->value) => round(0.1 * $newWidth, 8),
 		];
 		$verticalMainHand = [
 			RenderSubOffsetsTypeEnum::FIRST_PERSON->value => round(0.039 * $newHeight, 8),

@@ -48,5 +48,6 @@ enum ComponentName : string
 
 	const USE_MODIFIERS = "minecraft:use_modifiers";
 	const WEARABLE = "minecraft:wearable";
+	const PUBLISHER_ON_USE_ON = "minecraft:publisher_on_use_on";
 
 }

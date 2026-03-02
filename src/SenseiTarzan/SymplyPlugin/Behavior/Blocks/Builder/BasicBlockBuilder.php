@@ -100,18 +100,18 @@ class BasicBlockBuilder implements IBuilderComponent
 		return $this->addComponent(new CollisionBoxComponent([new HitBoxSubComponent($enable, $origin, $size)]));
 	}
 
-    /**
-     * @param HitBoxSubComponent[] $hitBoxes
-     */
-    public function setMultipleCollisionBoxes(array $hitBoxes) : static
-    {
-        foreach ($hitBoxes as $hitBox) {
-            if (!$hitBox instanceof HitBoxSubComponent) {
-                throw new InvalidArgumentException("All elements of hitBoxes must be instances of HitBoxSubComponent");
-            }
-        }
-        return $this->addComponent(new CollisionBoxComponent($hitBoxes));
-    }
+	/**
+	 * @param HitBoxSubComponent[] $hitBoxes
+	 */
+	public function setMultipleCollisionBoxes(array $hitBoxes) : static
+	{
+		foreach ($hitBoxes as $hitBox) {
+			if (!$hitBox instanceof HitBoxSubComponent) {
+				throw new InvalidArgumentException("All elements of hitBoxes must be instances of HitBoxSubComponent");
+			}
+		}
+		return $this->addComponent(new CollisionBoxComponent($hitBoxes));
+	}
 
 	public function setSelectionBox(Vector3 $origin, Vector3 $size, bool $enable = true) : static
 	{
