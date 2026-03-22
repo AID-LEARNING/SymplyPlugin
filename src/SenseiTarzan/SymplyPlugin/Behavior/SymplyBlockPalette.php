@@ -126,7 +126,7 @@ final class SymplyBlockPalette
 		// As of 1.18.30, blocks are sorted using a fnv164 hash of their names.
 		usort($names, static fn(string $a, string $b) => strcmp(self::getFnv164NameHash($a), self::getFnv164NameHash($b)));
 		$stateId = 0;
-		foreach($names as $_ =>  $name){
+		foreach($names as $_ => $name){
 			$blockStates = $states[$name];
 			$numberState = count($blockStates);
 			// With the sorted list of names, we can now go back and add all the states for each block in the correct order.
