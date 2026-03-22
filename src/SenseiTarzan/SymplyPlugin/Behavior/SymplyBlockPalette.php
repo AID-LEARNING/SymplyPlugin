@@ -33,6 +33,7 @@ use pocketmine\utils\AssumptionFailedError;
 use pocketmine\utils\SingletonTrait;
 use pocketmine\utils\Utils;
 use ReflectionProperty;
+use RuntimeException;
 use function array_keys;
 use function count;
 use function hash;
@@ -49,7 +50,16 @@ final class SymplyBlockPalette
 	/** @var BlockStateDictionaryEntry[] */
 	private array $customStates = [];
 
+	/** @var array<string, string> */
+	private static array $fnv164NameHashCache = [];
+
+	/** @var array<string, ReflectionProperty> */
+	private static array $reflectionCache = [];
+
+	private static ?LittleEndianNbtSerializer $nbtSerializer = null;
+
 	public function __construct() {
+		self::$nbtSerializer ??= new LittleEndianNbtSerializer();
 	}
 
 	/**
@@ -64,36 +74,31 @@ final class SymplyBlockPalette
 	 */
 	public function insertState(BlockStateDictionaryEntry $entry) : void {
 		if(($name = $entry->getStateName()) === "") {
-			throw new \RuntimeException("Block state must contain a StringTag called 'name'");
+			throw new RuntimeException("Block state must contain a StringTag called 'name'");
 		}
 		$this->customStates[] = $entry;
 	}
+
 	/**
 	 * Inserts the provided state in to the correct position of the palette.
 	 */
 	public function insertStates(array $entries) : void {
 		foreach ($entries as $entry){
 			if(($entry->getStateName()) === "") {
-				throw new \RuntimeException("Block state must contain a StringTag called 'name'");
+				throw new RuntimeException("Block state must contain a StringTag called 'name'");
 			}
-		}
-		foreach ($entries as $entry){
 			$this->customStates[] = $entry;
 		}
 	}
 
-	private function selectModeSort(bool $blockNetworkIdsAreHashes, array $states, ?array &$sortedStates, ?array &$stateDataToStateIdLookup) : void
+	private function selectModeSort(bool $blockNetworkIdsAreHashes, array $states, array &$sortedStates, array &$stateDataToStateIdLookup) : void
 	{
-		if ($stateDataToStateIdLookup === null) {
-			$stateDataToStateIdLookup = [];
-		}
-		if ($sortedStates === null) {
-			$sortedStates = [];
-		}
+		$stateDataToStateIdLookup = [];
+		$sortedStates = [];
 		if ($blockNetworkIdsAreHashes){
 			foreach ($states as $name => $blockStates) {
 				$numberState = count($blockStates);
-				foreach ($blockStates as $_ => $blockState) {
+				foreach ($blockStates as $blockState) {
 					$data = BlockStateDictionaryEntry::decodeStateProperties($blockState->getRawStateProperties());
 					ksort($data);
 					$test = CompoundTag::create();
@@ -104,6 +109,9 @@ final class SymplyBlockPalette
 						->setString("name", $blockState->getStateName())
 						->setTag("states", $test);
 					$stateId = self::fnv1a32Nbt($tag);
+					if($stateId === -2) {
+						throw new RuntimeException("The block state " . $blockState->getStateName() . " with properties " . $blockState->getRawStateProperties() . " has a name that results in a hash collision with the reserved name 'minecraft:unknown'. Please change the name of this block state.");
+					}
 					if ($numberState === 1) {
 						$stateDataToStateIdLookup[$name] = $stateId;
 					} else {
@@ -116,15 +124,15 @@ final class SymplyBlockPalette
 		}
 		$names = array_keys($states);
 		// As of 1.18.30, blocks are sorted using a fnv164 hash of their names.
-		usort($names, static fn(string $a, string $b) => strcmp(hash("fnv164", $a), hash("fnv164", $b)));
-		$sortedStates = [];
+		usort($names, static fn(string $a, string $b) => strcmp(self::getFnv164NameHash($a), self::getFnv164NameHash($b)));
 		$stateId = 0;
-		$stateDataToStateIdLookup = [];
-		foreach($names as $_ => $name){
+		foreach($names as $_ =>  $name){
+			$blockStates = $states[$name];
+			$numberState = count($blockStates);
 			// With the sorted list of names, we can now go back and add all the states for each block in the correct order.
-			foreach($states[$name] as $__ => $state){
+			foreach($blockStates as $__ => $state){
 				$sortedStates[$stateId] = $state;
-				if(count($states[$name]) === 1) {
+				if($numberState === 1) {
 					$stateDataToStateIdLookup[$name] = $stateId;
 				}else{
 					$stateDataToStateIdLookup[$name][$state->getRawStateProperties()] = $stateId;
@@ -134,18 +142,23 @@ final class SymplyBlockPalette
 		}
 	}
 
+	private static function getFnv164NameHash(string $name) : string
+	{
+		return self::$fnv164NameHashCache[$name] ??= hash("fnv164", $name);
+	}
+
 	public static function fnv1a32Nbt(CompoundTag $tag) : int
 	{
-		// Vérifie si le nom du tag est "minecraft:unknown"
+		// Verifie si le nom du tag est "minecraft:unknown"
 		if ($tag->getString("name", "") === "minecraft:unknown") {
-			return -2; // Cas spécial
+			return -2; // Cas special
 		}
 
-		// Écrit le NBT en Little Endian
-		$nbtStream = new LittleEndianNbtSerializer();
+		// Ecrit le NBT en Little Endian
+		$nbtStream = self::$nbtSerializer ??= new LittleEndianNbtSerializer();
 		$binaryNBT = $nbtStream->write(new TreeRoot($tag));
 
-		// Applique l'algorithme FNV-1a sur les données NBT binaires
+		// Applique l'algorithme FNV-1a sur les donnees NBT binaires
 		return self::fnv1a32($binaryNBT);
 	}
 
@@ -160,15 +173,14 @@ final class SymplyBlockPalette
 	}
 
 	public function sort(bool $blockNetworkIdsAreHashes = false) : void {
+		$translator = TypeConverter::getInstance()->getBlockTranslator();
+		$dictionary = $translator->getBlockStateDictionary();
 
-		$translator = $instance = TypeConverter::getInstance()->getBlockTranslator();
-		$dictionary = $instance->getBlockStateDictionary();
-
-		$bedrockKnownStates = new ReflectionProperty($dictionary, "states");
-		$stateDataToStateIdLookup = new ReflectionProperty($dictionary, "stateDataToStateIdLookup");
-		$idMetaToStateIdLookupCache = new ReflectionProperty($dictionary, "idMetaToStateIdLookupCache");
-		$fallbackStateId = new ReflectionProperty($instance, "fallbackStateId");
-		$networkIdCache = new ReflectionProperty($instance, "networkIdCache");
+		$bedrockKnownStates = self::getReflectionProperty($dictionary, "states");
+		$stateDataToStateIdLookup = self::getReflectionProperty($dictionary, "stateDataToStateIdLookup");
+		$idMetaToStateIdLookupCache = self::getReflectionProperty($dictionary, "idMetaToStateIdLookupCache");
+		$fallbackStateId = self::getReflectionProperty($translator, "fallbackStateId");
+		$networkIdCache = self::getReflectionProperty($translator, "networkIdCache");
 		$states = [];
 
 		foreach ($dictionary->getStates() as $state) {
@@ -182,7 +194,6 @@ final class SymplyBlockPalette
 		$sortedStates = [];
 		$stateDataToStateIdLookupValue = [];
 		$this->selectModeSort($blockNetworkIdsAreHashes, $states, $sortedStates, $stateDataToStateIdLookupValue);
-		$dictionary = $translator->getBlockStateDictionary();
 		$bedrockKnownStates->setValue($dictionary, $sortedStates);
 		$stateDataToStateIdLookup->setValue($dictionary, $stateDataToStateIdLookupValue);
 		$idMetaToStateIdLookupCache->setValue($dictionary, null); //set this to null so pm can create a new cache
@@ -190,5 +201,14 @@ final class SymplyBlockPalette
 		$fallbackStateId->setValue($translator, $stateDataToStateIdLookupValue[BlockTypeNames::INFO_UPDATE] ??
 			throw new AssumptionFailedError(BlockTypeNames::INFO_UPDATE . " should always exist")
 		);
+	}
+	private static function getReflectionProperty(object $object, string $property) : ReflectionProperty
+	{
+		$key = $object::class . "::" . $property;
+		if (!isset(self::$reflectionCache[$key])) {
+			$ref = new ReflectionProperty($object, $property);
+			self::$reflectionCache[$key] = $ref;
+		}
+		return self::$reflectionCache[$key];
 	}
 }

@@ -36,7 +36,11 @@ use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
 use SenseiTarzan\SymplyPlugin\Manager\SymplySchemaManager;
 use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
 use Throwable;
+use function count;
+use function is_array;
+use function microtime;
 use function serialize;
+use function sprintf;
 use function unserialize;
 
 class RegisterSymplyAsyncTask extends AsyncTask
@@ -57,33 +61,15 @@ class RegisterSymplyAsyncTask extends AsyncTask
 	public function __construct(private int $workerId)
 	{
 		$this->logger = Server::getInstance()->getLogger();
-		$this->blockOverwrite = new ThreadSafeArray();
-		foreach (SymplyCache::getInstance()->getTransmitterBlockOverwrite() as $array) {
-			$this->blockOverwrite[] = ThreadSafeArray::fromArray($array);
-		}
-		$this->itemOverwrite = new ThreadSafeArray();
-		foreach (SymplyCache::getInstance()->getTransmitterItemOverwrite() as $array) {
-			$this->itemOverwrite[] = ThreadSafeArray::fromArray($array);
-		}
+		$cache = SymplyCache::getInstance();
 
-		$this->blockVanilla = new ThreadSafeArray();
-		foreach (SymplyCache::getInstance()->getTransmitterBlockVanilla() as $array) {
-			$this->blockVanilla[] = ThreadSafeArray::fromArray($array);
-		}
-		$this->itemVanilla = new ThreadSafeArray();
-		foreach (SymplyCache::getInstance()->getTransmitterItemVanilla() as $array) {
-			$this->itemVanilla[] = ThreadSafeArray::fromArray($array);
-		}
-
-		$this->blockCustom = new ThreadSafeArray();
-		foreach (SymplyCache::getInstance()->getTransmitterBlockCustom() as $array) {
-			$this->blockCustom[] = ThreadSafeArray::fromArray($array);
-		}
-		$this->itemCustom = new ThreadSafeArray();
-		foreach (SymplyCache::getInstance()->getTransmitterItemCustom() as $array) {
-			$this->itemCustom[] = ThreadSafeArray::fromArray($array);
-		}
-		$this->blockNetworkIdsAreHashes = SymplyCache::getInstance()->isBlockNetworkIdsAreHashes();
+		$this->blockOverwrite = $this->toThreadSafeRows($cache->getTransmitterBlockOverwrite());
+		$this->itemOverwrite = $this->toThreadSafeRows($cache->getTransmitterItemOverwrite());
+		$this->blockVanilla = $this->toThreadSafeRows($cache->getTransmitterBlockVanilla());
+		$this->itemVanilla = $this->toThreadSafeRows($cache->getTransmitterItemVanilla());
+		$this->blockCustom = $this->toThreadSafeRows($cache->getTransmitterBlockCustom());
+		$this->itemCustom = $this->toThreadSafeRows($cache->getTransmitterItemCustom());
+		$this->blockNetworkIdsAreHashes = $cache->isBlockNetworkIdsAreHashes();
 		$this->listSchema = serialize(SymplySchemaManager::getInstance()->getListSchema());
 	}
 
@@ -93,22 +79,31 @@ class RegisterSymplyAsyncTask extends AsyncTask
 	 */
 	public function onRun() : void
 	{
+		$startTime = microtime(true);
+		$blockFactory = SymplyBlockFactory::getInstance(true);
+		$itemFactory = SymplyItemFactory::getInstance(true);
+
+		$vanillaBlocks = 0;
+		$vanillaItems = 0;
 		foreach ($this->blockVanilla as [$blockClosure, $identifier, $serialize, $deserialize]) {
 			try {
-				SymplyBlockFactory::getInstance(true)->registerVanilla($blockClosure, $identifier, $serialize, $deserialize);
+				$blockFactory->registerVanilla($blockClosure, $identifier, $serialize, $deserialize);
+				$vanillaBlocks++;
 			} catch (Throwable $throwable) {
-				$this->logger->warning("[SymplyPlugin] WorkerId " . $this->workerId . ": " . $throwable->getMessage());
+				$this->logWarning($throwable);
 			}
 		}
 		foreach ($this->itemVanilla as [$itemClosure, $identifier, $serialize, $deserialize, $argv]) {
 			try {
-				SymplyItemFactory::getInstance(true)->registerVanilla($itemClosure, $identifier, $serialize, $deserialize, unserialize($argv));
+				$itemFactory->registerVanilla($itemClosure, $identifier, $serialize, $deserialize, $this->decodePayload($argv));
+				$vanillaItems++;
 			} catch (Throwable $throwable) {
-				$this->logger->warning("[SymplyPlugin] WorkerId " . $this->workerId . ": " . $throwable->getMessage());
+				$this->logWarning($throwable);
 			}
 		}
-		$this->logger->debug("[SymplyPlugin] WorkerId " . $this->workerId . ": finish registering vanilla items and blocks");
+		$this->logger->debug(sprintf("[SymplyPlugin] WorkerId %d: finish registering vanilla items and blocks (blocks=%d, items=%d)", $this->workerId, $vanillaBlocks, $vanillaItems));
 
+		$customBlocks = 0;
 		foreach ($this->blockCustom as $data) {
 			$type = $data[0];
 			try {
@@ -117,17 +112,24 @@ class RegisterSymplyAsyncTask extends AsyncTask
 					$serialize = $data[2];
 					$deserialize = $data[3];
 					$argv = $data[4];
-					SymplyBlockFactory::getInstance(true)->register($blockClosure, $serialize, $deserialize, unserialize($argv, ['allowed_classes' => true]));
+					$blockFactory->register($blockClosure, $serialize, $deserialize, $this->decodePayload($argv));
+					$customBlocks++;
 				} elseif ($type === BlockRegisterEnum::MULTI_REGISTER) {
 					$blockClosure = $data[1];
 					$argv = $data[2];
-					SymplyBlockFactory::getInstance(true)->registerAll($blockClosure, unserialize($argv, ['allowed_classes' => true]));
+					$decoded = $this->decodePayload($argv);
+					$blockFactory->registerAll($blockClosure, $decoded);
+					if (is_array($decoded)) {
+						$customBlocks += count($decoded);
+					}
 				}
 			} catch (Throwable $throwable) {
-				$this->logger->warning("[SymplyPlugin] WorkerId " . $this->workerId . ": " . $throwable->getMessage());
+				$this->logWarning($throwable);
 			}
 		}
 		SymplyBlockFactory::getInstance()->initBlockBuilders();
+
+		$customItems = 0;
 		foreach ($this->itemCustom as $data) {
 			$type = $data[0];
 			try {
@@ -136,48 +138,79 @@ class RegisterSymplyAsyncTask extends AsyncTask
 					$serialize = $data[2];
 					$deserialize = $data[3];
 					$argv = $data[4];
-					SymplyItemFactory::getInstance(true)->register($itemClosure, $serialize, $deserialize, unserialize($argv, ['allowed_classes' => true]));
+					$itemFactory->register($itemClosure, $serialize, $deserialize, $this->decodePayload($argv));
+					$customItems++;
 				} elseif ($type === ItemRegisterEnum::MULTI_REGISTER) {
 					$itemClosure = $data[1];
 					$argv = $data[2];
-					SymplyItemFactory::getInstance(true)->registerAll($itemClosure, unserialize($argv, ['allowed_classes' => true]));
+					$decoded = $this->decodePayload($argv);
+					$itemFactory->registerAll($itemClosure, $decoded);
+					if (is_array($decoded)) {
+						$customItems += count($decoded);
+					}
 				}
 			} catch (Throwable $throwable) {
-				$this->logger->warning("[SymplyPlugin] WorkerId " . $this->workerId . ": " . $throwable->getMessage());
+				$this->logWarning($throwable);
 			}
 		}
-		$this->logger->debug("[SymplyPlugin] WorkerId " . $this->workerId . ": finish registering custom items and blocks");
+		$this->logger->debug(sprintf("[SymplyPlugin] WorkerId %d: finish registering custom items and blocks (blocks=%d, items=%d)", $this->workerId, $customBlocks, $customItems));
 
+		$overwriteBlocks = 0;
 		foreach ($this->blockOverwrite as [$blockClosure, $serialize, $deserialize]) {
 			try {
-				SymplyBlockFactory::getInstance(true)->overwrite($blockClosure, $serialize, $deserialize);
+				$blockFactory->overwrite($blockClosure, $serialize, $deserialize);
+				$overwriteBlocks++;
 			} catch (Throwable $throwable) {
-				$this->logger->warning("[SymplyPlugin] WorkerId " . $this->workerId . ": " . $throwable->getMessage());
+				$this->logWarning($throwable);
 			}
 		}
 
+		$overwriteItems = 0;
 		foreach ($this->itemOverwrite as [$itemClosure, $serialize, $deserialize, $argv]) {
 			try {
-				SymplyItemFactory::getInstance(true)->overwrite($itemClosure, $serialize, $deserialize, unserialize($argv));
+				$itemFactory->overwrite($itemClosure, $serialize, $deserialize, $this->decodePayload($argv));
+				$overwriteItems++;
 			} catch (Throwable $throwable) {
-				$this->logger->warning("[SymplyPlugin] WorkerId " . $this->workerId . ": " . $throwable->getMessage());
+				$this->logWarning($throwable);
 			}
 		}
-		$this->logger->debug("[SymplyPlugin] WorkerId " . $this->workerId . ": finish overwrite items and blocks");
+		$this->logger->debug(sprintf("[SymplyPlugin] WorkerId %d: finish overwrite items and blocks (blocks=%d, items=%d)", $this->workerId, $overwriteBlocks, $overwriteItems));
 
 		SymplyBlockPalette::getInstance()->sort($this->blockNetworkIdsAreHashes);
 		$this->logger->debug("[SymplyPlugin] WorkerId " . $this->workerId . ": finish sort block state task");
 
-		$schemas = unserialize($this->listSchema);
+		$schemas = $this->decodePayload($this->listSchema);
+		$schemaCount = 0;
 		foreach ($schemas as $schema) {
 			try {
 				SymplySchemaManager::getInstance()->addSchema($schema);
+				$schemaCount++;
 			} catch (Throwable $throwable) {
-				$this->logger->warning("[SymplyPlugin] WorkerId " . $this->workerId . ": " . $throwable->getMessage());
-
+				$this->logWarning($throwable);
 			}
 		}
 
-		$this->logger->debug("[SymplyPlugin] WorkerId " . $this->workerId . ": finish registering schema");
+		$this->logger->debug(sprintf("[SymplyPlugin] WorkerId %d: finish registering schema (count=%d)", $this->workerId, $schemaCount));
+		$this->logger->debug(sprintf("[SymplyPlugin] WorkerId %d: total time taken for registration: %.2f seconds", $this->workerId, microtime(true) - $startTime));
+	}
+
+	private function toThreadSafeRows(iterable $source) : ThreadSafeArray
+	{
+		$rows = new ThreadSafeArray();
+		foreach ($source as $array) {
+			$rows[] = ThreadSafeArray::fromArray($array);
+		}
+
+		return $rows;
+	}
+
+	private function decodePayload(string $payload) : mixed
+	{
+		return unserialize($payload, ['allowed_classes' => true]);
+	}
+
+	private function logWarning(Throwable $throwable) : void
+	{
+		$this->logger->warning("[SymplyPlugin] WorkerId " . $this->workerId . ": " . $throwable->getMessage());
 	}
 }
