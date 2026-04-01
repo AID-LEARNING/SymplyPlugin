@@ -109,9 +109,6 @@ final class SymplyBlockPalette
 						->setString("name", $blockState->getStateName())
 						->setTag("states", $test);
 					$stateId = self::fnv1a32Nbt($tag);
-					if($stateId === -2) {
-						throw new RuntimeException("The block state " . $blockState->getStateName() . " with properties " . $blockState->getRawStateProperties() . " has a name that results in a hash collision with the reserved name 'minecraft:unknown'. Please change the name of this block state.");
-					}
 					if ($numberState === 1) {
 						$stateDataToStateIdLookup[$name] = $stateId;
 					} else {
