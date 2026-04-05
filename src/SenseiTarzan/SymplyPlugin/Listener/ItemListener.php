@@ -45,14 +45,18 @@ use ReflectionMethod;
 use SenseiTarzan\ExtraEvent\Class\EventAttribute;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\ICustomItem;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
+use SenseiTarzan\SymplyPlugin\Utils\ReflectionUtils;
 
 class ItemListener
 {
 	private ReflectionMethod $returnItemsFromAction;
 
+	/**
+	 * @throws ReflectionException
+	 */
 	public function __construct()
 	{
-		$this->returnItemsFromAction = new ReflectionMethod(Player::class, "returnItemsFromAction");
+		$this->returnItemsFromAction = ReflectionUtils::getReflectionMethod(Player::class, "returnItemsFromAction");
 	}
 
 	/**

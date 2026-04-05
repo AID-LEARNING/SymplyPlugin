@@ -34,7 +34,7 @@ use pocketmine\crafting\ShapelessRecipe;
 use pocketmine\data\SavedDataLoadingException;
 use pocketmine\utils\Config;
 use pocketmine\world\format\io\GlobalItemDataHandlers;
-use ReflectionClass;
+use ReflectionException;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyBlockFactory;
 use SenseiTarzan\SymplyPlugin\Behavior\SymplyItemFactory;
 use SenseiTarzan\SymplyPlugin\Main;
@@ -44,6 +44,7 @@ use SenseiTarzan\SymplyPlugin\Models\FurnaceModel;
 use SenseiTarzan\SymplyPlugin\Models\ItemModel;
 use SenseiTarzan\SymplyPlugin\Models\ShapedModel;
 use SenseiTarzan\SymplyPlugin\Models\ShapelessModel;
+use SenseiTarzan\SymplyPlugin\Utils\ReflectionUtils;
 use Symfony\Component\Filesystem\Path;
 use function array_keys;
 use function array_walk;
@@ -70,13 +71,14 @@ class SymplyCraftManager
 		$this->craftManager = $craftManager ?? $this->plugin->getServer()->getCraftingManager();
 	}
 
+	/**
+	 * @throws ReflectionException
+	 */
 	public function overwriteCraft(array $recipes) : void
 	{
 		foreach ($recipes as $__ => $recipe) {
 			if ($recipe instanceof ShapedRecipe) {
-				$recipeReflectionClass = new ReflectionClass(ShapedRecipe::class);
-
-				$resultsProperty = $recipeReflectionClass->getProperty('results');
+				$resultsProperty = ReflectionUtils::getReflectionProperty(ShapedRecipe::class, 'results');
 				$results = $resultsProperty->getValue($recipe);
 				for ($i = 0; $i < count($results); $i++) {
 					$serializeItem = GlobalItemDataHandlers::getSerializer()->serializeType($results[$i]);
@@ -86,7 +88,7 @@ class SymplyCraftManager
 					}
 				}
 				$resultsProperty->setValue($recipe, $results);
-				$ingredientListProperty = $recipeReflectionClass->getProperty('ingredientList');
+				$ingredientListProperty = ReflectionUtils::getReflectionProperty(ShapedRecipe::class, 'ingredientList');
 				$ingredientList = $ingredientListProperty->getValue($recipe);
 				$keys = array_keys($ingredientList);
 				for ($i = 0; $i < count($keys); $i++) {
@@ -100,8 +102,7 @@ class SymplyCraftManager
 				}
 				$ingredientListProperty->setValue($recipe, $ingredientList);
 			} elseif ($recipe instanceof ShapelessRecipe) {
-				$recipeReflectionClass = new ReflectionClass(ShapelessRecipe::class);
-				$resultsProperty = $recipeReflectionClass->getProperty('results');
+				$resultsProperty = ReflectionUtils::getReflectionProperty(ShapelessRecipe::class, 'results');
 				$results = $resultsProperty->getValue($recipe);
 				for ($i = 0; $i < count($results); $i++) {
 					$serializeItem = GlobalItemDataHandlers::getSerializer()->serializeType($results[$i]);
@@ -111,7 +112,7 @@ class SymplyCraftManager
 				}
 				$resultsProperty->setValue($recipe, $results);
 
-				$ingredientsProperty = $recipeReflectionClass->getProperty('ingredients');
+				$ingredientsProperty = ReflectionUtils::getReflectionProperty(ShapelessRecipe::class, 'ingredients');
 				$ingredientsList = $ingredientsProperty->getValue($recipe);
 				for ($i = 0; $i < count($ingredientsList); $i++) {
 					$ingredientData = $ingredientsList[$i];
@@ -124,15 +125,14 @@ class SymplyCraftManager
 				}
 				$ingredientsProperty->setValue($recipe, $ingredientsList);
 			} elseif ($recipe instanceof FurnaceRecipe) {
-				$recipeReflectionClass = new ReflectionClass(FurnaceRecipe::class);
-				$resultsProperty = $recipeReflectionClass->getProperty('result');
+				$resultsProperty = ReflectionUtils::getReflectionProperty(FurnaceRecipe::class, 'result');
 				$result = $resultsProperty->getValue($recipe);
 				$serializeItem = GlobalItemDataHandlers::getSerializer()->serializeType($result);
 				$item = SymplyItemFactory::getInstance()->getOverwrite($serializeItem->getName()) ?? (SymplyBlockFactory::getInstance()->getOverwrite($serializeItem->getName())?->asItem() ?? null);
 				if ($item)
 					$resultsProperty->setValue($recipe, clone $item);
 
-				$ingredientProperty = $recipeReflectionClass->getProperty('ingredient');
+				$ingredientProperty = ReflectionUtils::getReflectionProperty(FurnaceRecipe::class, 'ingredient');
 				$ingredient = $ingredientProperty->getValue($recipe);
 				if ($ingredient instanceof ExactRecipeIngredient) {
 					$serializeItem = GlobalItemDataHandlers::getSerializer()->serializeType($ingredient->getItem());
@@ -141,10 +141,7 @@ class SymplyCraftManager
 						$ingredientProperty->setValue($recipe, new ExactRecipeIngredient($item));
 				}
 			} elseif ($recipe instanceof PotionTypeRecipe) {
-
-				$recipeReflectionClass = new ReflectionClass(PotionTypeRecipe::class);
-
-				$inputProperty = $recipeReflectionClass->getProperty('input');
+				$inputProperty = ReflectionUtils::getReflectionProperty(PotionTypeRecipe::class, 'input');
 				$input = $inputProperty->getValue($recipe);
 				if ($input instanceof ExactRecipeIngredient) {
 					$serializeItem = GlobalItemDataHandlers::getSerializer()->serializeType($input->getItem());
@@ -153,7 +150,7 @@ class SymplyCraftManager
 						$inputProperty->setValue($recipe, new ExactRecipeIngredient($item));
 				}
 
-				$ingredientProperty = $recipeReflectionClass->getProperty('ingredient');
+				$ingredientProperty = ReflectionUtils::getReflectionProperty(PotionTypeRecipe::class, 'ingredient');
 				$ingredient = $ingredientProperty->getValue($recipe);
 				if ($ingredient instanceof ExactRecipeIngredient) {
 					$serializeItem = GlobalItemDataHandlers::getSerializer()->serializeType($ingredient->getItem());
@@ -162,17 +159,14 @@ class SymplyCraftManager
 						$ingredientProperty->setValue($recipe, new ExactRecipeIngredient($item));
 				}
 
-				$outputProperty = $recipeReflectionClass->getProperty('output');
+				$outputProperty = ReflectionUtils::getReflectionProperty(PotionTypeRecipe::class, 'output');
 				$output = $outputProperty->getValue($recipe);
 				$serializeItem = GlobalItemDataHandlers::getSerializer()->serializeType($output);
 				$item = SymplyItemFactory::getInstance()->getOverwrite($serializeItem->getName()) ?? (SymplyBlockFactory::getInstance()->getOverwrite($serializeItem->getName())?->asItem() ?? null);
 				if ($item)
 					$outputProperty->setValue($recipe, clone $item);
 			} elseif ($recipe instanceof PotionContainerChangeRecipe) {
-
-				$recipeReflectionClass = new ReflectionClass(PotionContainerChangeRecipe::class);
-
-				$ingredientProperty = $recipeReflectionClass->getProperty('ingredient');
+				$ingredientProperty = ReflectionUtils::getReflectionProperty(PotionContainerChangeRecipe::class, 'ingredient');
 				$ingredient = $ingredientProperty->getValue($recipe);
 				if ($ingredient instanceof ExactRecipeIngredient) {
 					$serializeItem = GlobalItemDataHandlers::getSerializer()->serializeType($ingredient->getItem());

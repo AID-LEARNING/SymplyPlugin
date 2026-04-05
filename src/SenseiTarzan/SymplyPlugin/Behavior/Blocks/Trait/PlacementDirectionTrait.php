@@ -30,7 +30,6 @@ use pocketmine\data\bedrock\block\BlockStateSerializeException;
 use pocketmine\data\bedrock\block\BlockStateStringValues as StringValues;
 use pocketmine\math\Facing;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\tag\StringTag;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Enum\TraitNameEnum;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property\StringBlockProperty;
 use function array_map;
@@ -58,17 +57,17 @@ readonly class PlacementDirectionTrait implements ITrait
 	{
 		if ($this->isCardinalDirection()) {
 
-			yield new StringBlockProperty(BlockStateNames::MC_CARDINAL_DIRECTION, array_map(static fn(int $face) => new StringTag(match ($face) {
+			yield new StringBlockProperty(BlockStateNames::MC_CARDINAL_DIRECTION, array_map(static fn(int $face) => match ($face) {
 				Facing::SOUTH => StringValues::MC_CARDINAL_DIRECTION_SOUTH,
 				Facing::WEST => StringValues::MC_CARDINAL_DIRECTION_WEST,
 				Facing::NORTH => StringValues::MC_CARDINAL_DIRECTION_NORTH,
 				Facing::EAST => StringValues::MC_CARDINAL_DIRECTION_EAST,
 				default => throw new BlockStateSerializeException("Invalid cardinal facing $face")
-			}), Facing::HORIZONTAL));
+			}, Facing::HORIZONTAL));
 		}
 		if ($this->isFacingDirection())
 		{
-			yield new StringBlockProperty(BlockStateNames::MC_FACING_DIRECTION, array_map(static fn(int $face) => new StringTag(match ($face) {
+			yield new StringBlockProperty(BlockStateNames::MC_FACING_DIRECTION, array_map(static fn(int $face) => match ($face) {
 				Facing::DOWN => StringValues::MC_FACING_DIRECTION_DOWN,
 				Facing::UP => StringValues::MC_FACING_DIRECTION_UP,
 				Facing::SOUTH => StringValues::MC_FACING_DIRECTION_SOUTH,
@@ -76,7 +75,7 @@ readonly class PlacementDirectionTrait implements ITrait
 				Facing::NORTH => StringValues::MC_FACING_DIRECTION_NORTH,
 				Facing::EAST => StringValues::MC_FACING_DIRECTION_EAST,
 				default => throw new BlockStateSerializeException("Invalid direction facing  $face")
-			}), Facing::ALL));
+			}, Facing::ALL));
 		}
 	}
 

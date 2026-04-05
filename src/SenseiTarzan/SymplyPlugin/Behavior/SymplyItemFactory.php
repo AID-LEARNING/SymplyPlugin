@@ -39,10 +39,10 @@ use pocketmine\network\mcpe\protocol\types\ItemTypeEntry;
 use pocketmine\utils\SingletonTrait;
 use pocketmine\world\format\io\GlobalItemDataHandlers;
 use ReflectionClass;
-use ReflectionProperty;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\VanillaGroupMinecraft;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\Builder\ItemBuilder;
 use SenseiTarzan\SymplyPlugin\Behavior\Items\ICustomItem;
+use SenseiTarzan\SymplyPlugin\Utils\ReflectionUtils;
 use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
 use function array_merge;
 use function is_array;
@@ -154,7 +154,7 @@ final class SymplyItemFactory
 	 */
 	public function registerCustomItemMapping(ItemTypeEntry $itemTypeEntry) : void {
 		$dictionary = TypeConverter::getInstance()->getItemTypeDictionary();
-		$reflection = new ReflectionClass($dictionary);
+		$reflection = ReflectionUtils::getReflectionClass($dictionary);
 
 		$intToString = $reflection->getProperty("intToStringIdMap");
 		/** @var int[] $value */
@@ -240,7 +240,7 @@ final class SymplyItemFactory
 			try {
 				$instanceDeserializer->map($namespaceId, $deserializer);
 			} catch (InvalidArgumentException) {
-				$deserializerProperty = new ReflectionProperty($instanceDeserializer, "deserializers");
+				$deserializerProperty = ReflectionUtils::getReflectionProperty($instanceDeserializer, "deserializers");
 				$value = $deserializerProperty->getValue($instanceDeserializer);
 				$value[$namespaceId] = $deserializer;
 				$deserializerProperty->setValue($instanceDeserializer, $value);
@@ -255,11 +255,11 @@ final class SymplyItemFactory
 				}
 			} catch (InvalidArgumentException) {
 				if ($item instanceof ItemBlock) {
-					$serializerProperty = new ReflectionProperty($instanceSerializer, "blockItemSerializers");
+					$serializerProperty = ReflectionUtils::getReflectionProperty($instanceSerializer, "blockItemSerializers");
 					$value = $serializerProperty->getValue($instanceSerializer);
 					$value[$item->getBlock()->getTypeId()] = $serializer;
 				}else{
-					$serializerProperty = new ReflectionProperty($instanceSerializer, "itemSerializers");
+					$serializerProperty = ReflectionUtils::getReflectionProperty($instanceSerializer, "itemSerializers");
 					$value = $serializerProperty->getValue($instanceSerializer);
 					$value[$item->getTypeId()] = $serializer;
 				}

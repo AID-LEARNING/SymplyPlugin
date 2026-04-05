@@ -42,12 +42,11 @@ use pocketmine\network\mcpe\protocol\types\CacheableNbt;
 use pocketmine\network\mcpe\protocol\types\ItemTypeEntry;
 use pocketmine\world\format\io\GlobalBlockStateHandlers;
 use ReflectionException;
-use ReflectionMethod;
-use ReflectionProperty;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Builder\BlockBuilder;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\IBlockCustom;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\IPermutationBlock;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\VanillaGroupMinecraft;
+use SenseiTarzan\SymplyPlugin\Utils\ReflectionUtils;
 use SenseiTarzan\SymplyPlugin\Utils\SymplyCache;
 use function hash;
 use function is_array;
@@ -250,7 +249,7 @@ final class SymplyBlockFactory
 	public function registerBlockItem(ItemTypeEntry $itemTypeEntry) : void {
 		SymplyItemFactory::getInstance()->registerCustomItemMapping($itemTypeEntry);
 		$blockItemIdMap = BlockItemIdMap::getInstance();
-		$reflection = new \ReflectionClass($blockItemIdMap);
+		$reflection = ReflectionUtils::getReflectionClass($blockItemIdMap);
 
 		$itemToBlockId = $reflection->getProperty("itemToBlockId");
 		/** @var string[] $value */
@@ -292,12 +291,12 @@ final class SymplyBlockFactory
 		try {
 			$runtimeBlockStateRegistry->register($block);
 		} catch (InvalidArgumentException) {
-			$typeIndexProperty = new ReflectionProperty($runtimeBlockStateRegistry, "typeIndex");
+			$typeIndexProperty = ReflectionUtils::getReflectionProperty($runtimeBlockStateRegistry, "typeIndex");
 			$value = $typeIndexProperty->getValue($runtimeBlockStateRegistry);
 			$value[$block->getTypeId()] = $block;
 			$typeIndexProperty->setValue($runtimeBlockStateRegistry, $value);
 
-			$fillStaticArraysMethod = new ReflectionMethod($runtimeBlockStateRegistry, "fillStaticArrays");
+			$fillStaticArraysMethod = ReflectionUtils::getReflectionMethod($runtimeBlockStateRegistry, "fillStaticArrays");
 			foreach ($block->generateStatePermutations() as $v) {
 				$fillStaticArraysMethod->invoke($runtimeBlockStateRegistry, $v->getStateId(), $v);
 			}
@@ -341,7 +340,7 @@ final class SymplyBlockFactory
 			try {
 				$instanceDeserializer->map($namespaceId, $deserializer);
 			} catch (InvalidArgumentException) {
-				$deserializerProperty = new ReflectionProperty($instanceDeserializer, "deserializeFuncs");
+				$deserializerProperty = ReflectionUtils::getReflectionProperty($instanceDeserializer, "deserializeFuncs");
 				$value = $deserializerProperty->getValue($instanceDeserializer);
 				$value[$namespaceId] = $deserializer;
 				$deserializerProperty->setValue($instanceDeserializer, $value);
@@ -351,7 +350,7 @@ final class SymplyBlockFactory
 			try {
 				$instanceSerializer->map($block, $serializer);
 			} catch (InvalidArgumentException) {
-				$serializerProperty = new ReflectionProperty($instanceSerializer, "serializers");
+				$serializerProperty = ReflectionUtils::getReflectionProperty($instanceSerializer, "serializers");
 				$value = $serializerProperty->getValue($instanceSerializer);
 				$value[$block->getTypeId()] = $serializer;
 				$serializerProperty->setValue($instanceSerializer, $value);

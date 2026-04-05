@@ -32,8 +32,8 @@ use pocketmine\network\mcpe\convert\TypeConverter;
 use pocketmine\utils\AssumptionFailedError;
 use pocketmine\utils\SingletonTrait;
 use pocketmine\utils\Utils;
-use ReflectionProperty;
 use RuntimeException;
+use SenseiTarzan\SymplyPlugin\Utils\ReflectionUtils;
 use function array_keys;
 use function count;
 use function hash;
@@ -52,9 +52,6 @@ final class SymplyBlockPalette
 
 	/** @var array<string, string> */
 	private static array $fnv164NameHashCache = [];
-
-	/** @var array<string, ReflectionProperty> */
-	private static array $reflectionCache = [];
 
 	private static ?LittleEndianNbtSerializer $nbtSerializer = null;
 
@@ -173,11 +170,11 @@ final class SymplyBlockPalette
 		$translator = TypeConverter::getInstance()->getBlockTranslator();
 		$dictionary = $translator->getBlockStateDictionary();
 
-		$bedrockKnownStates = self::getReflectionProperty($dictionary, "states");
-		$stateDataToStateIdLookup = self::getReflectionProperty($dictionary, "stateDataToStateIdLookup");
-		$idMetaToStateIdLookupCache = self::getReflectionProperty($dictionary, "idMetaToStateIdLookupCache");
-		$fallbackStateId = self::getReflectionProperty($translator, "fallbackStateId");
-		$networkIdCache = self::getReflectionProperty($translator, "networkIdCache");
+		$bedrockKnownStates = ReflectionUtils::getReflectionProperty($dictionary, "states");
+		$stateDataToStateIdLookup = ReflectionUtils::getReflectionProperty($dictionary, "stateDataToStateIdLookup");
+		$idMetaToStateIdLookupCache = ReflectionUtils::getReflectionProperty($dictionary, "idMetaToStateIdLookupCache");
+		$fallbackStateId = ReflectionUtils::getReflectionProperty($translator, "fallbackStateId");
+		$networkIdCache = ReflectionUtils::getReflectionProperty($translator, "networkIdCache");
 		$states = [];
 
 		foreach ($dictionary->getStates() as $state) {
@@ -198,14 +195,5 @@ final class SymplyBlockPalette
 		$fallbackStateId->setValue($translator, $stateDataToStateIdLookupValue[BlockTypeNames::INFO_UPDATE] ??
 			throw new AssumptionFailedError(BlockTypeNames::INFO_UPDATE . " should always exist")
 		);
-	}
-	private static function getReflectionProperty(object $object, string $property) : ReflectionProperty
-	{
-		$key = $object::class . "::" . $property;
-		if (!isset(self::$reflectionCache[$key])) {
-			$ref = new ReflectionProperty($object, $property);
-			self::$reflectionCache[$key] = $ref;
-		}
-		return self::$reflectionCache[$key];
 	}
 }
