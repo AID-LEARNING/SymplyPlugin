@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Manager;
 
+use pmmp\encoding\BE;
 use pocketmine\crafting\FurnaceType;
 use pocketmine\crafting\ShapedRecipe;
 use pocketmine\crafting\ShapelessRecipe;
@@ -31,7 +32,6 @@ use pocketmine\network\mcpe\cache\CraftingDataCache;
 use pocketmine\network\mcpe\convert\TypeConverter;
 use pocketmine\network\mcpe\protocol\CraftingDataPacket;
 use pocketmine\network\mcpe\protocol\types\recipe\CraftingRecipeBlockName;
-use pocketmine\network\mcpe\protocol\types\recipe\FurnaceRecipe as ProtocolFurnaceRecipe;
 use pocketmine\network\mcpe\protocol\types\recipe\FurnaceRecipeBlockName;
 use pocketmine\network\mcpe\protocol\types\recipe\IntIdMetaItemDescriptor;
 use pocketmine\network\mcpe\protocol\types\recipe\PotionContainerChangeRecipe as ProtocolPotionContainerChangeRecipe;
@@ -41,7 +41,6 @@ use pocketmine\network\mcpe\protocol\types\recipe\ShapedRecipe as ProtocolShaped
 use pocketmine\network\mcpe\protocol\types\recipe\ShapelessRecipe as ProtocolShapelessRecipe;
 use pocketmine\timings\Timings;
 use pocketmine\utils\AssumptionFailedError;
-use pocketmine\utils\Binary;
 use pocketmine\utils\SingletonTrait;
 use Ramsey\Uuid\Uuid;
 use SenseiTarzan\SymplyPlugin\Manager\Component\SymplyShapedRecipe;
@@ -82,24 +81,26 @@ class SymplyDataCraftingDataCache
 	{
 		Timings::$craftingDataCacheRebuild->startTiming();
 
+		$noUnlockingRequirement = new RecipeUnlockingRequirement(null);
 		$nullUUID = Uuid::fromString(Uuid::NIL);
 		$converter = TypeConverter::getInstance();
 		$recipesWithTypeIds = [];
 		$manager = $symplyManager->getCraftingManager();
 
+		$recipeNetId = CraftingDataCache::RECIPE_ID_OFFSET;
 		foreach ($manager->getCraftingRecipeIndex() as $index => $recipe) {
 			$recipeNetId = $index + CraftingDataCache::RECIPE_ID_OFFSET;
 
 			if ($recipe instanceof SymplyShapelessRecipe) {
 				$recipesWithTypeIds[] = new ProtocolShapelessRecipe(
 					CraftingDataPacket::ENTRY_SHAPELESS,
-					Binary::writeInt($recipeNetId),
+					BE::packUnsignedInt($recipeNetId), //TODO: this should probably be changed to something human-readable
 					array_map($converter->coreRecipeIngredientToNet(...), $recipe->getIngredientList()),
 					array_map($converter->coreItemStackToNet(...), $recipe->getResults()),
 					$nullUUID,
 					$recipe->getTypeFake(),
 					50,
-					new RecipeUnlockingRequirement(null),
+					$noUnlockingRequirement,
 					$recipeNetId
 				);
 			} elseif ($recipe instanceof SymplyShapedRecipe) {
@@ -111,14 +112,14 @@ class SymplyDataCraftingDataCache
 				}
 				$recipesWithTypeIds[] = $r = new ProtocolShapedRecipe(
 					CraftingDataPacket::ENTRY_SHAPED,
-					Binary::writeInt($recipeNetId),
+					BE::packUnsignedInt($recipeNetId), //TODO: this should probably be changed to something human-readable
 					$inputs,
 					array_map($converter->coreItemStackToNet(...), $recipe->getResults()),
 					$nullUUID,
 					$recipe->getType(),
 					50,
 					true,
-					new RecipeUnlockingRequirement(null),
+					$noUnlockingRequirement,
 					$recipeNetId
 				);
 			}
@@ -131,13 +132,13 @@ class SymplyDataCraftingDataCache
 				};
 				$recipesWithTypeIds[] = new ProtocolShapelessRecipe(
 					CraftingDataPacket::ENTRY_SHAPELESS,
-					Binary::writeInt($recipeNetId),
+					BE::packUnsignedInt($recipeNetId), //TODO: this should probably be changed to something human-readable
 					array_map($converter->coreRecipeIngredientToNet(...), $recipe->getIngredientList()),
 					array_map($converter->coreItemStackToNet(...), $recipe->getResults()),
 					$nullUUID,
 					$typeTag,
 					50,
-					new RecipeUnlockingRequirement(null),
+					$noUnlockingRequirement,
 					$recipeNetId
 				);
 			} elseif ($recipe instanceof ShapedRecipe) {
@@ -148,16 +149,16 @@ class SymplyDataCraftingDataCache
 						$inputs[$row][$column] = $converter->coreRecipeIngredientToNet($recipe->getIngredient($column, $row));
 					}
 				}
-				$recipesWithTypeIds[] = $r = new ProtocolShapedRecipe(
+				$recipesWithTypeIds[] = new ProtocolShapedRecipe(
 					CraftingDataPacket::ENTRY_SHAPED,
-					Binary::writeInt($recipeNetId),
+					BE::packUnsignedInt($recipeNetId), //TODO: this should probably be changed to something human-readable
 					$inputs,
 					array_map($converter->coreItemStackToNet(...), $recipe->getResults()),
 					$nullUUID,
 					CraftingRecipeBlockName::CRAFTING_TABLE,
 					50,
 					true,
-					new RecipeUnlockingRequirement(null),
+					$noUnlockingRequirement,
 					$recipeNetId
 				);
 			} else {
@@ -165,25 +166,26 @@ class SymplyDataCraftingDataCache
 			}
 		}
 
-		foreach (FurnaceType::cases() as $furnaceType) {
-			$typeTag = match ($furnaceType) {
+		foreach(FurnaceType::cases() as $furnaceType){
+			$typeTag = match($furnaceType){
 				FurnaceType::FURNACE => FurnaceRecipeBlockName::FURNACE,
 				FurnaceType::BLAST_FURNACE => FurnaceRecipeBlockName::BLAST_FURNACE,
 				FurnaceType::SMOKER => FurnaceRecipeBlockName::SMOKER,
 				FurnaceType::CAMPFIRE => FurnaceRecipeBlockName::CAMPFIRE,
 				FurnaceType::SOUL_CAMPFIRE => FurnaceRecipeBlockName::SOUL_CAMPFIRE
 			};
-			foreach ($manager->getFurnaceRecipeManager($furnaceType)->getAll() as $recipe) {
-				$input = $converter->coreRecipeIngredientToNet($recipe->getInput())->getDescriptor();
-				if (!$input instanceof IntIdMetaItemDescriptor) {
-					throw new AssumptionFailedError();
-				}
-				$recipesWithTypeIds[] = new ProtocolFurnaceRecipe(
-					CraftingDataPacket::ENTRY_FURNACE_DATA,
-					$input->getId(),
-					$input->getMeta(),
-					$converter->coreItemStackToNet($recipe->getResult()),
-					$typeTag
+			$recipeNetId++;
+			foreach($manager->getFurnaceRecipeManager($furnaceType)->getAll() as $recipe){
+				$recipesWithTypeIds[] = new ProtocolShapelessRecipe(
+					CraftingDataPacket::ENTRY_SHAPELESS,
+					BE::packUnsignedInt($recipeNetId), //TODO: this should probably be changed to something human-readable
+					[$converter->coreRecipeIngredientToNet($recipe->getInput())],
+					[$converter->coreItemStackToNet($recipe->getResult())],
+					$nullUUID,
+					$typeTag,
+					50,
+					$noUnlockingRequirement,
+					$recipeNetId //not used, but we need to fill them with something unique regardless
 				);
 			}
 		}
