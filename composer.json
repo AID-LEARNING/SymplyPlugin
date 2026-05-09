@@ -13,11 +13,12 @@
   ],
   "require": {
     "ext-pmmpthread": "*",
-    "ext-mbstring": "*"
+    "ext-mbstring": "*",
+    "ext-encoding": "*"
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^v3.94.2",
-    "pocketmine/pocketmine-mp": "5.36.0"
+    "pocketmine/pocketmine-mp": "5.43.1"
   },
   "scripts": {
     "php-cs-fixer": "vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix"
