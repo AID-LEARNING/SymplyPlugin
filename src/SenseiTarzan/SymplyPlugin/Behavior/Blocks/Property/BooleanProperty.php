@@ -33,8 +33,8 @@ class BooleanProperty extends BlockProperty
 	public function __construct(string|BackedEnum|UnitEnum $identifier)
 	{
 		parent::__construct($identifier, new ListTag([
-			new ByteTag(1),
 			new ByteTag(0),
+			new ByteTag(1),
 		]));
 	}
 }

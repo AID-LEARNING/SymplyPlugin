@@ -23,28 +23,23 @@ declare(strict_types=1);
 
 namespace SenseiTarzan\SymplyPlugin\Utils;
 
-use function array_map;
-use function array_product;
-use function count;
-use function current;
-use function next;
-use function reset;
-
 class Utils
 {
 
+	/**
+	 * @param array<array-key, array> $arrays
+	 * @return array<int, array>
+	 */
 	public static function getCartesianProduct(array $arrays) : array {
-		$result = [];
-		$count = count($arrays) - 1;
-		$combinations = array_product(array_map(static fn(array $array) => count($array), $arrays));
-		for($i = 0; $i < $combinations; $i++){
-			$result[] = array_map(static fn(array $array) => current($array), $arrays);
-			for($j = $count; $j >= 0; $j--){
-				if(next($arrays[$j])) {
-					break;
+		$result = [[]];
+		foreach ($arrays as $values) {
+			$next = [];
+			foreach ($result as $product) {
+				foreach ($values as $value) {
+					$next[] = [...$product, $value];
 				}
-				reset($arrays[$j]);
 			}
+			$result = $next;
 		}
 		return $result;
 	}

@@ -42,8 +42,8 @@ use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Permutation\Permutations;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property\BlockProperty;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property\DoorHingeBitProperty;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property\OpenBitProperty;
+use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property\StringBlockProperty;
 use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Property\UpperBlockBitProperty;
-use SenseiTarzan\SymplyPlugin\Behavior\Blocks\Trait\PlacementDirectionTrait;
 use SenseiTarzan\SymplyPlugin\Behavior\Common\Enum\CategoryCreativeEnum;
 use SenseiTarzan\SymplyPlugin\Utils\Molang;
 use SenseiTarzan\SymplyPlugin\Utils\Utils;
@@ -89,7 +89,12 @@ class Door extends PMDoor implements IPermutationBlock
 				new MaterialSubComponent(TargetMaterialEnum::ALL, $identifier, RenderMethodEnum::ALPHA_TEST_SINGLE_SIDED)
 			])
 			->setCreativeInfo(new BlockCreativeInfo(CategoryCreativeEnum::NATURE))
-			->addTrait(new PlacementDirectionTrait(true))
+			->addProperty(new StringBlockProperty(BlockStateNames::MC_CARDINAL_DIRECTION, [
+				BlockStateStringValues::MC_CARDINAL_DIRECTION_SOUTH,
+				BlockStateStringValues::MC_CARDINAL_DIRECTION_NORTH,
+				BlockStateStringValues::MC_CARDINAL_DIRECTION_WEST,
+				BlockStateStringValues::MC_CARDINAL_DIRECTION_EAST,
+			]))
 			->addProperty(new UpperBlockBitProperty())
 			->addProperty(new DoorHingeBitProperty())
 			->addProperty(new OpenBitProperty())
